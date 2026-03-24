@@ -1,42 +1,44 @@
 # Data Standardization Pipeline
 
-A microservices-based system for processing and standardizing data from multiple sources using user-defined JSON rules.
+A microservices-based system for processing and standardizing data from multiple sources using user-defined JSON rules. Includes a full vanilla HTML/CSS/JS dashboard UI.
 
 ## Architecture
 
 ```
-┌──────────────┐
-│   Clients    │
-│ (UI/API/CLI) │
-└──────┬───────┘
-       │  X-Trace-Id response header
-┌──────▼───────┐
-│  API Gateway │ :8080
-│ (Spring GW)  │─── traceId generated here ───┐
-└──────┬───────┘                               │
-       │  W3C / B3 trace propagation           │
-┌──────▼───────────────────────────────────────▼──┐
+┌──────────────────────────────────────────────────────────────────┐
+│                     Browser UI (vanilla HTML/CSS/JS)             │
+│  dashboard.html │ ingestion.html │ rules.html │ jobs.html │ logs │
+└────────┬─────────────────┬──────────────────┬────────────────────┘
+         │ fetch()          │ fetch()           │ fetch()
+         │ :8080            │ :8080             │ :3100 (Loki)
+┌────────▼─────────────────▼──────────────────▼───┐
+│            API Gateway  :8080                    │
+│            (Spring Cloud Gateway)                │
+│            X-Trace-Id response header            │
+└────────┬──────────────┬──────────────┬──────────┘
+         │  W3C / B3     │              │
+┌────────▼──────────────▼──────────────▼──────────┐
 │              Eureka Service Discovery  :8761     │
 └─────────────────────────────────────────────────┘
-       │                │                │
-┌──────▼──────┐  ┌──────▼──────┐  ┌─────▼──────────┐
-│  Ingestion  │  │ Rule Engine │  │Standardization │
-│  Service    │  │  Service    │  │   Service      │
-│  :8081      │  │  :8082      │  │   :8083        │
-│  (H2 DB)   │  │  (H2 DB)   │  │   (H2 DB)     │
-└──────┬──────┘  └──────┬──────┘  └──────┬─────────┘
-       │                │                │
-       └────────────────┼────────────────┘
-                        │  Loki4j log shipping
-               ┌────────▼────────┐
-               │  Grafana Loki   │ :3100
-               │  (Log Storage)  │
-               └────────┬────────┘
-                        │
-               ┌────────▼────────┐
-               │    Grafana      │ :3000
-               │  (Dashboards)   │
-               └─────────────────┘
+         │                │                │
+┌────────▼──────┐  ┌──────▼──────┐  ┌─────▼──────────┐
+│  Ingestion    │  │ Rule Engine │  │Standardization │
+│  Service      │  │  Service    │  │   Service      │
+│  :8081        │  │  :8082      │  │   :8083        │
+│  (H2 DB)     │  │  (H2 DB)   │  │   (H2 DB)     │
+└────────┬──────┘  └──────┬──────┘  └──────┬─────────┘
+         │                │                │
+         └────────────────┼────────────────┘
+                          │  Loki4j log shipping
+                 ┌────────▼────────┐
+                 │  Grafana Loki   │ :3100
+                 │  (Log Storage)  │
+                 └────────┬────────┘
+                          │
+                 ┌────────▼────────┐
+                 │    Grafana      │ :3000
+                 │  (Dashboards)   │
+                 └─────────────────┘
 ```
 
 ## Technology Stack
@@ -45,6 +47,7 @@ A microservices-based system for processing and standardizing data from multiple
 |------------------------|-------------------------------------|
 | Language               | Java 17                             |
 | Framework              | Spring Boot 3.2.x                   |
+| **UI**                 | **Vanilla HTML / CSS / JS (no framework)** |
 | API Gateway            | Spring Cloud Gateway                |
 | Service Discovery      | Netflix Eureka                      |
 | Inter-service Calls    | OpenFeign                           |
@@ -73,6 +76,16 @@ A microservices-based system for processing and standardizing data from multiple
 data-standardization/
 ├── pom.xml                          # Parent POM (dependency management)
 ├── docker-compose.yml               # Full stack: services + Loki + Grafana
+│
+├── ── UI (vanilla HTML/CSS/JS) ─────────────────────────────────────
+├── dashboard.html                   # Pipeline health overview & KPI tiles
+├── ingestion.html                   # Multi-source data upload (file/JSON/manual)
+├── rules.html                       # Rule builder & manager + test drawer
+├── jobs.html                        # Job submission, tracking & export
+├── logs.html                        # Filtered live log viewer (Loki + fallback)
+├── preview-panel.js                 # Reusable before/after diff component
+│
+├── ── Backend services ─────────────────────────────────────────────
 ├── common-dto/                      # Shared DTOs (IngestedDatasetResponse, RuleResponse, …)
 ├── eureka-server/                   # Netflix Eureka service registry
 ├── api-gateway/                     # Spring Cloud Gateway
@@ -327,6 +340,96 @@ curl -X POST "http://localhost:8080/api/standardization/preview?maxRecords=5" \
   -d '{"datasetId": "<DATASET_UUID>", "ruleIds": ["<RULE_UUID_1>", "<RULE_UUID_2>"]}'
 ```
 
+## UI Dashboard
+
+A complete browser-based management interface built with **vanilla HTML, CSS, and JS** — zero
+frameworks, zero build step. All API calls go through the gateway at `:8080`. CSS custom
+properties in `:root` enable full theming. Open any `.html` file directly in a browser.
+
+### Screens
+
+| File               | Purpose                                                                |
+|--------------------|------------------------------------------------------------------------|
+| `dashboard.html`   | Pipeline health overview — KPI tiles, topology, active jobs, throughput chart, event log |
+| `ingestion.html`   | Multi-source data upload — file drag-and-drop, JSON input, manual table editor |
+| `rules.html`       | Rule builder & manager — two-column layout, drag-reorder, test drawer  |
+| `jobs.html`        | Job submission, tracking & export — table, detail drawer, new-job modal |
+| `logs.html`        | Filtered live log viewer — Loki primary, job-status fallback           |
+| `preview-panel.js` | Reusable before/after diff component (used by `rules.html` and `jobs.html`) |
+
+### Dashboard (`dashboard.html`)
+
+- **KPI strip** — 5 tiles: total datasets, active rules, running jobs, records processed, avg job time
+- **Pipeline topology** — 5 service nodes with live health-status dots (polls `GET /actuator/health` per service every 5 s)
+- **Active jobs** — polls `GET /api/standardization/jobs?status=PROCESSING` every 3 s with progress bars
+- **Throughput chart** — CSS-only bar chart of records/hour bucketed from job history
+- **Event log** — last 20 events from job status changes, color-coded by level
+
+### Ingestion (`ingestion.html`)
+
+- **Three upload modes** as segmented tabs:
+  - **File Upload** — drag-and-drop `.csv` / `.xlsx` zone → `POST /api/ingestion/upload` (multipart)
+  - **JSON Input** — textarea with real-time client-side JSON validation → `POST /api/ingestion/json`
+  - **Manual Entry** — dynamic column/row table editor → assembles JSON payload on submit
+- **Parsed preview table** — auto-inferred column type badges (string, number, boolean, date, mixed, null)
+- **Dataset list** — `GET /api/ingestion/datasets` with preview and delete per row
+
+### Rules (`rules.html`)
+
+- **Two-column layout** — left: filterable/drag-reorderable rule list, right: rule builder form
+- **Rule list** — active toggle (`PATCH /api/rules/{id}/toggle`), type badge, edit/delete actions
+- **Rule builder** — `ruleType` dropdown dynamically renders the correct config sub-form:
+  - `REPLACE`: find / replace inputs
+  - `MAP_VALUES`: dynamic key → value pair editor
+  - `DATE_FORMAT`: source / target format dropdowns
+  - `REGEX`: pattern + replacement + **live regex test preview**
+  - `TRIM` / `UPPERCASE` / `LOWERCASE`: no config
+  - `DEFAULT_VALUE`: single input
+- **Rule sets panel** — list existing sets, select rules + create (`POST /api/rules/rulesets`)
+- **Test drawer** — enter sample value → client-side rule application → before/after display; optional dataset preview via `POST /api/standardization/preview`
+
+### Jobs (`jobs.html`)
+
+- **Job table** — polls all jobs every 3 s, progress bars, status badges
+  - `PROCESSING` badge = amber with CSS pulse animation
+  - `COMPLETED` = green, `FAILED` = red, `QUEUED` = blue
+- **Row click → detail drawer** — full metadata grid, X-Trace-Id (copyable), result table
+  - **COMPLETED**: Export CSV + Export JSON download from `/jobs/{id}/result`
+  - **FAILED**: red error message box showing `errorLog`
+- **New Job modal** — 2-step wizard:
+  1. Select dataset (cards from ingestion service)
+  2. Pick individual rules OR a rule set
+  - **Preview button**: inline diff panel (via `preview-panel.js`) before submitting
+
+### Logs (`logs.html`)
+
+- **Filter bar** — service multi-select chips, level chips (INFO / WARN / ERROR / DEBUG), Trace ID text input
+- **Log table** — monospace, columns: timestamp / service / level / message
+  - INFO = teal, WARN = amber, ERROR = red, DEBUG = muted
+- **UUID auto-linking** — regex detection, links job UUIDs to `jobs.html`, dataset UUIDs to `ingestion.html`
+- **Auto-scroll toggle** + "Jump to latest" badge when scrolled up
+- **Primary source**: Grafana Loki `/loki/api/v1/query_range` (port 3100)
+- **Fallback**: polls `GET /api/standardization/jobs` to synthesize log entries when Loki is unavailable
+
+### Preview Panel (`preview-panel.js`)
+
+Reusable vanilla JS component — zero dependencies, CSS injected once at runtime.
+
+```js
+PreviewPanel.render(containerEl, {
+  original:      [{ name: 'Alice', … }, …],   // original records
+  standardized:  [{ name: 'alice', … }, …],   // after rules applied
+  changedFields: { name: 'Lowercase Name' },   // field → rule name
+  elapsedMs:     42                             // optional timing
+});
+```
+
+- **Summary strip** — "N of M records changed · K fields · Xms"
+- **Two-column diff table** — Original vs. Standardized, synchronized horizontal scroll
+- **Changed cells** — amber highlight + hover tooltip showing rule name
+- **Export** — CSV and JSON download via Blob API
+- **Data source** — `POST /api/standardization/preview?maxRecords=N`
+
 ## Centralized Logging & Distributed Tracing
 
 Every request receives a **traceId** at the API Gateway that propagates through all downstream
@@ -467,4 +570,5 @@ No authentication is enabled in v1. When needed:
 - **Rate Limiting** — API throttling at the gateway
 - **Zipkin** — Visual trace waterfall diagrams (add `zipkin-reporter-brave` dependency)
 - **Prometheus + Grafana** — Metrics monitoring (Spring Boot Actuator metrics endpoint)
-- **UI Dashboard** — React/Angular frontend for visual rule configuration and data preview
+- **WebSocket live updates** — Push job progress and log entries instead of polling
+- **Dark/light theme toggle** — UI already uses CSS custom properties; add a switcher

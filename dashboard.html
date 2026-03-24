@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Standardization — Dashboard</title>
+<style>
+/* ── Theme tokens ─────────────────────────────────────────────── */
+:root {
+  --color-bg:          #0f1117;
+  --color-surface:     #181b23;
+  --color-surface-alt: #1e222d;
+  --color-border:      #2a2f3e;
+  --color-text:        #e1e4ed;
+  --color-text-dim:    #8b90a0;
+  --color-accent:      #6c8cff;
+  --color-accent-glow: rgba(108,140,255,.18);
+  --color-green:       #34d399;
+  --color-green-dim:   rgba(52,211,153,.15);
+  --color-yellow:      #fbbf24;
+  --color-yellow-dim:  rgba(251,191,36,.15);
+  --color-red:         #f87171;
+  --color-red-dim:     rgba(248,113,113,.15);
+  --color-orange:      #fb923c;
+  --color-purple:      #a78bfa;
+  --radius:            10px;
+  --radius-sm:         6px;
+  --shadow:            0 2px 12px rgba(0,0,0,.35);
+  --font-mono:         'SF Mono', 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  --font-sans:         'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --transition:        .2s ease;
+}
+
+/* ── Reset & base ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.5;
+  min-height: 100vh;
+  padding: 24px 32px 48px;
+}
+
+/* ── Header ───────────────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+.header h1 {
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.header h1 .logo {
+  width: 28px; height: 28px;
+  background: var(--color-accent);
+  border-radius: 7px;
+  display: grid; place-items: center;
+  font-size: .85rem; color: #fff; font-weight: 800;
+}
+.header-meta {
+  font-size: .8rem;
+  color: var(--color-text-dim);
+  display: flex; align-items: center; gap: 16px;
+}
+.header-meta .dot { width:7px; height:7px; border-radius:50%; background:var(--color-green); display:inline-block; }
+#clock { font-family: var(--font-mono); }
+
+/* ── KPI strip ────────────────────────────────────────────────── */
+.kpi-strip {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.kpi-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.kpi-card:hover {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-glow);
+}
+.kpi-label {
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--color-text-dim);
+  font-weight: 600;
+}
+.kpi-value {
+  font-size: 1.9rem;
+  font-weight: 700;
+  letter-spacing: -.03em;
+  font-family: var(--font-mono);
+  line-height: 1.1;
+}
+.kpi-sub {
+  font-size: .72rem;
+  color: var(--color-text-dim);
+}
+
+/* KPI icon colors */
+.kpi-card[data-kpi="datasets"]  .kpi-value { color: var(--color-accent); }
+.kpi-card[data-kpi="rules"]     .kpi-value { color: var(--color-purple); }
+.kpi-card[data-kpi="jobs"]      .kpi-value { color: var(--color-yellow); }
+.kpi-card[data-kpi="records"]   .kpi-value { color: var(--color-green); }
+.kpi-card[data-kpi="avg-time"]  .kpi-value { color: var(--color-orange); }
+
+/* ── Section titles ───────────────────────────────────────────── */
+.section-title {
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--color-text-dim);
+  font-weight: 600;
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+/* ── Pipeline topology ────────────────────────────────────────── */
+.topology-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 28px;
+  overflow-x: auto;
+  padding: 4px 0;
+}
+.topo-node {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 16px 22px;
+  min-width: 170px;
+  text-align: center;
+  position: relative;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.topo-node:hover {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-glow);
+}
+.topo-node .name {
+  font-size: .82rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.topo-node .port {
+  font-size: .7rem;
+  color: var(--color-text-dim);
+  font-family: var(--font-mono);
+}
+.topo-node .status-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  position: absolute;
+  top: 12px; right: 12px;
+  transition: background var(--transition), box-shadow var(--transition);
+}
+.topo-node .status-dot.up   { background: var(--color-green);  box-shadow: 0 0 8px var(--color-green); }
+.topo-node .status-dot.down { background: var(--color-red);    box-shadow: 0 0 8px var(--color-red); }
+.topo-node .status-dot.unknown { background: var(--color-text-dim); }
+
+.topo-arrow {
+  flex-shrink: 0;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-border);
+  font-size: 1.2rem;
+  user-select: none;
+}
+
+/* ── Two-column layout ────────────────────────────────────────── */
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+/* ── Panel (shared) ───────────────────────────────────────────── */
+.panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+}
+
+/* ── Active jobs ──────────────────────────────────────────────── */
+.job-list { display: flex; flex-direction: column; gap: 12px; }
+.job-card {
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+}
+.job-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.job-id {
+  font-family: var(--font-mono);
+  font-size: .75rem;
+  color: var(--color-accent);
+  font-weight: 600;
+}
+.job-status {
+  font-size: .68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.job-status.PROCESSING { background: var(--color-yellow-dim); color: var(--color-yellow); }
+.job-status.QUEUED     { background: var(--color-accent-glow); color: var(--color-accent); }
+.job-status.COMPLETED  { background: var(--color-green-dim);  color: var(--color-green); }
+.job-status.FAILED     { background: var(--color-red-dim);    color: var(--color-red); }
+.job-meta {
+  font-size: .72rem;
+  color: var(--color-text-dim);
+  margin-bottom: 8px;
+  display: flex; gap: 16px;
+}
+.progress-track {
+  height: 6px;
+  background: var(--color-bg);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--color-accent), var(--color-green));
+  transition: width .4s ease;
+}
+.progress-label {
+  font-size: .7rem;
+  font-family: var(--font-mono);
+  color: var(--color-text-dim);
+  margin-top: 4px;
+  text-align: right;
+}
+.empty-state {
+  text-align: center;
+  padding: 32px 16px;
+  color: var(--color-text-dim);
+  font-size: .85rem;
+}
+
+/* ── Throughput chart ─────────────────────────────────────────── */
+.chart-container {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 160px;
+  padding-top: 10px;
+}
+.chart-bar-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+}
+.chart-bar {
+  width: 100%;
+  max-width: 36px;
+  border-radius: 4px 4px 0 0;
+  background: linear-gradient(180deg, var(--color-accent) 0%, rgba(108,140,255,.4) 100%);
+  transition: height .5s ease;
+  position: relative;
+  min-height: 2px;
+}
+.chart-bar:hover {
+  background: linear-gradient(180deg, var(--color-green) 0%, rgba(52,211,153,.4) 100%);
+}
+.chart-bar-val {
+  font-size: .62rem;
+  font-family: var(--font-mono);
+  color: var(--color-text-dim);
+  margin-bottom: 4px;
+  white-space: nowrap;
+}
+.chart-bar-label {
+  font-size: .6rem;
+  color: var(--color-text-dim);
+  margin-top: 6px;
+  white-space: nowrap;
+}
+
+/* ── Log tail ─────────────────────────────────────────────────── */
+.log-panel { margin-top: 0; }
+.log-list {
+  font-family: var(--font-mono);
+  font-size: .74rem;
+  line-height: 1.65;
+  max-height: 380px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.log-entry {
+  padding: 4px 10px;
+  border-radius: 3px;
+  display: flex;
+  gap: 10px;
+  white-space: nowrap;
+}
+.log-entry:nth-child(odd) { background: var(--color-surface-alt); }
+.log-time { color: var(--color-text-dim); flex-shrink: 0; }
+.log-level {
+  font-weight: 700;
+  flex-shrink: 0;
+  width: 56px;
+  text-align: center;
+  border-radius: 3px;
+  padding: 0 4px;
+}
+.log-level.INFO    { color: var(--color-green);  background: var(--color-green-dim); }
+.log-level.WARN    { color: var(--color-yellow); background: var(--color-yellow-dim); }
+.log-level.ERROR   { color: var(--color-red);    background: var(--color-red-dim); }
+.log-level.DEBUG   { color: var(--color-accent); background: var(--color-accent-glow); }
+.log-msg { color: var(--color-text); overflow: hidden; text-overflow: ellipsis; }
+
+/* ── Scrollbar ────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-dim); }
+
+/* ── Responsive ───────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .kpi-strip { grid-template-columns: repeat(3, 1fr); }
+  .main-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 700px) {
+  body { padding: 16px; }
+  .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+  .topology-row { flex-wrap: wrap; gap: 8px; }
+  .topo-arrow { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Header ─────────────────────────────────────────────────── -->
+<header class="header">
+  <h1><span class="logo">DS</span> Data Standardization Pipeline</h1>
+  <div class="header-meta">
+    <nav class="nav-links" style="display:flex;gap:8px;margin-right:16px">
+      <a href="dashboard.html" style="font-size:.78rem;color:var(--color-accent);text-decoration:none;padding:6px 14px;border-radius:6px;border:1px solid var(--color-accent);background:var(--color-accent-glow)">Dashboard</a>
+      <a href="ingestion.html" style="font-size:.78rem;color:var(--color-text-dim);text-decoration:none;padding:6px 14px;border-radius:6px;border:1px solid var(--color-border)">Ingestion</a>
+      <a href="rules.html" style="font-size:.78rem;color:var(--color-text-dim);text-decoration:none;padding:6px 14px;border-radius:6px;border:1px solid var(--color-border)">Rules</a>
+      <a href="jobs.html" style="font-size:.78rem;color:var(--color-text-dim);text-decoration:none;padding:6px 14px;border-radius:6px;border:1px solid var(--color-border)">Jobs</a>
+      <a href="logs.html" style="font-size:.78rem;color:var(--color-text-dim);text-decoration:none;padding:6px 14px;border-radius:6px;border:1px solid var(--color-border)">Logs</a>
+    </nav>
+    <span><span class="dot"></span> Live</span>
+    <span id="clock">--:--:--</span>
+  </div>
+</header>
+
+<!-- ── KPI Strip ──────────────────────────────────────────────── -->
+<section class="kpi-strip">
+  <div class="kpi-card" data-kpi="datasets">
+    <span class="kpi-label">Total Datasets</span>
+    <span class="kpi-value" id="kpi-datasets">—</span>
+    <span class="kpi-sub" id="kpi-datasets-sub">loading…</span>
+  </div>
+  <div class="kpi-card" data-kpi="rules">
+    <span class="kpi-label">Active Rules</span>
+    <span class="kpi-value" id="kpi-rules">—</span>
+    <span class="kpi-sub" id="kpi-rules-sub">loading…</span>
+  </div>
+  <div class="kpi-card" data-kpi="jobs">
+    <span class="kpi-label">Running Jobs</span>
+    <span class="kpi-value" id="kpi-jobs">—</span>
+    <span class="kpi-sub" id="kpi-jobs-sub">loading…</span>
+  </div>
+  <div class="kpi-card" data-kpi="records">
+    <span class="kpi-label">Records Processed</span>
+    <span class="kpi-value" id="kpi-records">—</span>
+    <span class="kpi-sub" id="kpi-records-sub">loading…</span>
+  </div>
+  <div class="kpi-card" data-kpi="avg-time">
+    <span class="kpi-label">Avg Job Time</span>
+    <span class="kpi-value" id="kpi-avg-time">—</span>
+    <span class="kpi-sub" id="kpi-avg-time-sub">loading…</span>
+  </div>
+</section>
+
+<!-- ── Pipeline Topology ──────────────────────────────────────── -->
+<div class="section-title">Pipeline Topology</div>
+<div class="topology-row" id="topology">
+  <!-- rendered by JS -->
+</div>
+
+<!-- ── Main two-column layout ─────────────────────────────────── -->
+<div class="main-grid">
+
+  <!-- Active Jobs -->
+  <div class="panel">
+    <div class="section-title">Active Jobs</div>
+    <div class="job-list" id="job-list">
+      <div class="empty-state">No running jobs</div>
+    </div>
+  </div>
+
+  <!-- Throughput Chart -->
+  <div class="panel">
+    <div class="section-title">Throughput — Records / Hour</div>
+    <div class="chart-container" id="throughput-chart">
+      <div class="empty-state" style="width:100%">Waiting for job history…</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Log Tail ───────────────────────────────────────────────── -->
+<div class="panel log-panel">
+  <div class="section-title">Event Log</div>
+  <div class="log-list" id="log-list">
+    <div class="empty-state">No events yet</div>
+  </div>
+</div>
+
+<!-- ──────────────────────────────────────────────────────────── -->
+<script>
+(function () {
+  'use strict';
+
+  /* ── Configuration ──────────────────────────────────────────── */
+  var GW = location.protocol + '//' + location.hostname + ':8080';
+
+  var SERVICES = [
+    { id: 'eureka-server',           name: 'Eureka Server',       port: 8761 },
+    { id: 'api-gateway',             name: 'API Gateway',         port: 8080 },
+    { id: 'data-ingestion-service',  name: 'Data Ingestion',      port: 8081 },
+    { id: 'rule-engine-service',     name: 'Rule Engine',         port: 8082 },
+    { id: 'standardization-service', name: 'Standardization',     port: 8083 }
+  ];
+
+  var HEALTH_INTERVAL  = 5000;   // 5 s
+  var JOBS_INTERVAL    = 3000;   // 3 s
+  var KPI_INTERVAL     = 10000;  // 10 s
+  var MAX_LOG_ENTRIES  = 20;
+
+  /* ── State ──────────────────────────────────────────────────── */
+  var logEntries     = [];
+  var prevJobMap     = {};       // jobId → status  (for change detection)
+  var allJobsCache   = [];       // full job list for throughput + KPI
+
+  /* ── Helpers ────────────────────────────────────────────────── */
+  function $(sel) { return document.querySelector(sel); }
+  function $$(sel) { return document.querySelectorAll(sel); }
+
+  function fetchJSON(url) {
+    return fetch(url).then(function (r) {
+      if (!r.ok) throw new Error(r.status);
+      return r.json();
+    });
+  }
+
+  function shortId(uuid) {
+    return uuid ? uuid.substring(0, 8) : '—';
+  }
+
+  function fmtNum(n) {
+    if (n == null) return '—';
+    if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+    if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+    return String(n);
+  }
+
+  function fmtDuration(ms) {
+    if (ms == null || isNaN(ms)) return '—';
+    if (ms < 1000) return ms + 'ms';
+    var s = ms / 1000;
+    if (s < 60) return s.toFixed(1) + 's';
+    var m = Math.floor(s / 60);
+    return m + 'm ' + Math.round(s % 60) + 's';
+  }
+
+  function fmtTime(iso) {
+    if (!iso) return '';
+    var d = new Date(iso);
+    if (isNaN(d)) return '';
+    return d.toLocaleTimeString();
+  }
+
+  function nowISO() {
+    return new Date().toLocaleTimeString();
+  }
+
+  /* ── Clock ──────────────────────────────────────────────────── */
+  function tickClock() {
+    var d = new Date();
+    var hh = String(d.getHours()).padStart(2, '0');
+    var mm = String(d.getMinutes()).padStart(2, '0');
+    var ss = String(d.getSeconds()).padStart(2, '0');
+    $('#clock').textContent = hh + ':' + mm + ':' + ss;
+  }
+  setInterval(tickClock, 1000);
+  tickClock();
+
+  /* ── Log tail ───────────────────────────────────────────────── */
+  function addLog(level, msg) {
+    logEntries.unshift({ time: nowISO(), level: level, msg: msg });
+    if (logEntries.length > MAX_LOG_ENTRIES) logEntries.length = MAX_LOG_ENTRIES;
+    renderLog();
+  }
+
+  function renderLog() {
+    var el = $('#log-list');
+    if (!logEntries.length) {
+      el.innerHTML = '<div class="empty-state">No events yet</div>';
+      return;
+    }
+    el.innerHTML = logEntries.map(function (e) {
+      return '<div class="log-entry">' +
+        '<span class="log-time">' + escHtml(e.time) + '</span>' +
+        '<span class="log-level ' + escHtml(e.level) + '">' + escHtml(e.level) + '</span>' +
+        '<span class="log-msg">' + escHtml(e.msg) + '</span>' +
+        '</div>';
+    }).join('');
+  }
+
+  function escHtml(s) {
+    var d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  /* ── Pipeline topology ──────────────────────────────────────── */
+  function buildTopology() {
+    var container = $('#topology');
+    container.innerHTML = '';
+    SERVICES.forEach(function (svc, i) {
+      if (i > 0) {
+        var arrow = document.createElement('div');
+        arrow.className = 'topo-arrow';
+        arrow.textContent = '→';
+        container.appendChild(arrow);
+      }
+      var node = document.createElement('div');
+      node.className = 'topo-node';
+      node.id = 'topo-' + svc.id;
+      node.innerHTML =
+        '<div class="status-dot unknown" id="dot-' + svc.id + '"></div>' +
+        '<div class="name">' + escHtml(svc.name) + '</div>' +
+        '<div class="port">:' + svc.port + '</div>';
+      container.appendChild(node);
+    });
+  }
+  buildTopology();
+
+  function pollHealth() {
+    SERVICES.forEach(function (svc) {
+      var url;
+      if (svc.id === 'api-gateway') {
+        url = GW + '/actuator/health';
+      } else {
+        url = GW + '/' + svc.id + '/actuator/health';
+      }
+      fetch(url, { signal: AbortSignal.timeout ? AbortSignal.timeout(4000) : undefined })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          var dot = $('#dot-' + svc.id);
+          if (data && data.status === 'UP') {
+            dot.className = 'status-dot up';
+          } else {
+            dot.className = 'status-dot down';
+            addLog('WARN', svc.name + ' reported status: ' + (data && data.status || 'UNKNOWN'));
+          }
+        })
+        .catch(function () {
+          var dot = $('#dot-' + svc.id);
+          if (dot.className.indexOf('down') === -1 && dot.className.indexOf('unknown') === -1) {
+            addLog('ERROR', svc.name + ' is unreachable');
+          }
+          dot.className = 'status-dot down';
+        });
+    });
+  }
+  pollHealth();
+  setInterval(pollHealth, HEALTH_INTERVAL);
+
+  /* ── Active jobs ────────────────────────────────────────────── */
+  function renderJobs(jobs) {
+    var el = $('#job-list');
+    if (!jobs || !jobs.length) {
+      el.innerHTML = '<div class="empty-state">No running jobs</div>';
+      return;
+    }
+    el.innerHTML = jobs.map(function (j) {
+      var pct = (j.progressPercentage || 0).toFixed(1);
+      return '<div class="job-card">' +
+        '<div class="job-header">' +
+          '<span class="job-id">' + shortId(j.jobId) + '…</span>' +
+          '<span class="job-status ' + escHtml(j.status) + '">' + escHtml(j.status) + '</span>' +
+        '</div>' +
+        '<div class="job-meta">' +
+          '<span>Dataset ' + shortId(j.datasetId) + '</span>' +
+          '<span>' + fmtNum(j.processedRecords) + ' / ' + fmtNum(j.totalRecords) + ' records</span>' +
+          (j.startedAt ? '<span>started ' + fmtTime(j.startedAt) + '</span>' : '') +
+        '</div>' +
+        '<div class="progress-track"><div class="progress-fill" style="width:' + pct + '%"></div></div>' +
+        '<div class="progress-label">' + pct + '%</div>' +
+        '</div>';
+    }).join('');
+  }
+
+  function detectJobChanges(jobs) {
+    var newMap = {};
+    jobs.forEach(function (j) {
+      newMap[j.jobId] = j.status;
+      var prev = prevJobMap[j.jobId];
+      if (!prev) {
+        addLog('INFO', 'Job ' + shortId(j.jobId) + ' appeared — status: ' + j.status);
+      } else if (prev !== j.status) {
+        var level = j.status === 'FAILED' ? 'ERROR' :
+                    j.status === 'COMPLETED' ? 'INFO' : 'WARN';
+        addLog(level, 'Job ' + shortId(j.jobId) + ' → ' + j.status);
+      }
+    });
+    // detect removed jobs (completed/failed since last poll)
+    Object.keys(prevJobMap).forEach(function (id) {
+      if (!newMap[id]) {
+        addLog('INFO', 'Job ' + shortId(id) + ' left active queue');
+      }
+    });
+    prevJobMap = newMap;
+  }
+
+  function pollActiveJobs() {
+    fetchJSON(GW + '/api/standardization/jobs?status=PROCESSING')
+      .then(function (jobs) {
+        detectJobChanges(jobs);
+        renderJobs(jobs);
+        $('#kpi-jobs').textContent = jobs.length;
+        $('#kpi-jobs-sub').textContent = jobs.length ? 'processing now' : 'idle';
+      })
+      .catch(function () {
+        /* service may be down; topology will show it */
+      });
+  }
+  pollActiveJobs();
+  setInterval(pollActiveJobs, JOBS_INTERVAL);
+
+  /* ── KPI data ───────────────────────────────────────────────── */
+  function pollKPIs() {
+    // Datasets count
+    fetchJSON(GW + '/api/ingestion/datasets')
+      .then(function (ds) {
+        $('#kpi-datasets').textContent = ds.length;
+        var total = ds.reduce(function (s, d) { return s + (d.recordCount || 0); }, 0);
+        $('#kpi-datasets-sub').textContent = fmtNum(total) + ' total records ingested';
+      })
+      .catch(function () {
+        $('#kpi-datasets-sub').textContent = 'unavailable';
+      });
+
+    // Active rules
+    fetchJSON(GW + '/api/rules?active=true')
+      .then(function (rules) {
+        $('#kpi-rules').textContent = rules.length;
+        $('#kpi-rules-sub').textContent = 'active';
+      })
+      .catch(function () {
+        // fallback: try all rules
+        fetchJSON(GW + '/api/rules')
+          .then(function (rules) {
+            var active = rules.filter(function (r) { return r.active; });
+            $('#kpi-rules').textContent = active.length;
+            $('#kpi-rules-sub').textContent = active.length + ' of ' + rules.length + ' total';
+          })
+          .catch(function () {
+            $('#kpi-rules-sub').textContent = 'unavailable';
+          });
+      });
+
+    // All jobs (for records processed, avg time, throughput)
+    fetchJSON(GW + '/api/standardization/jobs')
+      .then(function (jobs) {
+        allJobsCache = jobs;
+
+        // Records processed
+        var total = jobs.reduce(function (s, j) { return s + (j.processedRecords || 0); }, 0);
+        $('#kpi-records').textContent = fmtNum(total);
+        $('#kpi-records-sub').textContent = 'across ' + jobs.length + ' jobs';
+
+        // Avg job time
+        var completed = jobs.filter(function (j) {
+          return j.status === 'COMPLETED' && j.startedAt && j.completedAt;
+        });
+        if (completed.length) {
+          var totalMs = completed.reduce(function (s, j) {
+            return s + (new Date(j.completedAt) - new Date(j.startedAt));
+          }, 0);
+          $('#kpi-avg-time').textContent = fmtDuration(totalMs / completed.length);
+          $('#kpi-avg-time-sub').textContent = 'over ' + completed.length + ' completed';
+        } else {
+          $('#kpi-avg-time').textContent = '—';
+          $('#kpi-avg-time-sub').textContent = 'no completed jobs';
+        }
+
+        renderThroughputChart(jobs);
+      })
+      .catch(function () {
+        $('#kpi-records-sub').textContent = 'unavailable';
+        $('#kpi-avg-time-sub').textContent = 'unavailable';
+      });
+  }
+  pollKPIs();
+  setInterval(pollKPIs, KPI_INTERVAL);
+
+  /* ── Throughput chart ───────────────────────────────────────── */
+  function renderThroughputChart(jobs) {
+    var container = $('#throughput-chart');
+
+    // Bucket completed jobs by hour
+    var completed = jobs.filter(function (j) {
+      return j.status === 'COMPLETED' && j.completedAt;
+    });
+
+    if (!completed.length) {
+      container.innerHTML = '<div class="empty-state" style="width:100%">No completed jobs yet</div>';
+      return;
+    }
+
+    // Sort by completedAt
+    completed.sort(function (a, b) {
+      return new Date(a.completedAt) - new Date(b.completedAt);
+    });
+
+    // Group into hourly buckets (last 12 hours max)
+    var buckets = {};
+    completed.forEach(function (j) {
+      var d = new Date(j.completedAt);
+      var hourKey = d.getFullYear() + '-' +
+        String(d.getMonth() + 1).padStart(2, '0') + '-' +
+        String(d.getDate()).padStart(2, '0') + ' ' +
+        String(d.getHours()).padStart(2, '0') + ':00';
+      if (!buckets[hourKey]) buckets[hourKey] = 0;
+      buckets[hourKey] += (j.processedRecords || 0);
+    });
+
+    // Take last 12 buckets
+    var keys = Object.keys(buckets).sort();
+    if (keys.length > 12) keys = keys.slice(keys.length - 12);
+
+    var maxVal = Math.max.apply(null, keys.map(function (k) { return buckets[k]; }));
+    if (maxVal === 0) maxVal = 1;
+
+    container.innerHTML = keys.map(function (k) {
+      var val = buckets[k];
+      var pct = (val / maxVal * 100).toFixed(1);
+      var label = k.split(' ')[1] || k; // "HH:00"
+      return '<div class="chart-bar-wrap">' +
+        '<span class="chart-bar-val">' + fmtNum(val) + '</span>' +
+        '<div class="chart-bar" style="height:' + pct + '%" title="' + escHtml(k) + ': ' + val + ' records"></div>' +
+        '<span class="chart-bar-label">' + escHtml(label) + '</span>' +
+        '</div>';
+    }).join('');
+  }
+
+  /* ── Initial log ────────────────────────────────────────────── */
+  addLog('INFO', 'Dashboard initialized — gateway ' + GW);
+
+})();
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Logs — Data Standardization</title>
+<style>
+/* ── Theme tokens (shared) ────────────────────────────────────── */
+:root {
+  --color-bg:          #0f1117;
+  --color-surface:     #181b23;
+  --color-surface-alt: #1e222d;
+  --color-border:      #2a2f3e;
+  --color-text:        #e1e4ed;
+  --color-text-dim:    #8b90a0;
+  --color-accent:      #6c8cff;
+  --color-accent-glow: rgba(108,140,255,.18);
+  --color-green:       #34d399;
+  --color-green-dim:   rgba(52,211,153,.15);
+  --color-yellow:      #fbbf24;
+  --color-yellow-dim:  rgba(251,191,36,.15);
+  --color-red:         #f87171;
+  --color-red-dim:     rgba(248,113,113,.15);
+  --color-orange:      #fb923c;
+  --color-purple:      #a78bfa;
+  --color-teal:        #2dd4bf;
+  --color-teal-dim:    rgba(45,212,191,.15);
+  --radius:            10px;
+  --radius-sm:         6px;
+  --shadow:            0 2px 12px rgba(0,0,0,.35);
+  --font-mono:         'SF Mono','Cascadia Code','Fira Code','Consolas',monospace;
+  --font-sans:         'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --transition:        .2s ease;
+}
+
+/* ── Reset ────────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px}
+body{font-family:var(--font-sans);background:var(--color-bg);color:var(--color-text);line-height:1.5;min-height:100vh;padding:24px 32px 48px;display:flex;flex-direction:column}
+
+/* ── Header / nav ─────────────────────────────────────────────── */
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.header h1{font-size:1.35rem;font-weight:700;letter-spacing:-.02em;display:flex;align-items:center;gap:10px}
+.header h1 .logo{width:28px;height:28px;background:var(--color-accent);border-radius:7px;display:grid;place-items:center;font-size:.85rem;color:#fff;font-weight:800}
+.nav-links{display:flex;gap:8px}
+.nav-links a{font-size:.78rem;color:var(--color-text-dim);text-decoration:none;padding:6px 14px;border-radius:var(--radius-sm);border:1px solid var(--color-border);transition:all var(--transition)}
+.nav-links a:hover,.nav-links a.active{color:var(--color-accent);border-color:var(--color-accent);background:var(--color-accent-glow)}
+
+/* ── Filter bar ───────────────────────────────────────────────── */
+.filter-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:14px;padding:14px 18px;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius)}
+.filter-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--color-text-dim);font-weight:700;flex-shrink:0}
+.svc-checks{display:flex;gap:6px;flex-wrap:wrap}
+.svc-check{display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:.72rem;font-weight:600;border:1px solid var(--color-border);background:transparent;color:var(--color-text-dim);cursor:pointer;transition:all var(--transition);user-select:none}
+.svc-check.active{border-color:var(--color-accent);color:var(--color-accent);background:var(--color-accent-glow)}
+.level-chips{display:flex;gap:4px}
+.level-chip{padding:4px 10px;border-radius:20px;font-size:.7rem;font-weight:700;border:1px solid var(--color-border);background:transparent;cursor:pointer;transition:all var(--transition);user-select:none;text-transform:uppercase;letter-spacing:.03em}
+.level-chip.active.INFO{border-color:var(--color-teal);color:var(--color-teal);background:var(--color-teal-dim)}
+.level-chip.active.WARN{border-color:var(--color-yellow);color:var(--color-yellow);background:var(--color-yellow-dim)}
+.level-chip.active.ERROR{border-color:var(--color-red);color:var(--color-red);background:var(--color-red-dim)}
+.level-chip.active.DEBUG{border-color:var(--color-text-dim);color:var(--color-text-dim);background:rgba(139,144,160,.1)}
+.level-chip:not(.active){color:var(--color-text-dim)}
+.trace-input{background:var(--color-bg);color:var(--color-text);border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:6px 10px;font-size:.78rem;font-family:var(--font-mono);width:280px;transition:border-color var(--transition)}
+.trace-input:focus{outline:none;border-color:var(--color-accent)}
+.filter-sep{width:1px;height:24px;background:var(--color-border);flex-shrink:0}
+
+/* ── Auto-scroll toggle ──────────────────────────────────────── */
+.auto-scroll-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.toggle-wrap{display:flex;align-items:center;gap:8px}
+.toggle{position:relative;display:inline-block;width:34px;height:18px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle .slider{position:absolute;inset:0;background:var(--color-border);border-radius:9px;cursor:pointer;transition:var(--transition)}
+.toggle .slider::before{content:'';position:absolute;height:14px;width:14px;left:2px;bottom:2px;background:#fff;border-radius:50%;transition:var(--transition)}
+.toggle input:checked + .slider{background:var(--color-green)}
+.toggle input:checked + .slider::before{transform:translateX(16px)}
+.toggle-label{font-size:.72rem;color:var(--color-text-dim);font-weight:600}
+.jump-badge{display:none;padding:5px 14px;border-radius:20px;font-size:.72rem;font-weight:700;background:var(--color-accent);color:#fff;cursor:pointer;animation:badgePop .3s ease;box-shadow:0 2px 8px rgba(108,140,255,.3)}
+.jump-badge.visible{display:inline-flex}
+@keyframes badgePop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.log-count{font-size:.72rem;color:var(--color-text-dim);font-family:var(--font-mono)}
+
+/* ── Log table ────────────────────────────────────────────────── */
+.log-wrap{flex:1;overflow-y:auto;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius);position:relative;min-height:300px}
+.log-table{width:100%;border-collapse:collapse;font-family:var(--font-mono);font-size:.76rem}
+.log-table th{position:sticky;top:0;z-index:2;background:var(--color-surface-alt);font-size:.64rem;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-dim);font-weight:600;padding:8px 10px;text-align:left;border-bottom:1px solid var(--color-border)}
+.log-table td{padding:5px 10px;border-bottom:1px solid rgba(42,47,62,.5);vertical-align:top;white-space:nowrap}
+.log-table tr:hover td{background:rgba(108,140,255,.04)}
+
+/* level cell colors */
+.log-table .lvl{font-weight:700;font-size:.68rem;text-transform:uppercase;letter-spacing:.03em;padding:1px 8px;border-radius:3px;display:inline-block;text-align:center;min-width:44px}
+.lvl.INFO{background:var(--color-teal-dim);color:var(--color-teal)}
+.lvl.WARN{background:var(--color-yellow-dim);color:var(--color-yellow)}
+.lvl.ERROR{background:var(--color-red-dim);color:var(--color-red)}
+.lvl.DEBUG{background:rgba(139,144,160,.1);color:var(--color-text-dim)}
+
+/* service cell */
+.svc-tag{font-size:.68rem;font-weight:600;padding:2px 7px;border-radius:3px;background:var(--color-accent-glow);color:var(--color-accent)}
+
+/* message links */
+.log-table .msg{white-space:pre-wrap;word-break:break-all;max-width:700px}
+.msg a{color:var(--color-accent);text-decoration:underline;text-decoration-style:dotted}
+.msg a:hover{text-decoration-style:solid}
+
+.empty-state{text-align:center;padding:48px 16px;color:var(--color-text-dim);font-size:.85rem}
+
+/* ── Toast ────────────────────────────────────────────────────── */
+.toast-container{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{padding:12px 18px;border-radius:var(--radius-sm);font-size:.8rem;font-weight:600;box-shadow:var(--shadow);animation:toastIn .3s ease;max-width:380px}
+.toast.success{background:var(--color-green-dim);color:var(--color-green);border:1px solid var(--color-green)}
+.toast.error{background:var(--color-red-dim);color:var(--color-red);border:1px solid var(--color-red)}
+@keyframes toastIn{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── Scrollbar ────────────────────────────────────────────────── */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--color-border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--color-text-dim)}
+</style>
+</head>
+<body>
+
+<div class="toast-container" id="toasts"></div>
+
+<!-- ── Header ─────────────────────────────────────────────────── -->
+<header class="header">
+  <h1><span class="logo">DS</span> Log Stream</h1>
+  <nav class="nav-links">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="ingestion.html">Ingestion</a>
+    <a href="rules.html">Rules</a>
+    <a href="jobs.html">Jobs</a>
+    <a href="logs.html" class="active">Logs</a>
+  </nav>
+</header>
+
+<!-- ── Filter bar ─────────────────────────────────────────────── -->
+<div class="filter-bar">
+  <span class="filter-label">Services</span>
+  <div class="svc-checks" id="svc-checks">
+    <span class="svc-check active" data-svc="api-gateway">Gateway</span>
+    <span class="svc-check active" data-svc="data-ingestion-service">Ingestion</span>
+    <span class="svc-check active" data-svc="rule-engine-service">Rule Engine</span>
+    <span class="svc-check active" data-svc="standardization-service">Standardization</span>
+    <span class="svc-check active" data-svc="eureka-server">Eureka</span>
+  </div>
+  <div class="filter-sep"></div>
+  <span class="filter-label">Level</span>
+  <div class="level-chips" id="level-chips">
+    <span class="level-chip active INFO" data-level="INFO">Info</span>
+    <span class="level-chip active WARN" data-level="WARN">Warn</span>
+    <span class="level-chip active ERROR" data-level="ERROR">Error</span>
+    <span class="level-chip active DEBUG" data-level="DEBUG">Debug</span>
+  </div>
+  <div class="filter-sep"></div>
+  <span class="filter-label">Trace ID</span>
+  <input type="text" class="trace-input" id="trace-input" placeholder="Paste UUID to filter…">
+</div>
+
+<!-- ── Controls ───────────────────────────────────────────────── -->
+<div class="auto-scroll-bar">
+  <div class="toggle-wrap">
+    <label class="toggle">
+      <input type="checkbox" id="auto-scroll-toggle" checked>
+      <span class="slider"></span>
+    </label>
+    <span class="toggle-label">Auto-scroll</span>
+    <span class="jump-badge" id="jump-badge">↓ Jump to latest</span>
+  </div>
+  <span class="log-count" id="log-count">0 entries</span>
+</div>
+
+<!-- ── Log table ──────────────────────────────────────────────── -->
+<div class="log-wrap" id="log-wrap">
+  <table class="log-table">
+    <thead>
+      <tr>
+        <th style="width:130px">Timestamp</th>
+        <th style="width:120px">Service</th>
+        <th style="width:60px">Level</th>
+        <th>Message</th>
+      </tr>
+    </thead>
+    <tbody id="log-tbody">
+      <tr><td colspan="4" class="empty-state">Connecting to log sources…</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var GW = location.protocol + '//' + location.hostname + ':8080';
+  var LOKI_BASE = location.protocol + '//' + location.hostname + ':3100';
+  var POLL_INTERVAL = 3000;
+
+  /* ── Helpers ────────────────────────────────────────────────── */
+  function $(s) { return document.querySelector(s); }
+  function $$(s) { return document.querySelectorAll(s); }
+  function escHtml(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+  function toast(msg, type) {
+    var el = document.createElement('div');
+    el.className = 'toast ' + (type || 'success');
+    el.textContent = msg;
+    $('#toasts').appendChild(el);
+    setTimeout(function () { el.remove(); }, 4000);
+  }
+
+  /* ── UUID regex for auto-linking ────────────────────────────── */
+  var UUID_RE = /\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi;
+
+  function linkUUIDs(msg) {
+    return escHtml(msg).replace(UUID_RE, function (uuid) {
+      // heuristic: link to jobs if "job" context, else ingestion
+      var lower = msg.toLowerCase();
+      if (lower.indexOf('dataset') !== -1) {
+        return '<a href="ingestion.html" title="Dataset ' + uuid + '">' + uuid + '</a>';
+      }
+      return '<a href="jobs.html" title="Job ' + uuid + '">' + uuid + '</a>';
+    });
+  }
+
+  /* ── Filter state ───────────────────────────────────────────── */
+  var enabledServices = {};
+  var enabledLevels = {};
+  var traceFilter = '';
+
+  $$('.svc-check').forEach(function (el) {
+    enabledServices[el.dataset.svc] = true;
+    el.addEventListener('click', function () {
+      this.classList.toggle('active');
+      enabledServices[this.dataset.svc] = this.classList.contains('active');
+      renderLogs();
+    });
+  });
+
+  $$('.level-chip').forEach(function (el) {
+    enabledLevels[el.dataset.level] = true;
+    el.addEventListener('click', function () {
+      this.classList.toggle('active');
+      enabledLevels[this.dataset.level] = this.classList.contains('active');
+      renderLogs();
+    });
+  });
+
+  $('#trace-input').addEventListener('input', function () {
+    traceFilter = this.value.trim().toLowerCase();
+    renderLogs();
+  });
+
+  /* ── Auto-scroll ────────────────────────────────────────────── */
+  var autoScroll = true;
+  var logWrap = $('#log-wrap');
+
+  $('#auto-scroll-toggle').addEventListener('change', function () {
+    autoScroll = this.checked;
+    if (autoScroll) scrollToBottom();
+    $('#jump-badge').classList.remove('visible');
+  });
+
+  logWrap.addEventListener('scroll', function () {
+    var atBottom = logWrap.scrollHeight - logWrap.scrollTop - logWrap.clientHeight < 40;
+    if (atBottom) {
+      $('#jump-badge').classList.remove('visible');
+    } else if (!autoScroll) {
+      $('#jump-badge').classList.add('visible');
+    }
+  });
+
+  $('#jump-badge').addEventListener('click', function () {
+    scrollToBottom();
+    this.classList.remove('visible');
+  });
+
+  function scrollToBottom() {
+    logWrap.scrollTop = logWrap.scrollHeight;
+  }
+
+  /* ── Log data store ─────────────────────────────────────────── */
+  var allLogs = [];      // { ts, service, level, msg, raw }
+  var seenKeys = {};     // dedup
+  var useLoki = true;    // will fall back if Loki fails
+  var lokiFailed = false;
+  var lastLokiNano = '0';
+
+  /* ── Parse Loki streams into log entries ────────────────────── */
+  function parseLokiResponse(data) {
+    var entries = [];
+    if (!data || !data.data || !data.data.result) return entries;
+    data.data.result.forEach(function (stream) {
+      var labels = stream.stream || {};
+      var service = labels.service_name || labels.job || labels.container || 'unknown';
+      (stream.values || []).forEach(function (pair) {
+        var tsNano = pair[0];
+        var line = pair[1];
+        var key = tsNano + '|' + line.substring(0, 80);
+        if (seenKeys[key]) return;
+        seenKeys[key] = true;
+
+        var level = 'INFO';
+        if (/\bERROR\b/i.test(line)) level = 'ERROR';
+        else if (/\bWARN/i.test(line)) level = 'WARN';
+        else if (/\bDEBUG\b/i.test(line)) level = 'DEBUG';
+
+        var ts = new Date(parseInt(tsNano.substring(0, 13), 10));
+
+        entries.push({
+          ts: ts,
+          tsNano: tsNano,
+          service: service,
+          level: level,
+          msg: line,
+          raw: line
+        });
+
+        if (tsNano > lastLokiNano) lastLokiNano = tsNano;
+      });
+    });
+    return entries;
+  }
+
+  /* ── Loki query ─────────────────────────────────────────────── */
+  function queryLoki() {
+    var now = Date.now();
+    var startNs = lastLokiNano === '0'
+      ? String(now - 300000) + '000000'   // last 5 min — string concat avoids precision loss
+      : lastLokiNano;
+    var endNs = String(now) + '000000';    // string concat: safe for nanosecond range
+
+    var query = '{job=~".+"}'; // all jobs
+    var url = LOKI_BASE + '/loki/api/v1/query_range?query=' + encodeURIComponent(query) +
+      '&start=' + startNs + '&end=' + endNs + '&limit=200&direction=forward';
+
+    return fetch(url, { signal: AbortSignal.timeout ? AbortSignal.timeout(4000) : undefined })
+      .then(function (r) {
+        if (!r.ok) throw new Error(r.status);
+        return r.json();
+      })
+      .then(function (data) {
+        var entries = parseLokiResponse(data);
+        if (entries.length) {
+          allLogs = allLogs.concat(entries);
+          // keep max 2000 entries
+          if (allLogs.length > 2000) allLogs = allLogs.slice(allLogs.length - 2000);
+          allLogs.sort(function (a, b) { return a.ts - b.ts; });
+          renderLogs();
+        }
+      });
+  }
+
+  /* ── Fallback: poll job statuses ────────────────────────────── */
+  var fallbackLastSeen = {};
+
+  function pollFallback() {
+    return fetch(GW + '/api/standardization/jobs')
+      .then(function (r) { return r.json(); })
+      .then(function (jobs) {
+        var now = new Date();
+        jobs.forEach(function (j) {
+          var key = j.jobId + '|' + j.status;
+          if (fallbackLastSeen[key]) return;
+          fallbackLastSeen[key] = true;
+
+          var level = j.status === 'FAILED' ? 'ERROR' : (j.status === 'PROCESSING' ? 'WARN' : 'INFO');
+          allLogs.push({
+            ts: j.startedAt ? new Date(j.startedAt) : now,
+            tsNano: String(now.getTime()) + '000000',
+            service: 'standardization-service',
+            level: level,
+            msg: 'Job ' + j.jobId + ' → ' + j.status +
+              ' | records: ' + (j.processedRecords || 0) + '/' + (j.totalRecords || 0) +
+              ' | progress: ' + (j.progressPercentage || 0).toFixed(1) + '%' +
+              (j.datasetId ? ' | dataset: ' + j.datasetId : ''),
+            raw: ''
+          });
+        });
+
+        if (allLogs.length > 2000) allLogs = allLogs.slice(allLogs.length - 2000);
+        allLogs.sort(function (a, b) { return a.ts - b.ts; });
+        renderLogs();
+      })
+      .catch(function () {});
+  }
+
+  /* ── Render ─────────────────────────────────────────────────── */
+  function renderLogs() {
+    var filtered = allLogs.filter(function (e) {
+      if (!enabledLevels[e.level]) return false;
+      // service filter
+      var svcMatch = false;
+      Object.keys(enabledServices).forEach(function (s) {
+        if (enabledServices[s] && e.service.indexOf(s) !== -1) svcMatch = true;
+      });
+      // also match if service is 'unknown' and all are enabled
+      if (!svcMatch) {
+        var allEnabled = Object.keys(enabledServices).every(function (s) { return enabledServices[s]; });
+        if (allEnabled) svcMatch = true;
+      }
+      if (!svcMatch) return false;
+      // trace filter
+      if (traceFilter && e.msg.toLowerCase().indexOf(traceFilter) === -1) return false;
+      return true;
+    });
+
+    $('#log-count').textContent = filtered.length + ' entries' + (allLogs.length !== filtered.length ? ' (of ' + allLogs.length + ')' : '');
+
+    var tbody = $('#log-tbody');
+    if (!filtered.length) {
+      tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No matching log entries</td></tr>';
+      return;
+    }
+
+    // Only render last 500 for performance
+    var visible = filtered.slice(Math.max(0, filtered.length - 500));
+
+    tbody.innerHTML = visible.map(function (e) {
+      var tsStr = e.ts instanceof Date && !isNaN(e.ts) ? e.ts.toLocaleTimeString(undefined, { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit', fractionalSecondDigits: 3 }) : '—';
+      // normalize service name for display
+      var svcShort = e.service
+        .replace('data-ingestion-service', 'ingestion')
+        .replace('rule-engine-service', 'rule-engine')
+        .replace('standardization-service', 'standardize')
+        .replace('api-gateway', 'gateway')
+        .replace('eureka-server', 'eureka');
+
+      return '<tr>' +
+        '<td style="color:var(--color-text-dim)">' + escHtml(tsStr) + '</td>' +
+        '<td><span class="svc-tag">' + escHtml(svcShort) + '</span></td>' +
+        '<td><span class="lvl ' + e.level + '">' + e.level + '</span></td>' +
+        '<td class="msg">' + linkUUIDs(e.msg) + '</td>' +
+      '</tr>';
+    }).join('');
+
+    if (autoScroll) scrollToBottom();
+  }
+
+  /* ── Poll loop ──────────────────────────────────────────────── */
+  function doPoll() {
+    if (!lokiFailed) {
+      queryLoki().catch(function () {
+        if (!lokiFailed) {
+          lokiFailed = true;
+          toast('Loki unavailable — falling back to job status polling', 'error');
+        }
+        pollFallback();
+      });
+    } else {
+      pollFallback();
+    }
+  }
+
+  // Initial load
+  doPoll();
+  setInterval(doPoll, POLL_INTERVAL);
+
+  // Also seed with a fallback poll immediately
+  pollFallback();
+
+})();
+</script>
+</body>
+</html>
+

@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Ingestion — Data Standardization</title>
+<style>
+/* ── Theme tokens (shared with dashboard) ─────────────────────── */
+:root {
+  --color-bg:          #0f1117;
+  --color-surface:     #181b23;
+  --color-surface-alt: #1e222d;
+  --color-border:      #2a2f3e;
+  --color-text:        #e1e4ed;
+  --color-text-dim:    #8b90a0;
+  --color-accent:      #6c8cff;
+  --color-accent-glow: rgba(108,140,255,.18);
+  --color-green:       #34d399;
+  --color-green-dim:   rgba(52,211,153,.15);
+  --color-yellow:      #fbbf24;
+  --color-yellow-dim:  rgba(251,191,36,.15);
+  --color-red:         #f87171;
+  --color-red-dim:     rgba(248,113,113,.15);
+  --color-orange:      #fb923c;
+  --color-purple:      #a78bfa;
+  --radius:            10px;
+  --radius-sm:         6px;
+  --shadow:            0 2px 12px rgba(0,0,0,.35);
+  --font-mono:         'SF Mono','Cascadia Code','Fira Code','Consolas',monospace;
+  --font-sans:         'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --transition:        .2s ease;
+}
+
+/* ── Reset ────────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px}
+body{font-family:var(--font-sans);background:var(--color-bg);color:var(--color-text);line-height:1.5;min-height:100vh;padding:24px 32px 48px}
+
+/* ── Header / nav ─────────────────────────────────────────────── */
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+.header h1{font-size:1.35rem;font-weight:700;letter-spacing:-.02em;display:flex;align-items:center;gap:10px}
+.header h1 .logo{width:28px;height:28px;background:var(--color-accent);border-radius:7px;display:grid;place-items:center;font-size:.85rem;color:#fff;font-weight:800}
+.nav-links{display:flex;gap:8px}
+.nav-links a{font-size:.78rem;color:var(--color-text-dim);text-decoration:none;padding:6px 14px;border-radius:var(--radius-sm);border:1px solid var(--color-border);transition:all var(--transition)}
+.nav-links a:hover,.nav-links a.active{color:var(--color-accent);border-color:var(--color-accent);background:var(--color-accent-glow)}
+
+/* ── Layout ───────────────────────────────────────────────────── */
+.page-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:1000px){.page-grid{grid-template-columns:1fr}}
+
+/* ── Panel ────────────────────────────────────────────────────── */
+.panel{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius);padding:22px 24px}
+.section-title{font-size:.78rem;text-transform:uppercase;letter-spacing:.07em;color:var(--color-text-dim);font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';flex:1;height:1px;background:var(--color-border)}
+
+/* ── Segmented tabs ───────────────────────────────────────────── */
+.seg-tabs{display:flex;background:var(--color-bg);border-radius:var(--radius-sm);padding:3px;gap:2px;margin-bottom:20px}
+.seg-tab{flex:1;text-align:center;padding:9px 12px;font-size:.78rem;font-weight:600;color:var(--color-text-dim);border:none;background:none;border-radius:4px;cursor:pointer;transition:all var(--transition)}
+.seg-tab:hover{color:var(--color-text)}
+.seg-tab.active{background:var(--color-accent);color:#fff}
+
+/* ── Tab panes ────────────────────────────────────────────────── */
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+
+/* ── Drop zone ────────────────────────────────────────────────── */
+.drop-zone{border:2px dashed var(--color-border);border-radius:var(--radius);padding:48px 24px;text-align:center;cursor:pointer;transition:all var(--transition);position:relative}
+.drop-zone:hover,.drop-zone.dragover{border-color:var(--color-accent);background:var(--color-accent-glow)}
+.drop-zone .icon{font-size:2.4rem;margin-bottom:8px;display:block}
+.drop-zone .label{font-size:.88rem;color:var(--color-text-dim)}
+.drop-zone .label strong{color:var(--color-accent)}
+.drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.file-info{margin-top:12px;font-size:.78rem;color:var(--color-green);font-family:var(--font-mono);display:none}
+.file-info.show{display:block}
+
+/* ── Textarea ─────────────────────────────────────────────────── */
+textarea{width:100%;min-height:200px;background:var(--color-bg);color:var(--color-text);border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:14px;font-family:var(--font-mono);font-size:.8rem;resize:vertical;transition:border-color var(--transition)}
+textarea:focus{outline:none;border-color:var(--color-accent)}
+.json-error{font-size:.72rem;color:var(--color-red);margin-top:6px;min-height:1.2em}
+.json-ok{font-size:.72rem;color:var(--color-green);margin-top:6px;min-height:1.2em}
+
+/* ── Inputs / selects ─────────────────────────────────────────── */
+.field-group{margin-bottom:14px}
+.field-group label{display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-dim);font-weight:600;margin-bottom:5px}
+input[type=text],input[type=number],select{width:100%;background:var(--color-bg);color:var(--color-text);border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:9px 12px;font-size:.82rem;font-family:var(--font-sans);transition:border-color var(--transition)}
+input:focus,select:focus{outline:none;border-color:var(--color-accent)}
+
+/* ── Buttons ──────────────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border:none;border-radius:var(--radius-sm);font-size:.8rem;font-weight:600;cursor:pointer;transition:all var(--transition);font-family:var(--font-sans)}
+.btn-primary{background:var(--color-accent);color:#fff}
+.btn-primary:hover{filter:brightness(1.15)}
+.btn-primary:disabled{opacity:.45;cursor:not-allowed}
+.btn-danger{background:var(--color-red-dim);color:var(--color-red);border:1px solid transparent}
+.btn-danger:hover{border-color:var(--color-red)}
+.btn-ghost{background:transparent;color:var(--color-text-dim);border:1px solid var(--color-border)}
+.btn-ghost:hover{color:var(--color-text);border-color:var(--color-text-dim)}
+.btn-sm{padding:5px 10px;font-size:.72rem}
+
+/* ── Manual table editor ──────────────────────────────────────── */
+.manual-table-wrap{overflow-x:auto;margin-bottom:14px}
+.manual-table{width:100%;border-collapse:collapse;font-size:.8rem}
+.manual-table th,.manual-table td{padding:7px 10px;border:1px solid var(--color-border);text-align:left}
+.manual-table th{background:var(--color-surface-alt);font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-dim);font-weight:600}
+.manual-table td{background:var(--color-bg)}
+.manual-table input{width:100%;background:transparent;border:none;color:var(--color-text);font-size:.8rem;padding:2px 0;font-family:var(--font-sans)}
+.manual-table input:focus{outline:none}
+.manual-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+
+/* ── Preview table ────────────────────────────────────────────── */
+.preview-wrap{margin-top:20px;overflow-x:auto;max-height:360px;overflow-y:auto}
+.preview-table{width:100%;border-collapse:collapse;font-size:.78rem}
+.preview-table th,.preview-table td{padding:7px 10px;border:1px solid var(--color-border);text-align:left;white-space:nowrap}
+.preview-table th{background:var(--color-surface-alt);color:var(--color-text-dim);font-weight:600;position:sticky;top:0;z-index:1}
+.col-badge{display:inline-block;font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:1px 6px;border-radius:3px;margin-left:6px;vertical-align:middle}
+.col-badge.string{background:var(--color-accent-glow);color:var(--color-accent)}
+.col-badge.number{background:var(--color-green-dim);color:var(--color-green)}
+.col-badge.boolean{background:var(--color-yellow-dim);color:var(--color-yellow)}
+.col-badge.date{background:rgba(167,139,250,.15);color:var(--color-purple)}
+.col-badge.null{background:var(--color-red-dim);color:var(--color-red)}
+.col-badge.mixed{background:rgba(251,146,60,.15);color:var(--color-orange)}
+
+/* ── Dataset list ─────────────────────────────────────────────── */
+.ds-list{display:flex;flex-direction:column;gap:10px;max-height:520px;overflow-y:auto}
+.ds-card{background:var(--color-surface-alt);border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:14px 16px;display:flex;align-items:center;gap:14px;transition:border-color var(--transition)}
+.ds-card:hover{border-color:var(--color-accent)}
+.ds-info{flex:1;min-width:0}
+.ds-name{font-weight:600;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ds-meta{font-size:.72rem;color:var(--color-text-dim);display:flex;gap:12px;margin-top:3px;flex-wrap:wrap}
+.ds-badge{font-size:.65rem;font-weight:700;text-transform:uppercase;padding:2px 7px;border-radius:3px;letter-spacing:.04em;flex-shrink:0}
+.ds-badge.PARSED{background:var(--color-green-dim);color:var(--color-green)}
+.ds-badge.FAILED{background:var(--color-red-dim);color:var(--color-red)}
+.ds-badge.CSV,.ds-badge.EXCEL{background:var(--color-accent-glow);color:var(--color-accent)}
+.ds-badge.API{background:var(--color-yellow-dim);color:var(--color-yellow)}
+.ds-actions{flex-shrink:0;display:flex;gap:6px}
+.empty-state{text-align:center;padding:32px 16px;color:var(--color-text-dim);font-size:.85rem}
+
+/* ── Toast ────────────────────────────────────────────────────── */
+.toast-container{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{padding:12px 18px;border-radius:var(--radius-sm);font-size:.8rem;font-weight:600;box-shadow:var(--shadow);animation:toastIn .3s ease;max-width:380px}
+.toast.success{background:var(--color-green-dim);color:var(--color-green);border:1px solid var(--color-green)}
+.toast.error{background:var(--color-red-dim);color:var(--color-red);border:1px solid var(--color-red)}
+@keyframes toastIn{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── Spinner ──────────────────────────────────────────────────── */
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--color-border);border-top-color:var(--color-accent);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Scrollbar ────────────────────────────────────────────────── */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--color-border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--color-text-dim)}
+</style>
+</head>
+<body>
+
+<div class="toast-container" id="toasts"></div>
+
+<!-- ── Header ─────────────────────────────────────────────────── -->
+<header class="header">
+  <h1><span class="logo">DS</span> Data Ingestion</h1>
+  <nav class="nav-links">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="ingestion.html" class="active">Ingestion</a>
+    <a href="rules.html">Rules</a>
+    <a href="jobs.html">Jobs</a>
+    <a href="logs.html">Logs</a>
+  </nav>
+</header>
+
+<div class="page-grid">
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!--  LEFT: Upload panel                                           -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div>
+  <div class="panel" style="margin-bottom:24px">
+    <div class="section-title">Ingest Data</div>
+
+    <!-- Segmented tabs -->
+    <div class="seg-tabs">
+      <button class="seg-tab active" data-tab="file">File Upload</button>
+      <button class="seg-tab" data-tab="json">JSON Input</button>
+      <button class="seg-tab" data-tab="manual">Manual Entry</button>
+    </div>
+
+    <!-- ── File Upload ──────────────────────────────────────── -->
+    <div class="tab-pane active" id="pane-file">
+      <div class="drop-zone" id="drop-zone">
+        <input type="file" id="file-input" accept=".csv,.xlsx,.xls">
+        <span class="icon">📁</span>
+        <div class="label">Drag & drop <strong>.csv</strong> or <strong>.xlsx</strong> here, or click to browse</div>
+      </div>
+      <div class="file-info" id="file-info"></div>
+      <div style="margin-top:14px;text-align:right">
+        <button class="btn btn-primary" id="btn-upload" disabled>
+          Upload &amp; Parse
+        </button>
+      </div>
+    </div>
+
+    <!-- ── JSON Input ───────────────────────────────────────── -->
+    <div class="tab-pane" id="pane-json">
+      <div class="field-group">
+        <label>Dataset Name</label>
+        <input type="text" id="json-name" placeholder="e.g. Customer Records Q4">
+      </div>
+      <div class="field-group">
+        <label>JSON Records</label>
+        <textarea id="json-input" placeholder='[&#10;  { "name": "Alice", "email": "alice@example.com" },&#10;  { "name": "Bob", "email": "bob@example.com" }&#10;]'></textarea>
+        <div id="json-validation"></div>
+      </div>
+      <div style="text-align:right">
+        <button class="btn btn-primary" id="btn-json" disabled>
+          Ingest JSON
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Manual Entry ─────────────────────────────────────── -->
+    <div class="tab-pane" id="pane-manual">
+      <div class="field-group">
+        <label>Dataset Name</label>
+        <input type="text" id="manual-name" placeholder="e.g. Product Catalogue">
+      </div>
+      <div class="field-group">
+        <label>Columns</label>
+        <div class="manual-toolbar">
+          <input type="text" id="col-input" placeholder="Column name" style="width:180px">
+          <button class="btn btn-ghost btn-sm" id="btn-add-col">+ Add Column</button>
+          <button class="btn btn-ghost btn-sm" id="btn-add-row">+ Add Row</button>
+        </div>
+        <div class="manual-table-wrap">
+          <table class="manual-table" id="manual-table">
+            <thead><tr id="manual-thead"></tr></thead>
+            <tbody id="manual-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <button class="btn btn-primary" id="btn-manual" disabled>
+          Ingest Table
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Preview ──────────────────────────────────────────────── -->
+  <div class="panel" id="preview-panel" style="display:none">
+    <div class="section-title">Parsed Preview</div>
+    <div class="preview-wrap" id="preview-wrap"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!--  RIGHT: Dataset list                                          -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="panel">
+  <div class="section-title">Datasets</div>
+  <div class="ds-list" id="ds-list">
+    <div class="empty-state">Loading…</div>
+  </div>
+</div>
+
+</div><!-- /page-grid -->
+
+<script>
+(function () {
+  'use strict';
+
+  var GW = location.protocol + '//' + location.hostname + ':8080';
+
+  /* ── Helpers ────────────────────────────────────────────────── */
+  function $(s) { return document.querySelector(s); }
+  function $$(s) { return document.querySelectorAll(s); }
+
+  function escHtml(s) {
+    var d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function shortId(u) { return u ? u.substring(0, 8) : '—'; }
+
+  function fmtDate(iso) {
+    if (!iso) return '—';
+    var d = new Date(iso);
+    return isNaN(d) ? '—' : d.toLocaleString();
+  }
+
+  function toast(msg, type) {
+    var el = document.createElement('div');
+    el.className = 'toast ' + (type || 'success');
+    el.textContent = msg;
+    $('#toasts').appendChild(el);
+    setTimeout(function () { el.remove(); }, 4000);
+  }
+
+  /* ── Tab switching ──────────────────────────────────────────── */
+  $$('.seg-tab').forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      $$('.seg-tab').forEach(function (t) { t.classList.remove('active'); });
+      $$('.tab-pane').forEach(function (p) { p.classList.remove('active'); });
+      tab.classList.add('active');
+      $('#pane-' + tab.dataset.tab).classList.add('active');
+    });
+  });
+
+  /* ── File upload ────────────────────────────────────────────── */
+  var dropZone = $('#drop-zone');
+  var fileInput = $('#file-input');
+  var selectedFile = null;
+  var dragDepth = 0;
+
+  dropZone.addEventListener('dragenter', function (e) {
+    e.preventDefault();
+    dragDepth++;
+    dropZone.classList.add('dragover');
+  });
+  dropZone.addEventListener('dragover', function (e) {
+    e.preventDefault();
+  });
+  dropZone.addEventListener('dragleave', function (e) {
+    e.preventDefault();
+    dragDepth--;
+    if (dragDepth <= 0) {
+      dragDepth = 0;
+      dropZone.classList.remove('dragover');
+    }
+  });
+  dropZone.addEventListener('drop', function (e) {
+    e.preventDefault();
+    dragDepth = 0;
+    dropZone.classList.remove('dragover');
+    var f = e.dataTransfer.files[0];
+    if (f) pickFile(f);
+  });
+  fileInput.addEventListener('change', function () {
+    if (fileInput.files[0]) pickFile(fileInput.files[0]);
+  });
+
+  function pickFile(f) {
+    var ext = f.name.split('.').pop().toLowerCase();
+    if (['csv', 'xlsx', 'xls'].indexOf(ext) === -1) {
+      toast('Only .csv and .xlsx files are accepted', 'error');
+      return;
+    }
+    selectedFile = f;
+    var info = $('#file-info');
+    info.textContent = f.name + '  (' + (f.size / 1024).toFixed(1) + ' KB)';
+    info.classList.add('show');
+    $('#btn-upload').disabled = false;
+  }
+
+  $('#btn-upload').addEventListener('click', function () {
+    if (!selectedFile) return;
+    var btn = $('#btn-upload');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Uploading…';
+
+    var fd = new FormData();
+    fd.append('file', selectedFile);
+
+    fetch(GW + '/api/ingestion/upload', { method: 'POST', body: fd })
+      .then(function (r) {
+        if (!r.ok) return r.text().then(function (t) { throw new Error(t); });
+        return r.json();
+      })
+      .then(function (data) {
+        toast(data.message || 'Uploaded successfully');
+        selectedFile = null;
+        $('#file-info').classList.remove('show');
+        fileInput.value = '';
+        loadDatasets();
+        // fetch and preview
+        if (data.datasetId) fetchAndPreview(data.datasetId);
+      })
+      .catch(function (e) { toast('Upload failed: ' + e.message, 'error'); })
+      .finally(function () { btn.disabled = false; btn.textContent = 'Upload & Parse'; });
+  });
+
+  /* ── JSON ingest ────────────────────────────────────────────── */
+  var jsonInput = $('#json-input');
+  var jsonName = $('#json-name');
+  var jsonVal = $('#json-validation');
+
+  jsonInput.addEventListener('input', validateJson);
+  jsonName.addEventListener('input', validateJson);
+
+  function validateJson() {
+    var raw = jsonInput.value.trim();
+    if (!raw) { jsonVal.innerHTML = ''; $('#btn-json').disabled = true; return; }
+    try {
+      var parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) throw new Error('Top-level must be a JSON array');
+      if (!parsed.length) throw new Error('Array must not be empty');
+      jsonVal.className = 'json-ok';
+      jsonVal.textContent = '✓ Valid — ' + parsed.length + ' record(s)';
+      $('#btn-json').disabled = !jsonName.value.trim();
+    } catch (e) {
+      jsonVal.className = 'json-error';
+      jsonVal.textContent = '✗ ' + e.message;
+      $('#btn-json').disabled = true;
+    }
+  }
+
+  $('#btn-json').addEventListener('click', function () {
+    var name = jsonName.value.trim();
+    var records;
+    try { records = JSON.parse(jsonInput.value.trim()); } catch (e) { return; }
+    if (!name || !Array.isArray(records)) return;
+
+    var btn = $('#btn-json');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Ingesting…';
+
+    fetch(GW + '/api/ingestion/json', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name, records: records })
+    })
+      .then(function (r) {
+        if (!r.ok) return r.text().then(function (t) { throw new Error(t); });
+        return r.json();
+      })
+      .then(function (data) {
+        toast(data.message || 'Ingested successfully');
+        loadDatasets();
+        showPreview(records);
+      })
+      .catch(function (e) { toast('JSON ingest failed: ' + e.message, 'error'); })
+      .finally(function () { btn.disabled = false; btn.textContent = 'Ingest JSON'; });
+  });
+
+  /* ── Manual entry ───────────────────────────────────────────── */
+  var manualCols = [];
+  var manualRows = [];
+
+  function refreshManualTable() {
+    var thead = $('#manual-thead');
+    var tbody = $('#manual-tbody');
+    thead.innerHTML = manualCols.map(function (c, ci) {
+      return '<th>' + escHtml(c) + ' <span style="cursor:pointer;color:var(--color-red);font-size:.7rem" data-delcol="' + ci + '">✕</span></th>';
+    }).join('') + (manualCols.length ? '<th style="width:40px"></th>' : '');
+
+    tbody.innerHTML = manualRows.map(function (row, ri) {
+      return '<tr>' + manualCols.map(function (c, ci) {
+        return '<td><input type="text" data-r="' + ri + '" data-c="' + ci + '" value="' + escHtml(row[ci] || '') + '"></td>';
+      }).join('') + '<td><span style="cursor:pointer;color:var(--color-red);font-size:.7rem" data-delrow="' + ri + '">✕</span></td></tr>';
+    }).join('');
+
+    // cell edits
+    tbody.querySelectorAll('input').forEach(function (inp) {
+      inp.addEventListener('input', function () {
+        manualRows[+this.dataset.r][+this.dataset.c] = this.value;
+      });
+    });
+    // delete column
+    thead.querySelectorAll('[data-delcol]').forEach(function (s) {
+      s.addEventListener('click', function () {
+        var ci = +this.dataset.delcol;
+        manualCols.splice(ci, 1);
+        manualRows.forEach(function (r) { r.splice(ci, 1); });
+        refreshManualTable();
+      });
+    });
+    // delete row
+    tbody.querySelectorAll('[data-delrow]').forEach(function (s) {
+      s.addEventListener('click', function () {
+        manualRows.splice(+this.dataset.delrow, 1);
+        refreshManualTable();
+      });
+    });
+
+    $('#btn-manual').disabled = !(manualCols.length && manualRows.length && $('#manual-name').value.trim());
+  }
+
+  $('#btn-add-col').addEventListener('click', function () {
+    var v = $('#col-input').value.trim();
+    if (!v) return;
+    manualCols.push(v);
+    manualRows.forEach(function (r) { r.push(''); });
+    $('#col-input').value = '';
+    refreshManualTable();
+  });
+
+  $('#col-input').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); $('#btn-add-col').click(); }
+  });
+
+  $('#btn-add-row').addEventListener('click', function () {
+    if (!manualCols.length) { toast('Add at least one column first', 'error'); return; }
+    manualRows.push(manualCols.map(function () { return ''; }));
+    refreshManualTable();
+  });
+
+  $('#manual-name').addEventListener('input', function () {
+    $('#btn-manual').disabled = !(manualCols.length && manualRows.length && this.value.trim());
+  });
+
+  $('#btn-manual').addEventListener('click', function () {
+    var name = $('#manual-name').value.trim();
+    if (!name || !manualCols.length || !manualRows.length) return;
+
+    var records = manualRows.map(function (row) {
+      var obj = {};
+      manualCols.forEach(function (c, i) { obj[c] = row[i]; });
+      return obj;
+    });
+
+    var btn = $('#btn-manual');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Ingesting…';
+
+    fetch(GW + '/api/ingestion/json', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name, records: records })
+    })
+      .then(function (r) {
+        if (!r.ok) return r.text().then(function (t) { throw new Error(t); });
+        return r.json();
+      })
+      .then(function (data) {
+        toast(data.message || 'Ingested successfully');
+        loadDatasets();
+        showPreview(records);
+      })
+      .catch(function (e) { toast('Ingest failed: ' + e.message, 'error'); })
+      .finally(function () { btn.disabled = false; btn.textContent = 'Ingest Table'; });
+  });
+
+  /* ── Preview ────────────────────────────────────────────────── */
+  function fetchAndPreview(datasetId) {
+    fetch(GW + '/api/ingestion/datasets/' + datasetId)
+      .then(function (r) { return r.json(); })
+      .then(function (ds) {
+        if (ds.rawData) {
+          try { showPreview(JSON.parse(ds.rawData)); } catch (e) {}
+        }
+      })
+      .catch(function () {});
+  }
+
+  function inferType(values) {
+    var types = {};
+    values.forEach(function (v) {
+      if (v === null || v === undefined || v === '') { types['null'] = true; return; }
+      if (typeof v === 'boolean') { types['boolean'] = true; return; }
+      if (typeof v === 'number' || (typeof v === 'string' && v !== '' && !isNaN(Number(v)))) { types['number'] = true; return; }
+      if (typeof v === 'string') {
+        // simple date heuristic
+        if (/^\d{4}[-\/]\d{2}[-\/]\d{2}/.test(v) || /^\d{2}[-\/]\d{2}[-\/]\d{4}/.test(v)) { types['date'] = true; return; }
+        types['string'] = true;
+      }
+    });
+    var keys = Object.keys(types).filter(function (k) { return k !== 'null'; });
+    if (keys.length === 0) return 'null';
+    if (keys.length === 1) return keys[0];
+    return 'mixed';
+  }
+
+  function showPreview(records) {
+    if (!records || !records.length) return;
+    var panel = $('#preview-panel');
+    var wrap = $('#preview-wrap');
+    panel.style.display = '';
+
+    var cols = [];
+    var colSet = {};
+    records.forEach(function (r) {
+      Object.keys(r).forEach(function (k) {
+        if (!colSet[k]) { colSet[k] = true; cols.push(k); }
+      });
+    });
+
+    // infer types
+    var colTypes = {};
+    cols.forEach(function (c) {
+      var vals = records.map(function (r) { return r[c]; });
+      colTypes[c] = inferType(vals);
+    });
+
+    var maxRows = Math.min(records.length, 50);
+    var html = '<table class="preview-table"><thead><tr>';
+    html += cols.map(function (c) {
+      return '<th>' + escHtml(c) + '<span class="col-badge ' + colTypes[c] + '">' + colTypes[c] + '</span></th>';
+    }).join('');
+    html += '</tr></thead><tbody>';
+    for (var i = 0; i < maxRows; i++) {
+      html += '<tr>';
+      cols.forEach(function (c) {
+        var v = records[i][c];
+        html += '<td>' + escHtml(v == null ? '' : String(v)) + '</td>';
+      });
+      html += '</tr>';
+    }
+    html += '</tbody></table>';
+    if (records.length > maxRows) {
+      html += '<div style="text-align:center;padding:8px;color:var(--color-text-dim);font-size:.75rem">Showing ' + maxRows + ' of ' + records.length + ' records</div>';
+    }
+    wrap.innerHTML = html;
+  }
+
+  /* ── Dataset list ───────────────────────────────────────────── */
+  function loadDatasets() {
+    fetch(GW + '/api/ingestion/datasets')
+      .then(function (r) { return r.json(); })
+      .then(function (datasets) {
+        var el = $('#ds-list');
+        if (!datasets.length) {
+          el.innerHTML = '<div class="empty-state">No datasets yet. Upload some data!</div>';
+          return;
+        }
+        el.innerHTML = datasets.map(function (d) {
+          return '<div class="ds-card" data-id="' + d.datasetId + '">' +
+            '<div class="ds-info">' +
+              '<div class="ds-name">' + escHtml(d.name) + '</div>' +
+              '<div class="ds-meta">' +
+                '<span>' + d.recordCount + ' records</span>' +
+                '<span>' + fmtDate(d.createdAt) + '</span>' +
+              '</div>' +
+            '</div>' +
+            '<span class="ds-badge ' + escHtml(d.sourceType) + '">' + escHtml(d.sourceType) + '</span>' +
+            '<span class="ds-badge ' + escHtml(d.status) + '">' + escHtml(d.status) + '</span>' +
+            '<div class="ds-actions">' +
+              '<button class="btn btn-ghost btn-sm" data-view="' + d.datasetId + '" title="Preview">👁</button>' +
+              '<button class="btn btn-danger btn-sm" data-delete="' + d.datasetId + '" title="Delete">✕</button>' +
+            '</div>' +
+          '</div>';
+        }).join('');
+
+        // view handlers
+        el.querySelectorAll('[data-view]').forEach(function (btn) {
+          btn.addEventListener('click', function () { fetchAndPreview(this.dataset.view); });
+        });
+
+        // delete handlers
+        el.querySelectorAll('[data-delete]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var id = this.dataset.delete;
+            if (!confirm('Delete dataset ' + shortId(id) + '?')) return;
+            fetch(GW + '/api/ingestion/datasets/' + id, { method: 'DELETE' })
+              .then(function (r) {
+                if (!r.ok) throw new Error('Failed');
+                toast('Dataset deleted');
+                loadDatasets();
+              })
+              .catch(function (e) { toast('Delete failed: ' + e.message, 'error'); });
+          });
+        });
+      })
+      .catch(function () {
+        $('#ds-list').innerHTML = '<div class="empty-state">Could not load datasets</div>';
+      });
+  }
+
+  loadDatasets();
+
+})();
+</script>
+</body>
+</html>
+

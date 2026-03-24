@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rule Engine — Data Standardization</title>
+<style>
+/* ── Theme tokens (shared) ────────────────────────────────────── */
+:root {
+  --color-bg:          #0f1117;
+  --color-surface:     #181b23;
+  --color-surface-alt: #1e222d;
+  --color-border:      #2a2f3e;
+  --color-text:        #e1e4ed;
+  --color-text-dim:    #8b90a0;
+  --color-accent:      #6c8cff;
+  --color-accent-glow: rgba(108,140,255,.18);
+  --color-green:       #34d399;
+  --color-green-dim:   rgba(52,211,153,.15);
+  --color-yellow:      #fbbf24;
+  --color-yellow-dim:  rgba(251,191,36,.15);
+  --color-red:         #f87171;
+  --color-red-dim:     rgba(248,113,113,.15);
+  --color-orange:      #fb923c;
+  --color-purple:      #a78bfa;
+  --radius:            10px;
+  --radius-sm:         6px;
+  --shadow:            0 2px 12px rgba(0,0,0,.35);
+  --font-mono:         'SF Mono','Cascadia Code','Fira Code','Consolas',monospace;
+  --font-sans:         'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --transition:        .2s ease;
+}
+
+/* ── Reset ────────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px}
+body{font-family:var(--font-sans);background:var(--color-bg);color:var(--color-text);line-height:1.5;min-height:100vh;padding:24px 32px 48px}
+
+/* ── Header / nav ─────────────────────────────────────────────── */
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+.header h1{font-size:1.35rem;font-weight:700;letter-spacing:-.02em;display:flex;align-items:center;gap:10px}
+.header h1 .logo{width:28px;height:28px;background:var(--color-accent);border-radius:7px;display:grid;place-items:center;font-size:.85rem;color:#fff;font-weight:800}
+.nav-links{display:flex;gap:8px}
+.nav-links a{font-size:.78rem;color:var(--color-text-dim);text-decoration:none;padding:6px 14px;border-radius:var(--radius-sm);border:1px solid var(--color-border);transition:all var(--transition)}
+.nav-links a:hover,.nav-links a.active{color:var(--color-accent);border-color:var(--color-accent);background:var(--color-accent-glow)}
+
+/* ── Layout ───────────────────────────────────────────────────── */
+.page-grid{display:grid;grid-template-columns:380px 1fr;gap:24px;align-items:start}
+@media(max-width:960px){.page-grid{grid-template-columns:1fr}}
+
+/* ── Panel ────────────────────────────────────────────────────── */
+.panel{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius);padding:22px 24px}
+.section-title{font-size:.78rem;text-transform:uppercase;letter-spacing:.07em;color:var(--color-text-dim);font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';flex:1;height:1px;background:var(--color-border)}
+
+/* ── Inputs / selects ─────────────────────────────────────────── */
+.field-group{margin-bottom:14px}
+.field-group label{display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-dim);font-weight:600;margin-bottom:5px}
+input[type=text],input[type=number],select,textarea{width:100%;background:var(--color-bg);color:var(--color-text);border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:9px 12px;font-size:.82rem;font-family:var(--font-sans);transition:border-color var(--transition)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--color-accent)}
+textarea{min-height:80px;resize:vertical;font-family:var(--font-mono);font-size:.8rem}
+.field-row{display:flex;gap:10px}
+.field-row .field-group{flex:1}
+
+/* ── Buttons ──────────────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border:none;border-radius:var(--radius-sm);font-size:.8rem;font-weight:600;cursor:pointer;transition:all var(--transition);font-family:var(--font-sans)}
+.btn-primary{background:var(--color-accent);color:#fff}
+.btn-primary:hover{filter:brightness(1.15)}
+.btn-primary:disabled{opacity:.45;cursor:not-allowed}
+.btn-danger{background:var(--color-red-dim);color:var(--color-red);border:1px solid transparent}
+.btn-danger:hover{border-color:var(--color-red)}
+.btn-ghost{background:transparent;color:var(--color-text-dim);border:1px solid var(--color-border)}
+.btn-ghost:hover{color:var(--color-text);border-color:var(--color-text-dim)}
+.btn-sm{padding:5px 10px;font-size:.72rem}
+.btn-success{background:var(--color-green-dim);color:var(--color-green);border:1px solid transparent}
+.btn-success:hover{border-color:var(--color-green)}
+.btn-bar{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+
+/* ── Rule list ────────────────────────────────────────────────── */
+.rule-list{display:flex;flex-direction:column;gap:8px;max-height:480px;overflow-y:auto;padding:2px}
+.rule-card{background:var(--color-surface-alt);border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:12px 14px;cursor:grab;transition:all var(--transition);position:relative}
+.rule-card:hover{border-color:var(--color-accent)}
+.rule-card.selected{border-color:var(--color-accent);box-shadow:0 0 0 3px var(--color-accent-glow)}
+.rule-card.dragging{opacity:.5;transform:scale(.97)}
+.rule-card.drag-over{border-top:2px solid var(--color-accent)}
+.rule-card-header{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.rule-name{font-weight:600;font-size:.84rem;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rule-badge{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 7px;border-radius:3px;flex-shrink:0}
+.rule-badge.TRIM,.rule-badge.UPPERCASE,.rule-badge.LOWERCASE{background:var(--color-green-dim);color:var(--color-green)}
+.rule-badge.REPLACE{background:var(--color-accent-glow);color:var(--color-accent)}
+.rule-badge.MAP_VALUES{background:var(--color-yellow-dim);color:var(--color-yellow)}
+.rule-badge.REGEX{background:rgba(167,139,250,.15);color:var(--color-purple)}
+.rule-badge.DEFAULT_VALUE{background:rgba(251,146,60,.15);color:var(--color-orange)}
+.rule-badge.DATE_FORMAT{background:var(--color-red-dim);color:var(--color-red)}
+.rule-meta{font-size:.7rem;color:var(--color-text-dim);display:flex;gap:10px;align-items:center}
+.rule-field{font-family:var(--font-mono);font-size:.7rem;color:var(--color-accent)}
+.rule-actions{position:absolute;top:10px;right:10px;display:flex;gap:4px}
+
+/* ── Toggle switch ────────────────────────────────────────────── */
+.toggle{position:relative;display:inline-block;width:34px;height:18px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle .slider{position:absolute;inset:0;background:var(--color-border);border-radius:9px;cursor:pointer;transition:var(--transition)}
+.toggle .slider::before{content:'';position:absolute;height:14px;width:14px;left:2px;bottom:2px;background:#fff;border-radius:50%;transition:var(--transition)}
+.toggle input:checked + .slider{background:var(--color-green)}
+.toggle input:checked + .slider::before{transform:translateX(16px)}
+
+/* ── Config sub-forms ─────────────────────────────────────────── */
+.config-section{margin-top:14px;padding:14px;background:var(--color-bg);border:1px solid var(--color-border);border-radius:var(--radius-sm)}
+.config-section.hidden{display:none}
+.kv-pair{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+.kv-pair input{flex:1}
+.kv-pair .remove-kv{cursor:pointer;color:var(--color-red);font-size:.8rem;padding:4px}
+
+/* ── Test drawer ──────────────────────────────────────────────── */
+.drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000}
+.drawer-overlay.open{display:block}
+.drawer{position:fixed;top:0;right:-420px;width:400px;height:100vh;background:var(--color-surface);border-left:1px solid var(--color-border);padding:24px;z-index:1001;transition:right .3s ease;overflow-y:auto}
+.drawer.open{right:0}
+.drawer-close{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--color-text-dim);font-size:1.2rem;cursor:pointer}
+.test-result{margin-top:16px;padding:14px;border-radius:var(--radius-sm);font-family:var(--font-mono);font-size:.82rem}
+.test-before{background:var(--color-red-dim);color:var(--color-red);margin-bottom:8px}
+.test-after{background:var(--color-green-dim);color:var(--color-green)}
+
+/* ── Rule sets ────────────────────────────────────────────────── */
+.rset-list{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;max-height:200px;overflow-y:auto}
+.rset-card{background:var(--color-surface-alt);border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:10px 12px}
+.rset-name{font-weight:600;font-size:.82rem}
+.rset-meta{font-size:.7rem;color:var(--color-text-dim);margin-top:2px}
+.rset-create{display:flex;gap:8px;align-items:flex-end}
+.rset-create .field-group{flex:1;margin-bottom:0}
+
+/* ── Toast ────────────────────────────────────────────────────── */
+.toast-container{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{padding:12px 18px;border-radius:var(--radius-sm);font-size:.8rem;font-weight:600;box-shadow:var(--shadow);animation:toastIn .3s ease;max-width:380px}
+.toast.success{background:var(--color-green-dim);color:var(--color-green);border:1px solid var(--color-green)}
+.toast.error{background:var(--color-red-dim);color:var(--color-red);border:1px solid var(--color-red)}
+@keyframes toastIn{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--color-border);border-top-color:var(--color-accent);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty-state{text-align:center;padding:24px 16px;color:var(--color-text-dim);font-size:.85rem}
+
+/* ── Scrollbar ────────────────────────────────────────────────── */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--color-border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--color-text-dim)}
+</style>
+</head>
+<body>
+
+<div class="toast-container" id="toasts"></div>
+
+<!-- ── Test Rule drawer ───────────────────────────────────────── -->
+<div class="drawer-overlay" id="drawer-overlay"></div>
+<div class="drawer" id="test-drawer">
+  <button class="drawer-close" id="drawer-close">✕</button>
+  <div class="section-title">Test Rule</div>
+  <div id="test-rule-info" style="font-size:.78rem;color:var(--color-text-dim);margin-bottom:14px"></div>
+  <div class="field-group">
+    <label>Sample Value</label>
+    <input type="text" id="test-input" placeholder="Enter a sample value…">
+  </div>
+  <button class="btn btn-primary" id="btn-test-run" style="width:100%">Run Test</button>
+  <div id="test-results"></div>
+  <div style="margin-top:18px">
+    <div class="section-title">Dataset Preview</div>
+    <div class="field-group">
+      <label>Select Dataset (optional)</label>
+      <select id="test-dataset-pick"><option value="">— none —</option></select>
+    </div>
+    <button class="btn btn-ghost btn-sm" id="btn-test-preview" style="width:100%">Preview with Dataset</button>
+    <div id="test-preview-container" style="margin-top:12px"></div>
+  </div>
+</div>
+
+<!-- ── Header ─────────────────────────────────────────────────── -->
+<header class="header">
+  <h1><span class="logo">DS</span> Rule Engine</h1>
+  <nav class="nav-links">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="ingestion.html">Ingestion</a>
+    <a href="rules.html" class="active">Rules</a>
+    <a href="jobs.html">Jobs</a>
+    <a href="logs.html">Logs</a>
+  </nav>
+</header>
+
+<div class="page-grid">
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!--  LEFT: Rule list                                              -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div>
+  <div class="panel" style="margin-bottom:20px">
+    <div class="section-title">Rules</div>
+    <div style="margin-bottom:12px;display:flex;gap:8px;flex-wrap:wrap">
+      <select id="filter-type" style="width:auto;flex:1">
+        <option value="">All Types</option>
+        <option>TRIM</option><option>UPPERCASE</option><option>LOWERCASE</option>
+        <option>REPLACE</option><option>MAP_VALUES</option><option>REGEX</option>
+        <option>DEFAULT_VALUE</option><option>DATE_FORMAT</option>
+      </select>
+      <select id="filter-active" style="width:auto;flex:1">
+        <option value="">All Status</option>
+        <option value="true">Active</option>
+        <option value="false">Inactive</option>
+      </select>
+    </div>
+    <div class="rule-list" id="rule-list">
+      <div class="empty-state">Loading…</div>
+    </div>
+    <div style="margin-top:12px;text-align:center">
+      <button class="btn btn-ghost btn-sm" id="btn-new-rule" style="width:100%">+ New Rule</button>
+    </div>
+  </div>
+
+  <!-- Rule Sets -->
+  <div class="panel">
+    <div class="section-title">Rule Sets</div>
+    <div class="rset-list" id="rset-list">
+      <div class="empty-state">No rule sets</div>
+    </div>
+    <div class="rset-create">
+      <div class="field-group">
+        <input type="text" id="rset-name" placeholder="Rule set name">
+      </div>
+      <button class="btn btn-primary btn-sm" id="btn-create-rset">Create</button>
+    </div>
+    <div style="font-size:.68rem;color:var(--color-text-dim);margin-top:6px">
+      Select rules in list above, then name &amp; create a set.
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!--  RIGHT: Rule builder                                          -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="panel" id="builder-panel">
+  <div class="section-title" id="builder-title">Rule Builder</div>
+
+  <div class="field-row">
+    <div class="field-group">
+      <label>Rule Name *</label>
+      <input type="text" id="rb-name" placeholder="e.g. Trim Names">
+    </div>
+    <div class="field-group" style="max-width:100px">
+      <label>Priority</label>
+      <input type="number" id="rb-priority" value="0" min="0">
+    </div>
+  </div>
+
+  <div class="field-group">
+    <label>Description</label>
+    <input type="text" id="rb-desc" placeholder="Optional description">
+  </div>
+
+  <div class="field-row">
+    <div class="field-group">
+      <label>Field Name *</label>
+      <input type="text" id="rb-field" placeholder="e.g. name, email, dob">
+    </div>
+    <div class="field-group">
+      <label>Rule Type *</label>
+      <select id="rb-type">
+        <option value="">Select type…</option>
+        <option value="TRIM">TRIM</option>
+        <option value="UPPERCASE">UPPERCASE</option>
+        <option value="LOWERCASE">LOWERCASE</option>
+        <option value="REPLACE">REPLACE</option>
+        <option value="MAP_VALUES">MAP_VALUES</option>
+        <option value="REGEX">REGEX</option>
+        <option value="DEFAULT_VALUE">DEFAULT_VALUE</option>
+        <option value="DATE_FORMAT">DATE_FORMAT</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- ── Dynamic config sections ──────────────────────────────── -->
+  <div class="config-section hidden" id="cfg-none">
+    <div style="color:var(--color-text-dim);font-size:.78rem;text-align:center">No configuration needed for this rule type.</div>
+  </div>
+
+  <div class="config-section hidden" id="cfg-replace">
+    <div class="field-group">
+      <label>Find</label>
+      <input type="text" id="cfg-replace-find" placeholder="Text to find">
+    </div>
+    <div class="field-group" style="margin-bottom:0">
+      <label>Replace With</label>
+      <input type="text" id="cfg-replace-with" placeholder="Replacement text">
+    </div>
+  </div>
+
+  <div class="config-section hidden" id="cfg-map">
+    <label style="font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-dim);font-weight:600;margin-bottom:8px;display:block">Key → Value Mappings</label>
+    <div id="kv-list"></div>
+    <button class="btn btn-ghost btn-sm" id="btn-add-kv" style="margin-top:6px">+ Add Mapping</button>
+  </div>
+
+  <div class="config-section hidden" id="cfg-regex">
+    <div class="field-group">
+      <label>Pattern (Regex)</label>
+      <input type="text" id="cfg-regex-pattern" placeholder="e.g. [^0-9]" style="font-family:var(--font-mono)">
+    </div>
+    <div class="field-group">
+      <label>Replacement</label>
+      <input type="text" id="cfg-regex-replacement" placeholder="e.g. (empty string)">
+    </div>
+    <div class="field-group" style="margin-bottom:0">
+      <label>Live Test</label>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="text" id="cfg-regex-test-in" placeholder="Sample input" style="flex:1">
+        <span style="color:var(--color-text-dim)">→</span>
+        <span id="cfg-regex-test-out" style="flex:1;font-family:var(--font-mono);font-size:.8rem;color:var(--color-green);min-height:1.2em"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="config-section hidden" id="cfg-default">
+    <div class="field-group" style="margin-bottom:0">
+      <label>Default Value</label>
+      <input type="text" id="cfg-default-val" placeholder="e.g. N/A">
+    </div>
+  </div>
+
+  <div class="config-section hidden" id="cfg-date">
+    <div class="field-group">
+      <label>Source Format</label>
+      <select id="cfg-date-src">
+        <option value="MM/dd/yyyy">MM/dd/yyyy</option>
+        <option value="dd/MM/yyyy">dd/MM/yyyy</option>
+        <option value="yyyy-MM-dd">yyyy-MM-dd</option>
+        <option value="dd-MM-yyyy">dd-MM-yyyy</option>
+        <option value="MM-dd-yyyy">MM-dd-yyyy</option>
+        <option value="yyyyMMdd">yyyyMMdd</option>
+      </select>
+    </div>
+    <div class="field-group" style="margin-bottom:0">
+      <label>Target Format</label>
+      <select id="cfg-date-tgt">
+        <option value="yyyy-MM-dd">yyyy-MM-dd</option>
+        <option value="MM/dd/yyyy">MM/dd/yyyy</option>
+        <option value="dd/MM/yyyy">dd/MM/yyyy</option>
+        <option value="dd-MM-yyyy">dd-MM-yyyy</option>
+        <option value="ISO_LOCAL_DATE">ISO_LOCAL_DATE</option>
+      </select>
+    </div>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:12px;margin-top:18px">
+    <label class="toggle">
+      <input type="checkbox" id="rb-active" checked>
+      <span class="slider"></span>
+    </label>
+    <span style="font-size:.78rem;color:var(--color-text-dim)">Active</span>
+  </div>
+
+  <div class="btn-bar" style="margin-top:18px">
+    <button class="btn btn-primary" id="btn-save-rule">Save Rule</button>
+    <button class="btn btn-ghost" id="btn-cancel-rule">Cancel</button>
+    <span style="flex:1"></span>
+    <button class="btn btn-success btn-sm" id="btn-test-rule" style="display:none">🧪 Test</button>
+  </div>
+</div>
+
+</div><!-- /page-grid -->
+
+<script>
+(function () {
+  'use strict';
+
+  var GW = location.protocol + '//' + location.hostname + ':8080';
+
+  /* ── Helpers ────────────────────────────────────────────────── */
+  function $(s) { return document.querySelector(s); }
+  function $$(s) { return document.querySelectorAll(s); }
+  function escHtml(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+  function shortId(u) { return u ? u.substring(0, 8) : '—'; }
+
+  function toast(msg, type) {
+    var el = document.createElement('div');
+    el.className = 'toast ' + (type || 'success');
+    el.textContent = msg;
+    $('#toasts').appendChild(el);
+    setTimeout(function () { el.remove(); }, 4000);
+  }
+
+  /* ── State ──────────────────────────────────────────────────── */
+  var rules = [];
+  var editingId = null; // null = new, uuid = editing
+  var selectedRuleIds = new Set();
+  var dragSrcIndex = null;
+
+  /* ── Load rules ─────────────────────────────────────────────── */
+  function loadRules() {
+    var typeF = $('#filter-type').value;
+    var activeF = $('#filter-active').value;
+    var qs = [];
+    if (typeF) qs.push('ruleType=' + typeF);
+    if (activeF) qs.push('active=' + activeF);
+    var url = GW + '/api/rules' + (qs.length ? '?' + qs.join('&') : '');
+
+    fetch(url).then(function (r) { return r.json(); }).then(function (data) {
+      rules = data;
+      renderRuleList();
+    }).catch(function () {
+      $('#rule-list').innerHTML = '<div class="empty-state">Could not load rules</div>';
+    });
+  }
+
+  $('#filter-type').addEventListener('change', loadRules);
+  $('#filter-active').addEventListener('change', loadRules);
+
+  function renderRuleList() {
+    var el = $('#rule-list');
+    if (!rules.length) {
+      el.innerHTML = '<div class="empty-state">No rules found</div>';
+      return;
+    }
+    // sort by priority
+    var sorted = rules.slice().sort(function (a, b) { return a.priority - b.priority; });
+    el.innerHTML = sorted.map(function (r, i) {
+      var sel = selectedRuleIds.has(r.id) ? ' selected' : '';
+      var active = r.active;
+      return '<div class="rule-card' + sel + '" data-id="' + r.id + '" data-idx="' + i + '" draggable="true">' +
+        '<div class="rule-card-header">' +
+          '<span class="rule-name">' + escHtml(r.name) + '</span>' +
+          '<span class="rule-badge ' + escHtml(r.ruleType) + '">' + escHtml(r.ruleType) + '</span>' +
+        '</div>' +
+        '<div class="rule-meta">' +
+          '<span class="rule-field">⌗ ' + escHtml(r.fieldName) + '</span>' +
+          '<span>P' + r.priority + '</span>' +
+          '<label class="toggle" title="Toggle active">' +
+            '<input type="checkbox"' + (active ? ' checked' : '') + ' data-toggle="' + r.id + '">' +
+            '<span class="slider"></span>' +
+          '</label>' +
+        '</div>' +
+        '<div class="rule-actions">' +
+          '<button class="btn btn-ghost btn-sm" data-edit="' + r.id + '" title="Edit">✎</button>' +
+          '<button class="btn btn-danger btn-sm" data-del="' + r.id + '" title="Delete">✕</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    // bind events
+    el.querySelectorAll('[data-toggle]').forEach(function (inp) {
+      inp.addEventListener('change', function (e) {
+        e.stopPropagation();
+        toggleRule(this.dataset.toggle);
+      });
+    });
+    el.querySelectorAll('[data-edit]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) { e.stopPropagation(); loadIntoBuilder(this.dataset.edit); });
+    });
+    el.querySelectorAll('[data-del]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (!confirm('Delete rule?')) return;
+        deleteRule(this.dataset.del);
+      });
+    });
+
+    // click card to select for rule sets
+    el.querySelectorAll('.rule-card').forEach(function (card) {
+      card.addEventListener('click', function () {
+        var id = this.dataset.id;
+        if (selectedRuleIds.has(id)) selectedRuleIds.delete(id);
+        else selectedRuleIds.add(id);
+        this.classList.toggle('selected');
+      });
+    });
+
+    // drag-reorder
+    el.querySelectorAll('.rule-card').forEach(function (card) {
+      card.addEventListener('dragstart', function (e) {
+        dragSrcIndex = +this.dataset.idx;
+        this.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+      });
+      card.addEventListener('dragend', function () {
+        this.classList.remove('dragging');
+        el.querySelectorAll('.rule-card').forEach(function (c) { c.classList.remove('drag-over'); });
+      });
+      card.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        el.querySelectorAll('.rule-card').forEach(function (c) { c.classList.remove('drag-over'); });
+        this.classList.add('drag-over');
+      });
+      card.addEventListener('drop', function (e) {
+        e.preventDefault();
+        var tgtIdx = +this.dataset.idx;
+        if (dragSrcIndex === null || dragSrcIndex === tgtIdx) return;
+        // swap priorities
+        var sorted2 = rules.slice().sort(function (a, b) { return a.priority - b.priority; });
+        var srcRule = sorted2[dragSrcIndex];
+        var tgtRule = sorted2[tgtIdx];
+        if (srcRule && tgtRule) {
+          var tmp = srcRule.priority;
+          // update src to tgt priority
+          updatePriority(srcRule.id, tgtRule.priority);
+          updatePriority(tgtRule.id, tmp);
+        }
+        dragSrcIndex = null;
+      });
+    });
+  }
+
+  function toggleRule(id) {
+    fetch(GW + '/api/rules/' + id + '/toggle', { method: 'PATCH' })
+      .then(function (r) { return r.json(); })
+      .then(function () { loadRules(); })
+      .catch(function (e) { toast('Toggle failed', 'error'); });
+  }
+
+  function deleteRule(id) {
+    fetch(GW + '/api/rules/' + id, { method: 'DELETE' })
+      .then(function (r) {
+        if (!r.ok) throw new Error();
+        toast('Rule deleted');
+        selectedRuleIds.delete(id);
+        if (editingId === id) resetBuilder();
+        loadRules();
+      })
+      .catch(function () { toast('Delete failed', 'error'); });
+  }
+
+  function updatePriority(id, newPriority) {
+    // find rule in cache, build full update
+    var rule = rules.find(function (r) { return r.id === id; });
+    if (!rule) return;
+    fetch(GW + '/api/rules/' + id, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: rule.name,
+        description: rule.description || '',
+        fieldName: rule.fieldName,
+        ruleType: rule.ruleType,
+        ruleConfig: rule.ruleConfig || '',
+        priority: newPriority,
+        active: rule.active
+      })
+    }).then(function () { loadRules(); });
+  }
+
+  /* ── Rule builder ───────────────────────────────────────────── */
+  var CONFIG_MAP = {
+    TRIM: 'cfg-none', UPPERCASE: 'cfg-none', LOWERCASE: 'cfg-none',
+    REPLACE: 'cfg-replace', MAP_VALUES: 'cfg-map', REGEX: 'cfg-regex',
+    DEFAULT_VALUE: 'cfg-default', DATE_FORMAT: 'cfg-date'
+  };
+
+  $('#rb-type').addEventListener('change', function () {
+    // hide all config sections
+    $$('.config-section').forEach(function (s) { s.classList.add('hidden'); });
+    var sec = CONFIG_MAP[this.value];
+    if (sec) $('#' + sec).classList.remove('hidden');
+  });
+
+  // Regex live test
+  function regexLiveTest() {
+    var pattern = $('#cfg-regex-pattern').value;
+    var replacement = $('#cfg-regex-replacement').value;
+    var sample = $('#cfg-regex-test-in').value;
+    var out = $('#cfg-regex-test-out');
+    if (!pattern || !sample) { out.textContent = ''; return; }
+    try {
+      out.textContent = sample.replace(new RegExp(pattern, 'g'), replacement);
+      out.style.color = 'var(--color-green)';
+    } catch (e) {
+      out.textContent = 'Invalid regex';
+      out.style.color = 'var(--color-red)';
+    }
+  }
+  $('#cfg-regex-pattern').addEventListener('input', regexLiveTest);
+  $('#cfg-regex-replacement').addEventListener('input', regexLiveTest);
+  $('#cfg-regex-test-in').addEventListener('input', regexLiveTest);
+
+  // KV pairs for MAP_VALUES
+  var kvPairs = [];
+  function renderKV() {
+    var el = $('#kv-list');
+    el.innerHTML = kvPairs.map(function (kv, i) {
+      return '<div class="kv-pair">' +
+        '<input type="text" placeholder="Key" value="' + escHtml(kv.k) + '" data-kv-k="' + i + '">' +
+        '<span style="color:var(--color-text-dim)">→</span>' +
+        '<input type="text" placeholder="Value" value="' + escHtml(kv.v) + '" data-kv-v="' + i + '">' +
+        '<span class="remove-kv" data-kv-del="' + i + '">✕</span>' +
+      '</div>';
+    }).join('');
+    el.querySelectorAll('[data-kv-k]').forEach(function (inp) {
+      inp.addEventListener('input', function () { kvPairs[+this.dataset.kvK].k = this.value; });
+    });
+    el.querySelectorAll('[data-kv-v]').forEach(function (inp) {
+      inp.addEventListener('input', function () { kvPairs[+this.dataset.kvV].v = this.value; });
+    });
+    el.querySelectorAll('[data-kv-del]').forEach(function (s) {
+      s.addEventListener('click', function () { kvPairs.splice(+this.dataset.kvDel, 1); renderKV(); });
+    });
+  }
+  $('#btn-add-kv').addEventListener('click', function () { kvPairs.push({ k: '', v: '' }); renderKV(); });
+
+  function buildConfigJSON() {
+    var type = $('#rb-type').value;
+    if (!type || type === 'TRIM' || type === 'UPPERCASE' || type === 'LOWERCASE') return '{}';
+    if (type === 'REPLACE') {
+      return JSON.stringify({ find: $('#cfg-replace-find').value, replace: $('#cfg-replace-with').value });
+    }
+    if (type === 'MAP_VALUES') {
+      var m = {};
+      kvPairs.forEach(function (kv) { if (kv.k) m[kv.k] = kv.v; });
+      return JSON.stringify({ mappings: m });
+    }
+    if (type === 'REGEX') {
+      return JSON.stringify({ pattern: $('#cfg-regex-pattern').value, replacement: $('#cfg-regex-replacement').value });
+    }
+    if (type === 'DEFAULT_VALUE') {
+      return JSON.stringify({ defaultValue: $('#cfg-default-val').value });
+    }
+    if (type === 'DATE_FORMAT') {
+      return JSON.stringify({ sourceFormat: $('#cfg-date-src').value, targetFormat: $('#cfg-date-tgt').value });
+    }
+    return '{}';
+  }
+
+  function loadIntoBuilder(id) {
+    var rule = rules.find(function (r) { return r.id === id; });
+    if (!rule) return;
+    editingId = id;
+    $('#builder-title').textContent = 'Edit Rule — ' + shortId(id);
+    $('#rb-name').value = rule.name;
+    $('#rb-desc').value = rule.description || '';
+    $('#rb-field').value = rule.fieldName;
+    $('#rb-type').value = rule.ruleType;
+    $('#rb-priority').value = rule.priority;
+    $('#rb-active').checked = rule.active;
+    $('#btn-test-rule').style.display = '';
+
+    // trigger config section
+    $$('.config-section').forEach(function (s) { s.classList.add('hidden'); });
+    var sec = CONFIG_MAP[rule.ruleType];
+    if (sec) $('#' + sec).classList.remove('hidden');
+
+    // populate config
+    var cfg = {};
+    try { cfg = JSON.parse(rule.ruleConfig || '{}'); } catch (e) {}
+
+    if (rule.ruleType === 'REPLACE') {
+      $('#cfg-replace-find').value = cfg.find || '';
+      $('#cfg-replace-with').value = cfg.replace || '';
+    } else if (rule.ruleType === 'MAP_VALUES') {
+      kvPairs = [];
+      if (cfg.mappings) {
+        Object.keys(cfg.mappings).forEach(function (k) { kvPairs.push({ k: k, v: cfg.mappings[k] }); });
+      }
+      renderKV();
+    } else if (rule.ruleType === 'REGEX') {
+      $('#cfg-regex-pattern').value = cfg.pattern || '';
+      $('#cfg-regex-replacement').value = cfg.replacement || '';
+      $('#cfg-regex-test-in').value = '';
+      $('#cfg-regex-test-out').textContent = '';
+    } else if (rule.ruleType === 'DEFAULT_VALUE') {
+      $('#cfg-default-val').value = cfg.defaultValue || '';
+    } else if (rule.ruleType === 'DATE_FORMAT') {
+      $('#cfg-date-src').value = cfg.sourceFormat || 'MM/dd/yyyy';
+      $('#cfg-date-tgt').value = cfg.targetFormat || 'yyyy-MM-dd';
+    }
+  }
+
+  function resetBuilder() {
+    editingId = null;
+    $('#builder-title').textContent = 'Rule Builder';
+    $('#rb-name').value = '';
+    $('#rb-desc').value = '';
+    $('#rb-field').value = '';
+    $('#rb-type').value = '';
+    $('#rb-priority').value = '0';
+    $('#rb-active').checked = true;
+    $$('.config-section').forEach(function (s) { s.classList.add('hidden'); });
+    kvPairs = [];
+    renderKV();
+    $('#btn-test-rule').style.display = 'none';
+  }
+
+  $('#btn-new-rule').addEventListener('click', resetBuilder);
+  $('#btn-cancel-rule').addEventListener('click', resetBuilder);
+
+  $('#btn-save-rule').addEventListener('click', function () {
+    var name = $('#rb-name').value.trim();
+    var field = $('#rb-field').value.trim();
+    var type = $('#rb-type').value;
+    if (!name || !field || !type) {
+      toast('Name, field, and type are required', 'error');
+      return;
+    }
+
+    var payload = {
+      name: name,
+      description: $('#rb-desc').value.trim(),
+      fieldName: field,
+      ruleType: type,
+      ruleConfig: buildConfigJSON(),
+      priority: parseInt($('#rb-priority').value) || 0,
+      active: $('#rb-active').checked
+    };
+
+    var url = editingId ? GW + '/api/rules/' + editingId : GW + '/api/rules';
+    var method = editingId ? 'PUT' : 'POST';
+
+    var btn = this;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Saving…';
+
+    fetch(url, {
+      method: method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+      .then(function (r) {
+        if (!r.ok) return r.text().then(function (t) { throw new Error(t); });
+        return r.json();
+      })
+      .then(function (data) {
+        toast(editingId ? 'Rule updated' : 'Rule created');
+        editingId = data.id;
+        $('#builder-title').textContent = 'Edit Rule — ' + shortId(data.id);
+        $('#btn-test-rule').style.display = '';
+        loadRules();
+      })
+      .catch(function (e) { toast('Save failed: ' + e.message, 'error'); })
+      .finally(function () { btn.disabled = false; btn.textContent = 'Save Rule'; });
+  });
+
+  /* ── Test Rule drawer ───────────────────────────────────────── */
+  $('#btn-test-rule').addEventListener('click', function () {
+    if (!editingId) return;
+    var rule = rules.find(function (r) { return r.id === editingId; });
+    if (!rule) { toast('Save the rule first', 'error'); return; }
+    $('#test-rule-info').innerHTML = '<strong>' + escHtml(rule.name) + '</strong> — ' + escHtml(rule.ruleType) + ' on <code>' + escHtml(rule.fieldName) + '</code>';
+    $('#test-input').value = '';
+    $('#test-results').innerHTML = '';
+    openDrawer();
+  });
+
+  function openDrawer() {
+    $('#drawer-overlay').classList.add('open');
+    $('#test-drawer').classList.add('open');
+  }
+  function closeDrawer() {
+    $('#drawer-overlay').classList.remove('open');
+    $('#test-drawer').classList.remove('open');
+  }
+  $('#drawer-close').addEventListener('click', closeDrawer);
+  $('#drawer-overlay').addEventListener('click', closeDrawer);
+
+  $('#btn-test-run').addEventListener('click', function () {
+    if (!editingId) return;
+    var rule = rules.find(function (r) { return r.id === editingId; });
+    if (!rule) return;
+    var sampleVal = $('#test-input').value;
+    var result = applyRuleLocally(rule, sampleVal);
+    $('#test-results').innerHTML =
+      '<div class="test-result test-before"><strong>Before:</strong> ' + escHtml(sampleVal) + '</div>' +
+      '<div class="test-result test-after"><strong>After:</strong> ' + escHtml(result) + '</div>';
+  });
+
+  function applyRuleLocally(rule, value) {
+    var cfg = {};
+    try { cfg = JSON.parse(rule.ruleConfig || '{}'); } catch (e) {}
+    switch (rule.ruleType) {
+      case 'TRIM': return value ? value.trim() : value;
+      case 'UPPERCASE': return value ? value.toUpperCase() : value;
+      case 'LOWERCASE': return value ? value.toLowerCase() : value;
+      case 'REPLACE':
+        if (!cfg.find) return value;
+        return (value || '').split(cfg.find).join(cfg.replace || '');
+      case 'MAP_VALUES':
+        if (cfg.mappings && cfg.mappings[value] !== undefined) return cfg.mappings[value];
+        return value;
+      case 'REGEX':
+        if (!cfg.pattern) return value;
+        try { return (value || '').replace(new RegExp(cfg.pattern, 'g'), cfg.replacement || ''); }
+        catch (e) { return value; }
+      case 'DEFAULT_VALUE':
+        return (!value || value === '') ? (cfg.defaultValue || '') : value;
+      case 'DATE_FORMAT':
+        // simple demo — just show the value as-is with a note
+        return value + '  (format: ' + (cfg.sourceFormat || '?') + ' → ' + (cfg.targetFormat || '?') + ')';
+      default: return value;
+    }
+  }
+
+  /* ── Rule Sets ──────────────────────────────────────────────── */
+  function loadRuleSets() {
+    fetch(GW + '/api/rules/rulesets').then(function (r) { return r.json(); }).then(function (data) {
+      var el = $('#rset-list');
+      if (!data.length) { el.innerHTML = '<div class="empty-state">No rule sets</div>'; return; }
+      el.innerHTML = data.map(function (rs) {
+        return '<div class="rset-card">' +
+          '<div class="rset-name">' + escHtml(rs.name) + '</div>' +
+          '<div class="rset-meta">' +
+            shortId(rs.id) + ' · ' + (rs.ruleIds ? rs.ruleIds.length : 0) + ' rules' +
+            (rs.description ? ' · ' + escHtml(rs.description) : '') +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }).catch(function () {
+      $('#rset-list').innerHTML = '<div class="empty-state">Could not load</div>';
+    });
+  }
+
+  $('#btn-create-rset').addEventListener('click', function () {
+    var name = $('#rset-name').value.trim();
+    if (!name) { toast('Name is required', 'error'); return; }
+    var ids = Array.from(selectedRuleIds);
+    if (!ids.length) { toast('Select at least one rule', 'error'); return; }
+
+    fetch(GW + '/api/rules/rulesets', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name, ruleIds: ids })
+    })
+      .then(function (r) {
+        if (!r.ok) return r.text().then(function (t) { throw new Error(t); });
+        return r.json();
+      })
+      .then(function () {
+        toast('Rule set created');
+        $('#rset-name').value = '';
+        selectedRuleIds.clear();
+        renderRuleList();
+        loadRuleSets();
+      })
+      .catch(function (e) { toast('Failed: ' + e.message, 'error'); });
+  });
+
+  /* ── Init ───────────────────────────────────────────────────── */
+  loadRules();
+  loadRuleSets();
+
+  /* ── Load datasets for test drawer ──────────────────────────── */
+  fetch(GW + '/api/ingestion/datasets')
+    .then(function (r) { return r.json(); })
+    .then(function (ds) {
+      var sel = $('#test-dataset-pick');
+      ds.forEach(function (d) {
+        sel.innerHTML += '<option value="' + d.datasetId + '">' + escHtml(d.name) + ' (' + d.recordCount + ' records)</option>';
+      });
+    })
+    .catch(function () {});
+
+  /* ── Dataset preview using PreviewPanel ─────────────────────── */
+  $('#btn-test-preview').addEventListener('click', function () {
+    if (!editingId) { toast('Save the rule first', 'error'); return; }
+    var dsId = $('#test-dataset-pick').value;
+    if (!dsId) { toast('Select a dataset', 'error'); return; }
+
+    var btn = this;
+    btn.disabled = true;
+    btn.textContent = 'Loading…';
+
+    var rule = rules.find(function (r) { return r.id === editingId; });
+    var t0 = Date.now();
+    Promise.all([
+      fetch(GW + '/api/ingestion/datasets/' + dsId).then(function (r) { return r.json(); }),
+      fetch(GW + '/api/standardization/preview?maxRecords=5', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ datasetId: dsId, ruleIds: [editingId] })
+      }).then(function (r) { if (!r.ok) throw new Error('Preview failed'); return r.json(); })
+    ]).then(function (results) {
+      var ds = results[0];
+      var preview = results[1];
+      var elapsed = Date.now() - t0;
+      var original = [];
+      try { original = JSON.parse(ds.rawData || '[]').slice(0, 5); } catch (e) {}
+      var cfMap = {};
+      if (rule) cfMap[rule.fieldName] = rule.name;
+      if (typeof PreviewPanel !== 'undefined') {
+        PreviewPanel.render($('#test-preview-container'), {
+          original: original,
+          standardized: preview.standardizedRecords || [],
+          changedFields: cfMap,
+          elapsedMs: elapsed
+        });
+      }
+    }).catch(function (e) {
+      toast('Preview failed: ' + e.message, 'error');
+    }).finally(function () {
+      btn.disabled = false;
+      btn.textContent = 'Preview with Dataset';
+    });
+  });
+
+})();
+</script>
+<script src="preview-panel.js"></script>
+</body>
+</html>
+
