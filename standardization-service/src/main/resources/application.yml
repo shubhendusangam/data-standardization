@@ -1,0 +1,78 @@
+server:
+  port: 8083
+
+spring:
+  application:
+    name: standardization-service
+  datasource:
+    url: jdbc:h2:mem:standardizationdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+feign:
+  client:
+    config:
+      default:
+        connect-timeout: 5000
+        read-timeout: 10000
+  micrometer:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  tracing:
+    sampling:
+      probability: 1.0          # Sample 100% of requests (reduce in prod)
+    propagation:
+      type: w3c,b3              # Support both W3C and Zipkin B3 propagation
+
+logging:
+  loki:
+    url: http://localhost:3100/loki/api/v1/push
+  level:
+    # Enable Feign client logging (works with FeignLoggingConfig.java BASIC level)
+    com.datastd.standardization.client: DEBUG
+
+# ── Async Job Processing ──────────────────────────────────────────
+# Thread pool is configured programmatically in AsyncConfig.java:
+#   core-pool-size: 4
+#   max-pool-size:  8
+#   queue-capacity: 100
+#   thread-name-prefix: std-job-
+#
+# POST /api/standardization/process returns 202 ACCEPTED immediately.
+# Clients poll GET /api/standardization/jobs/{id} for progress.
+#
+# ── Future: Kafka Migration ───────────────────────────────────────
+# Replace @Async + ThreadPool with Kafka consumer:
+#   1. submitJob() publishes to topic "standardization.jobs"
+#   2. AsyncJobProcessor becomes a @KafkaListener consumer
+#   3. Remove @EnableAsync and AsyncConfig
+# spring:
+#   kafka:
+#     bootstrap-servers: localhost:9092
+#     consumer:
+#       group-id: standardization-group
+

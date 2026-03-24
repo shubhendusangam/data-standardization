@@ -1,0 +1,142 @@
+version: '3.8'
+
+services:
+
+  # ── Observability Infrastructure ──────────────────────────────────
+
+  loki:
+    image: grafana/loki:2.9.4
+    container_name: loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./infra/loki/loki-config.yml:/etc/loki/local-config.yaml
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - datastd-network
+
+  grafana:
+    image: grafana/grafana:10.3.1
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+    volumes:
+      - ./infra/grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - loki
+    networks:
+      - datastd-network
+
+  # ── Application Services ──────────────────────────────────────────
+
+  eureka-server:
+    build:
+      context: .
+      dockerfile: eureka-server/Dockerfile
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - LOGGING_LOKI_URL=http://loki:3100/loki/api/v1/push
+    depends_on:
+      loki:
+        condition: service_started
+    networks:
+      - datastd-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8761/actuator/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: api-gateway/Dockerfile
+    container_name: api-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - LOGGING_LOKI_URL=http://loki:3100/loki/api/v1/push
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      loki:
+        condition: service_started
+    networks:
+      - datastd-network
+
+  data-ingestion-service:
+    build:
+      context: .
+      dockerfile: data-ingestion-service/Dockerfile
+    container_name: data-ingestion-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - LOGGING_LOKI_URL=http://loki:3100/loki/api/v1/push
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      loki:
+        condition: service_started
+    networks:
+      - datastd-network
+
+  rule-engine-service:
+    build:
+      context: .
+      dockerfile: rule-engine-service/Dockerfile
+    container_name: rule-engine-service
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - LOGGING_LOKI_URL=http://loki:3100/loki/api/v1/push
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      loki:
+        condition: service_started
+    networks:
+      - datastd-network
+
+  standardization-service:
+    build:
+      context: .
+      dockerfile: standardization-service/Dockerfile
+    container_name: standardization-service
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - LOGGING_LOKI_URL=http://loki:3100/loki/api/v1/push
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      data-ingestion-service:
+        condition: service_started
+      rule-engine-service:
+        condition: service_started
+      loki:
+        condition: service_started
+    networks:
+      - datastd-network
+
+networks:
+  datastd-network:
+    driver: bridge
+

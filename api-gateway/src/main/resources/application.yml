@@ -1,0 +1,61 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: data-ingestion-service
+          uri: lb://data-ingestion-service
+          predicates:
+            - Path=/api/ingestion/**
+        - id: rule-engine-service
+          uri: lb://rule-engine-service
+          predicates:
+            - Path=/api/rules/**
+        - id: standardization-service
+          uri: lb://standardization-service
+          predicates:
+            - Path=/api/standardization/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+  tracing:
+    sampling:
+      probability: 1.0
+    propagation:
+      type: w3c,b3
+
+logging:
+  loki:
+    url: http://localhost:3100/loki/api/v1/push
+
+# ── Security (v2) ─────────────────────────────────────────────────
+# Uncomment after adding the security dependencies in pom.xml.
+# See SecurityPlaceholder.java for the SecurityWebFilterChain bean.
+#
+# spring:
+#   security:
+#     oauth2:
+#       resourceserver:
+#         jwt:
+#           issuer-uri: https://your-auth-server.example.com/
+#           # OR use jwk-set-uri directly:
+#           # jwk-set-uri: https://your-auth-server.example.com/.well-known/jwks.json
+
