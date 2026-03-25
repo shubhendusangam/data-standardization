@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: data-quality-service
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+
+eureka:
+  client:
+    enabled: false
+
+feign:
+  client:
+    config:
+      default:
+        connect-timeout: 5000
+        read-timeout: 10000
+
+management:
+  tracing:
+    enabled: false
+
+logging:
+  loki:
+    url:
+
+quality:
+  report:
+    retention-days: 1
+

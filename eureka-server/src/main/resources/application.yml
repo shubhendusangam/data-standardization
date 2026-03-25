@@ -11,6 +11,8 @@ eureka:
     fetch-registry: false
   server:
     enable-self-preservation: false
+    eviction-interval-timer-in-ms: 15000          # run eviction every 15 s (default 60 s)
+    expected-client-renewal-interval-seconds: 10   # clients heartbeat every 10 s
 
 management:
   endpoints:

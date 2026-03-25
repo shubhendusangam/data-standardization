@@ -131,6 +131,29 @@ services:
         condition: service_started
       rule-engine-service:
         condition: service_started
+      data-quality-service:
+        condition: service_started
+      loki:
+        condition: service_started
+    networks:
+      - datastd-network
+
+  data-quality-service:
+    build:
+      context: .
+      dockerfile: data-quality-service/Dockerfile
+    container_name: data-quality-service
+    ports:
+      - "8085:8085"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - LOGGING_LOKI_URL=http://loki:3100/loki/api/v1/push
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      data-ingestion-service:
+        condition: service_started
       loki:
         condition: service_started
     networks:

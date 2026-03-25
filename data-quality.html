@@ -1,0 +1,1902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Quality — Data Standardization</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+/* ── Theme tokens (shared) ────────────────────────────────────── */
+:root {
+  --color-bg:          #0f1117;
+  --color-surface:     #181b23;
+  --color-surface-alt: #1e222d;
+  --color-border:      #2a2f3e;
+  --color-text:        #e1e4ed;
+  --color-text-dim:    #8b90a0;
+  --color-accent:      #6c8cff;
+  --color-accent-glow: rgba(108,140,255,.18);
+  --color-green:       #34d399;
+  --color-green-dim:   rgba(52,211,153,.15);
+  --color-yellow:      #fbbf24;
+  --color-yellow-dim:  rgba(251,191,36,.15);
+  --color-red:         #f87171;
+  --color-red-dim:     rgba(248,113,113,.15);
+  --color-orange:      #fb923c;
+  --color-purple:      #a78bfa;
+  --radius:            10px;
+  --radius-sm:         6px;
+  --shadow:            0 2px 12px rgba(0,0,0,.35);
+  --font-mono:         'SF Mono','Cascadia Code','Fira Code','Consolas',monospace;
+  --font-sans:         'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --transition:        .2s ease;
+}
+
+/* ── Reset ────────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px}
+body{font-family:var(--font-sans);background:var(--color-bg);color:var(--color-text);line-height:1.5;min-height:100vh;padding:24px 32px 48px}
+
+/* ── Header / nav ─────────────────────────────────────────────── */
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+.header h1{font-size:1.35rem;font-weight:700;letter-spacing:-.02em;display:flex;align-items:center;gap:10px}
+.header h1 .logo{width:28px;height:28px;background:var(--color-accent);border-radius:7px;display:grid;place-items:center;font-size:.85rem;color:#fff;font-weight:800}
+.nav-links{display:flex;gap:8px;align-items:center}
+.nav-links a{font-size:.78rem;color:var(--color-text-dim);text-decoration:none;padding:6px 14px;border-radius:var(--radius-sm);border:1px solid var(--color-border);transition:all var(--transition);position:relative}
+.nav-links a:hover,.nav-links a.active{color:var(--color-accent);border-color:var(--color-accent);background:var(--color-accent-glow)}
+.nav-badge{position:absolute;top:-6px;right:-6px;font-size:.58rem;font-weight:700;padding:1px 5px;border-radius:8px;line-height:1.3;min-width:18px;text-align:center}
+.nav-badge.score-good{background:var(--color-green);color:#fff}
+.nav-badge.score-warn{background:var(--color-yellow);color:#000}
+.nav-badge.score-bad{background:var(--color-red);color:#fff}
+
+/* ── Section tabs ─────────────────────────────────────────────── */
+.seg-tabs{display:flex;background:var(--color-bg);border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:3px;gap:2px;margin-bottom:24px;flex-wrap:wrap}
+.seg-tab{flex:1;min-width:120px;text-align:center;padding:9px 12px;font-size:.78rem;font-weight:600;color:var(--color-text-dim);border:none;background:none;border-radius:4px;cursor:pointer;transition:all var(--transition)}
+.seg-tab:hover{color:var(--color-text)}
+.seg-tab.active{background:var(--color-accent);color:#fff}
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+
+/* ── Panel ────────────────────────────────────────────────────── */
+.panel{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius);padding:22px 24px;margin-bottom:20px}
+.section-title{font-size:.78rem;text-transform:uppercase;letter-spacing:.07em;color:var(--color-text-dim);font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.section-title::after{content:'';flex:1;height:1px;background:var(--color-border)}
+
+/* ── Two-column layout ────────────────────────────────────────── */
+.page-grid{display:grid;grid-template-columns:420px 1fr;gap:24px;align-items:start}
+@media(max-width:1060px){.page-grid{grid-template-columns:1fr}}
+
+/* ── Inputs / selects ─────────────────────────────────────────── */
+.field-group{margin-bottom:14px}
+.field-group label{display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-dim);font-weight:600;margin-bottom:5px}
+input[type=text],input[type=number],input[type=password],input[type=url],select,textarea{width:100%;background:var(--color-bg);color:var(--color-text);border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:9px 12px;font-size:.82rem;font-family:var(--font-sans);transition:border-color var(--transition)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--color-accent)}
+textarea{min-height:80px;resize:vertical;font-family:var(--font-mono);font-size:.8rem}
+.field-row{display:flex;gap:10px}
+.field-row .field-group{flex:1}
+
+/* ── Buttons ──────────────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border:none;border-radius:var(--radius-sm);font-size:.8rem;font-weight:600;cursor:pointer;transition:all var(--transition);font-family:var(--font-sans)}
+.btn-primary{background:var(--color-accent);color:#fff}
+.btn-primary:hover{filter:brightness(1.15)}
+.btn-primary:disabled{opacity:.45;cursor:not-allowed}
+.btn-danger{background:var(--color-red-dim);color:var(--color-red);border:1px solid transparent}
+.btn-danger:hover{border-color:var(--color-red)}
+.btn-ghost{background:transparent;color:var(--color-text-dim);border:1px solid var(--color-border)}
+.btn-ghost:hover{color:var(--color-text);border-color:var(--color-text-dim)}
+.btn-sm{padding:5px 10px;font-size:.72rem}
+.btn-success{background:var(--color-green-dim);color:var(--color-green);border:1px solid transparent}
+.btn-success:hover{border-color:var(--color-green)}
+.btn-warn{background:var(--color-yellow-dim);color:var(--color-yellow);border:1px solid transparent}
+.btn-warn:hover{border-color:var(--color-yellow)}
+.btn-bar{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+
+/* ── Toggle switch ────────────────────────────────────────────── */
+.toggle{position:relative;display:inline-block;width:34px;height:18px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle .slider{position:absolute;inset:0;background:var(--color-border);border-radius:9px;cursor:pointer;transition:var(--transition)}
+.toggle .slider::before{content:'';position:absolute;height:14px;width:14px;left:2px;bottom:2px;background:#fff;border-radius:50%;transition:var(--transition)}
+.toggle input:checked + .slider{background:var(--color-green)}
+.toggle input:checked + .slider::before{transform:translateX(16px)}
+
+/* ── Badges / chips / pills ───────────────────────────────────── */
+.badge{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:2px 7px;border-radius:3px;display:inline-block}
+.badge-error{background:#FCEBEB;color:#A32D2D}
+.badge-warning{background:#FAEEDA;color:#854F0B}
+.badge-pass{background:var(--color-green-dim);color:var(--color-green)}
+.badge-warn-status{background:var(--color-yellow-dim);color:var(--color-yellow)}
+.badge-fail{background:var(--color-red-dim);color:var(--color-red)}
+.badge-type{background:var(--color-accent-glow);color:var(--color-accent)}
+.badge-inferred{background:rgba(108,140,255,.2);color:var(--color-accent)}
+.badge-confidence-HIGH{background:var(--color-green-dim);color:var(--color-green)}
+.badge-confidence-MEDIUM{background:var(--color-yellow-dim);color:var(--color-yellow)}
+.badge-confidence-LOW{background:var(--color-red-dim);color:var(--color-red)}
+.badge-trend-IMPROVING{background:var(--color-green-dim);color:var(--color-green)}
+.badge-trend-STABLE{background:rgba(139,144,160,.15);color:var(--color-text-dim)}
+.badge-trend-DEGRADING{background:var(--color-red-dim);color:var(--color-red)}
+
+.mono-chip{font-family:var(--font-mono);font-size:.7rem;background:var(--color-surface-alt);border:1px solid var(--color-border);border-radius:3px;padding:1px 6px;display:inline-block}
+
+.pill{font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:9px;display:inline-block;text-transform:uppercase;letter-spacing:.04em}
+.pill-active{background:var(--color-green-dim);color:var(--color-green)}
+.pill-inactive{background:rgba(139,144,160,.12);color:var(--color-text-dim)}
+
+/* ── Rule list (quality) ──────────────────────────────────────── */
+.qrule-list{display:flex;flex-direction:column;gap:8px;max-height:520px;overflow-y:auto;padding:2px}
+.qrule-card{background:var(--color-surface-alt);border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:12px 14px;transition:all var(--transition);position:relative}
+.qrule-card:hover{border-color:var(--color-accent)}
+.qrule-card-header{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.qrule-name{font-weight:600;font-size:.84rem;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qrule-meta{font-size:.7rem;color:var(--color-text-dim);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.qrule-actions{position:absolute;top:10px;right:10px;display:flex;gap:4px}
+
+/* ── Filter bar ───────────────────────────────────────────────── */
+.filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.filter-bar select,.filter-bar input[type=text]{width:auto;flex:1;min-width:120px}
+.filter-bar label{font-size:.72rem;color:var(--color-text-dim);display:flex;align-items:center;gap:4px;cursor:pointer;white-space:nowrap}
+
+/* ── Config sub-forms ─────────────────────────────────────────── */
+.config-section{margin-top:14px;padding:14px;background:var(--color-bg);border:1px solid var(--color-border);border-radius:var(--radius-sm)}
+.config-section.hidden{display:none}
+
+/* ── Chip input ───────────────────────────────────────────────── */
+.chip-input-wrap{display:flex;flex-wrap:wrap;gap:6px;padding:8px 10px;background:var(--color-bg);border:1px solid var(--color-border);border-radius:var(--radius-sm);min-height:40px;cursor:text;transition:border-color var(--transition)}
+.chip-input-wrap:focus-within{border-color:var(--color-accent)}
+.chip-input-wrap .chip{display:inline-flex;align-items:center;gap:4px;background:var(--color-accent-glow);color:var(--color-accent);border:1px solid rgba(108,140,255,.3);padding:2px 8px;border-radius:4px;font-size:.75rem;font-weight:600;cursor:pointer;transition:all var(--transition)}
+.chip-input-wrap .chip:hover{background:var(--color-red-dim);color:var(--color-red);border-color:var(--color-red)}
+.chip-input-wrap .chip::after{content:'✕';font-size:.6rem;margin-left:2px}
+.chip-input-wrap input{border:none;background:none;color:var(--color-text);font-size:.8rem;flex:1;min-width:80px;padding:2px 0;outline:none;font-family:var(--font-sans)}
+
+/* ── Regex live test ──────────────────────────────────────────── */
+.regex-test-row{display:flex;gap:8px;align-items:center}
+.regex-test-result{font-size:1.1rem;flex-shrink:0}
+
+/* ── Data tables ──────────────────────────────────────────────── */
+.data-table{width:100%;border-collapse:collapse;font-size:.8rem}
+.data-table th,.data-table td{padding:9px 12px;border:1px solid var(--color-border);text-align:left;white-space:nowrap}
+.data-table th{background:var(--color-surface-alt);font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-dim);font-weight:600;position:sticky;top:0;z-index:1}
+.data-table td{background:var(--color-surface)}
+.data-table tbody tr:hover td{background:var(--color-surface-alt)}
+.table-wrap{overflow-x:auto;max-height:500px;overflow-y:auto}
+
+/* ── Profiler grid ────────────────────────────────────────────── */
+.profile-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:1200px){.profile-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){.profile-grid{grid-template-columns:1fr}}
+.profile-card{background:var(--color-surface-alt);border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:16px}
+.profile-card .col-name{font-family:var(--font-mono);font-size:.85rem;font-weight:600;margin-bottom:6px}
+.profile-card .stats-row{font-size:.72rem;color:var(--color-text-dim);margin-bottom:8px;display:flex;gap:12px}
+.fail-bar-track{height:8px;background:var(--color-green);border-radius:4px;overflow:hidden;margin-bottom:4px;position:relative}
+.fail-bar-fail{height:100%;background:var(--color-red);position:absolute;right:0;top:0}
+.fail-bar-label{font-size:.68rem;color:var(--color-red);margin-bottom:6px}
+.top-values{font-family:var(--font-mono);font-size:.7rem;color:var(--color-text-dim);line-height:1.6}
+
+/* ── Stat cards (report drawer) ───────────────────────────────── */
+.stat-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+@media(max-width:600px){.stat-cards{grid-template-columns:repeat(2,1fr)}}
+.stat-card{background:var(--color-bg);border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:14px;text-align:center}
+.stat-card .stat-val{font-size:1.5rem;font-weight:700;font-family:var(--font-mono)}
+.stat-card .stat-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-dim);margin-top:2px}
+
+/* ── Failed rule cards ────────────────────────────────────────── */
+.fail-rule-card{border:1px solid;border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px}
+.fail-rule-card.error-border{border-color:var(--color-red)}
+.fail-rule-card.warn-border{border-color:var(--color-yellow)}
+.fail-rule-card .fr-name{font-weight:600;font-size:.84rem}
+.fail-rule-card .fr-meta{font-size:.72rem;color:var(--color-text-dim);margin-top:4px}
+.fail-rule-card .fr-msg{font-size:.78rem;margin-top:4px;color:var(--color-text)}
+
+/* ── Score coloring ───────────────────────────────────────────── */
+.score-good{color:var(--color-green)}
+.score-warn{color:var(--color-yellow)}
+.score-bad{color:var(--color-red)}
+
+/* ── Drawer (slide-in) ────────────────────────────────────────── */
+.drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000}
+.drawer-overlay.open{display:block}
+.drawer{position:fixed;top:0;right:-560px;width:540px;height:100vh;background:var(--color-surface);border-left:1px solid var(--color-border);padding:24px;z-index:1001;transition:right .3s ease;overflow-y:auto}
+.drawer.open{right:0}
+.drawer-close{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--color-text-dim);font-size:1.2rem;cursor:pointer}
+@media(max-width:600px){.drawer{width:100%;right:-100%}}
+
+/* ── Modal ────────────────────────────────────────────────────── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:2000;justify-content:center;align-items:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius);padding:24px;width:90%;max-width:640px;max-height:80vh;overflow-y:auto;box-shadow:var(--shadow)}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.modal-header h3{font-size:1rem;font-weight:700}
+.modal-close{background:none;border:none;color:var(--color-text-dim);font-size:1.2rem;cursor:pointer}
+
+/* ── Chart container ──────────────────────────────────────────── */
+.chart-wrap{position:relative;height:300px;margin-bottom:16px}
+.trend-stats{display:flex;gap:24px;font-size:.82rem;align-items:center}
+.trend-stats span{display:inline-flex;align-items:center;gap:6px}
+
+/* ── Accordion ────────────────────────────────────────────────── */
+.accordion-header{cursor:pointer;padding:10px 14px;background:var(--color-surface-alt);border:1px solid var(--color-border);border-radius:var(--radius-sm);margin-bottom:4px;font-size:.82rem;font-weight:600;display:flex;align-items:center;gap:8px;transition:all var(--transition)}
+.accordion-header:hover{border-color:var(--color-accent)}
+.accordion-header .arrow{transition:transform .2s;font-size:.7rem}
+.accordion-header.open .arrow{transform:rotate(90deg)}
+.accordion-body{display:none;padding:12px 14px;border:1px solid var(--color-border);border-top:none;border-radius:0 0 var(--radius-sm) var(--radius-sm);margin-bottom:8px;font-size:.78rem;background:var(--color-surface)}
+.accordion-body.open{display:block}
+
+/* ── Toast ────────────────────────────────────────────────────── */
+.toast-container{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{padding:12px 18px;border-radius:var(--radius-sm);font-size:.8rem;font-weight:600;box-shadow:var(--shadow);animation:toastIn .3s ease;max-width:380px}
+.toast.success{background:var(--color-green-dim);color:var(--color-green);border:1px solid var(--color-green)}
+.toast.error{background:var(--color-red-dim);color:var(--color-red);border:1px solid var(--color-red)}
+@keyframes toastIn{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--color-border);border-top-color:var(--color-accent);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner-lg{width:32px;height:32px;border-width:3px}
+.empty-state{text-align:center;padding:24px 16px;color:var(--color-text-dim);font-size:.85rem}
+.loading-center{display:flex;justify-content:center;padding:32px}
+
+/* ── Radio group ──────────────────────────────────────────────── */
+.radio-group{display:flex;gap:16px;align-items:center}
+.radio-group label{font-size:.8rem;display:flex;align-items:center;gap:5px;cursor:pointer;color:var(--color-text)}
+.radio-group input[type=radio]{accent-color:var(--color-accent);width:auto}
+
+/* ── Checkbox ─────────────────────────────────────────────────── */
+.cb-label{font-size:.8rem;display:flex;align-items:center;gap:5px;cursor:pointer;color:var(--color-text)}
+.cb-label input[type=checkbox]{accent-color:var(--color-accent);width:auto}
+
+/* ── Scrollbar ────────────────────────────────────────────────── */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--color-border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--color-text-dim)}
+
+/* ── Responsive ───────────────────────────────────────────────── */
+@media(max-width:700px){
+  body{padding:16px}
+  .stat-cards{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="toast-container" id="toasts"></div>
+
+<!-- ── Report drawer ──────────────────────────────────────────── -->
+<div class="drawer-overlay" id="report-drawer-overlay"></div>
+<div class="drawer" id="report-drawer">
+  <button class="drawer-close" id="report-drawer-close">✕</button>
+  <div class="section-title">Full Quality Report</div>
+  <div id="report-drawer-content"><div class="empty-state">Loading…</div></div>
+</div>
+
+<!-- ── Template modal ─────────────────────────────────────────── -->
+<div class="modal-overlay" id="template-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>📋 Rule Templates</h3>
+      <button class="modal-close" id="template-modal-close">✕</button>
+    </div>
+    <div id="template-list"><div class="loading-center"><span class="spinner spinner-lg"></span></div></div>
+  </div>
+</div>
+
+<!-- ── Suggest modal ──────────────────────────────────────────── -->
+<div class="modal-overlay" id="suggest-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>🤖 Auto-Suggested Rules</h3>
+      <button class="modal-close" id="suggest-modal-close">✕</button>
+    </div>
+    <div id="suggest-list"><div class="loading-center"><span class="spinner spinner-lg"></span></div></div>
+    <div style="margin-top:16px;text-align:right">
+      <button class="btn btn-primary" id="btn-save-suggestions">Save Selected</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Header ─────────────────────────────────────────────────── -->
+<header class="header">
+  <h1><span class="logo">DS</span> Data Quality</h1>
+  <nav class="nav-links">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="ingestion.html">Ingestion</a>
+    <a href="rules.html">Rules</a>
+    <a href="data-quality.html" class="active">Data Quality<span class="nav-badge" id="nav-quality-badge" style="display:none"></span></a>
+    <a href="jobs.html">Jobs</a>
+    <a href="logs.html">Logs</a>
+  </nav>
+</header>
+
+<!-- ── Section tabs ───────────────────────────────────────────── -->
+<div class="seg-tabs">
+  <button class="seg-tab active" data-tab="tab-rules">📏 Rules</button>
+  <button class="seg-tab" data-tab="tab-rulesets">📦 Rule Sets</button>
+  <button class="seg-tab" data-tab="tab-profiler">🔬 Profiler</button>
+  <button class="seg-tab" data-tab="tab-reports">📊 Reports</button>
+  <button class="seg-tab" data-tab="tab-trend">📈 Trend</button>
+  <button class="seg-tab" data-tab="tab-alerts">🔔 Alerts</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!--  TAB 1: Validation Rules                                      -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="tab-pane active" id="tab-rules">
+  <div class="page-grid">
+
+    <!-- Left: Rule list -->
+    <div>
+      <div class="panel">
+        <div class="section-title">Validation Rules</div>
+
+        <div class="filter-bar">
+          <select id="qr-filter-type">
+            <option value="">All Types</option>
+            <option>NOT_NULL</option><option>NOT_EMPTY</option><option>REGEX_MATCH</option>
+            <option>ALLOWED_VALUES</option><option>NUMERIC_RANGE</option>
+            <option>MIN_LENGTH</option><option>MAX_LENGTH</option><option>UNIQUE</option>
+          </select>
+          <select id="qr-filter-severity">
+            <option value="">All Severity</option>
+            <option value="ERROR">ERROR</option>
+            <option value="WARNING">WARNING</option>
+          </select>
+          <label><input type="checkbox" id="qr-filter-active-only"> Active only</label>
+        </div>
+
+        <div class="qrule-list" id="qrule-list">
+          <div class="empty-state">Loading…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Rule builder -->
+    <div class="panel" id="rule-builder-panel">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div class="section-title" id="qr-builder-title" style="margin-bottom:0">Rule Builder</div>
+        <button class="btn btn-ghost btn-sm" id="btn-use-template">📋 Use Template</button>
+      </div>
+
+      <div class="field-row">
+        <div class="field-group">
+          <label>Name *</label>
+          <input type="text" id="qr-name" placeholder="e.g. Email not null check">
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field-group">
+          <label>Column Name *</label>
+          <input type="text" id="qr-column" placeholder='Column name, or * for all columns'>
+        </div>
+        <div class="field-group">
+          <label>Validation Type *</label>
+          <select id="qr-type">
+            <option value="">Select type…</option>
+            <option value="NOT_NULL">NOT_NULL</option>
+            <option value="NOT_EMPTY">NOT_EMPTY</option>
+            <option value="REGEX_MATCH">REGEX_MATCH</option>
+            <option value="ALLOWED_VALUES">ALLOWED_VALUES</option>
+            <option value="NUMERIC_RANGE">NUMERIC_RANGE</option>
+            <option value="MIN_LENGTH">MIN_LENGTH</option>
+            <option value="MAX_LENGTH">MAX_LENGTH</option>
+            <option value="UNIQUE">UNIQUE</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>Severity *</label>
+        <div class="radio-group">
+          <label><input type="radio" name="qr-severity" value="ERROR" checked> ERROR</label>
+          <label><input type="radio" name="qr-severity" value="WARNING"> WARNING</label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="cb-label"><input type="checkbox" id="qr-active" checked> Active</label>
+      </div>
+
+      <!-- Dynamic config sub-forms -->
+      <div class="config-section hidden" id="cfg-not-null">
+        <div class="field-group" style="margin-bottom:0">
+          <label>Max Null Rate (%)</label>
+          <input type="number" id="cfg-not-null-rate" value="0" min="0" max="100" step="0.1">
+        </div>
+      </div>
+
+      <div class="config-section hidden" id="cfg-not-empty">
+        <div class="field-group" style="margin-bottom:0">
+          <label>Max Blank Rate (%)</label>
+          <input type="number" id="cfg-not-empty-rate" value="0" min="0" max="100" step="0.1">
+        </div>
+      </div>
+
+      <div class="config-section hidden" id="cfg-regex">
+        <div class="field-group">
+          <label>Pattern (Regex)</label>
+          <input type="text" id="cfg-regex-pattern" placeholder="e.g. ^[\\w.+-]+@[\\w-]+\\.[a-z]{2,}$" style="font-family:var(--font-mono)">
+        </div>
+        <div class="field-group">
+          <label>Max Fail Rate (%)</label>
+          <input type="number" id="cfg-regex-fail" value="0" min="0" max="100" step="0.1">
+        </div>
+        <div class="field-group" style="margin-bottom:0">
+          <label>Live Test</label>
+          <div class="regex-test-row">
+            <input type="text" id="cfg-regex-sample" placeholder="Type a sample value…" style="flex:1">
+            <span class="regex-test-result" id="cfg-regex-result"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="config-section hidden" id="cfg-allowed">
+        <div class="field-group">
+          <label>Allowed Values (press Enter to add)</label>
+          <div class="chip-input-wrap" id="allowed-chip-wrap">
+            <input type="text" id="allowed-chip-input" placeholder="Type value, press Enter…">
+          </div>
+        </div>
+        <div class="field-group" style="margin-bottom:0">
+          <label>Max Fail Rate (%)</label>
+          <input type="number" id="cfg-allowed-fail" value="0" min="0" max="100" step="0.1">
+        </div>
+      </div>
+
+      <div class="config-section hidden" id="cfg-numeric-range">
+        <div class="field-row">
+          <div class="field-group">
+            <label>Min</label>
+            <input type="number" id="cfg-range-min" placeholder="Minimum">
+          </div>
+          <div class="field-group">
+            <label>Max</label>
+            <input type="number" id="cfg-range-max" placeholder="Maximum">
+          </div>
+        </div>
+        <div class="field-group" style="margin-bottom:0">
+          <label>Max Fail Rate (%)</label>
+          <input type="number" id="cfg-range-fail" value="0" min="0" max="100" step="0.1">
+        </div>
+      </div>
+
+      <div class="config-section hidden" id="cfg-min-length">
+        <div class="field-group" style="margin-bottom:0">
+          <label>Minimum Length</label>
+          <input type="number" id="cfg-minlen-val" min="0" placeholder="e.g. 3">
+        </div>
+      </div>
+
+      <div class="config-section hidden" id="cfg-max-length">
+        <div class="field-group" style="margin-bottom:0">
+          <label>Maximum Length</label>
+          <input type="number" id="cfg-maxlen-val" min="0" placeholder="e.g. 255">
+        </div>
+      </div>
+
+      <div class="config-section hidden" id="cfg-unique">
+        <div class="field-group" style="margin-bottom:0">
+          <label>Max Duplicate Rate (%)</label>
+          <input type="number" id="cfg-unique-rate" value="0" min="0" max="100" step="0.1">
+        </div>
+      </div>
+
+      <div class="btn-bar" style="margin-top:18px">
+        <button class="btn btn-primary" id="btn-save-qrule">Save Rule</button>
+        <button class="btn btn-ghost" id="btn-cancel-qrule">Cancel</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!--  TAB 2: Rule Sets                                             -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="tab-pane" id="tab-rulesets">
+  <div class="panel">
+    <div class="section-title">Validation Rule Sets</div>
+    <div class="table-wrap">
+      <table class="data-table" id="ruleset-table">
+        <thead><tr><th>Name</th><th>Rules</th><th>Description</th><th>Action</th></tr></thead>
+        <tbody id="ruleset-tbody">
+          <tr><td colspan="4" class="empty-state">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:18px">
+      <div class="section-title">+ New Rule Set</div>
+      <div class="field-row">
+        <div class="field-group"><label>Name *</label><input type="text" id="rs-name" placeholder="Rule set name"></div>
+        <div class="field-group"><label>Description</label><input type="text" id="rs-desc" placeholder="Optional description"></div>
+      </div>
+      <div class="field-group">
+        <label>Select Active Rules</label>
+        <div id="rs-rule-checkboxes" style="max-height:200px;overflow-y:auto;padding:8px;background:var(--color-bg);border:1px solid var(--color-border);border-radius:var(--radius-sm)">
+          <div class="empty-state">Loading rules…</div>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="btn-create-ruleset">Create Rule Set</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!--  TAB 3: Column Profiler                                       -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="tab-pane" id="tab-profiler">
+  <div class="panel">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:18px">
+      <div class="section-title" style="margin-bottom:0">Column Profiler</div>
+      <button class="btn btn-warn btn-sm" id="btn-auto-suggest">🤖 Auto-Suggest Rules</button>
+    </div>
+    <div class="field-row" style="margin-bottom:14px">
+      <div class="field-group" style="max-width:320px;margin-bottom:0">
+        <label>Dataset</label>
+        <select id="prof-dataset"><option value="">Select dataset…</option></select>
+      </div>
+      <div style="display:flex;align-items:flex-end">
+        <button class="btn btn-primary" id="btn-profile">🔬 Profile</button>
+      </div>
+    </div>
+    <div id="profiler-results"><div class="empty-state">Select a dataset and click Profile</div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!--  TAB 4: Quality Reports                                       -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="tab-pane" id="tab-reports">
+  <div class="panel">
+    <div class="section-title">Quality Report History</div>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr>
+          <th>Dataset</th><th>Evaluated At</th><th>Status</th><th>Score</th>
+          <th>Total Records</th><th>Duplicates</th><th>Action</th>
+        </tr></thead>
+        <tbody id="report-tbody">
+          <tr><td colspan="7" class="empty-state">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!--  TAB 5: Trend Chart                                           -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="tab-pane" id="tab-trend">
+  <div class="panel">
+    <div class="section-title">Quality Trend</div>
+    <div class="field-row" style="margin-bottom:14px">
+      <div class="field-group" style="max-width:320px;margin-bottom:0">
+        <label>Dataset</label>
+        <select id="trend-dataset"><option value="">Select dataset…</option></select>
+      </div>
+      <div style="display:flex;align-items:flex-end">
+        <button class="btn btn-primary" id="btn-load-trend">📈 Load Trend</button>
+      </div>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="trend-chart"></canvas>
+    </div>
+    <div class="trend-stats" id="trend-stats" style="display:none">
+      <span><strong>Avg (30d):</strong> <span id="trend-avg">—</span></span>
+      <span><strong>Min (30d):</strong> <span id="trend-min">—</span></span>
+      <span><strong>Trend:</strong> <span id="trend-badge"></span></span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!--  TAB 6: Alert Webhooks                                        -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<div class="tab-pane" id="tab-alerts">
+  <div class="panel">
+    <div class="section-title">Alert Webhook Configuration</div>
+    <div class="table-wrap" style="margin-bottom:20px">
+      <table class="data-table">
+        <thead><tr>
+          <th>Name</th><th>Webhook URL</th><th>Trigger Status</th><th>Score Below</th>
+          <th>Active</th><th>Actions</th>
+        </tr></thead>
+        <tbody id="alert-tbody">
+          <tr><td colspan="6" class="empty-state">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section-title">+ New Alert</div>
+    <div class="field-row">
+      <div class="field-group"><label>Name *</label><input type="text" id="alert-name" placeholder="Alert name"></div>
+      <div class="field-group"><label>Webhook URL *</label><input type="url" id="alert-url" placeholder="https://hooks.example.com/…"></div>
+    </div>
+    <div class="field-row">
+      <div class="field-group">
+        <label>Trigger on Status</label>
+        <div style="display:flex;gap:16px;padding-top:4px">
+          <label class="cb-label"><input type="checkbox" id="alert-trig-fail" value="FAIL" checked> FAIL</label>
+          <label class="cb-label"><input type="checkbox" id="alert-trig-warn" value="WARN"> WARN</label>
+        </div>
+      </div>
+      <div class="field-group">
+        <label>Trigger on Score Below</label>
+        <input type="number" id="alert-score-below" min="0" max="100" placeholder="Leave blank to disable">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field-group">
+        <label>Secret</label>
+        <div style="display:flex;gap:8px">
+          <input type="password" id="alert-secret" placeholder="Optional secret" style="flex:1">
+          <button class="btn btn-ghost btn-sm" id="btn-copy-secret" title="Copy secret">📋</button>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-primary" id="btn-create-alert">Create Alert</button>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════════ -->
+<!--  SCRIPT                                                       -->
+<!-- ══════════════════════════════════════════════════════════════ -->
+<script>
+(function () {
+  'use strict';
+
+  var GW = location.origin;
+
+  /* ── Helpers ────────────────────────────────────────────────── */
+  function $(s) { return document.querySelector(s); }
+  function $$(s) { return document.querySelectorAll(s); }
+  function escHtml(s) {
+    if (s == null) return '';
+    var d = document.createElement('div');
+    d.textContent = String(s);
+    return d.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+  function shortId(u) { return u ? String(u).substring(0, 8) : '—'; }
+  function fmtDate(iso) {
+    if (!iso) return '—';
+    var d = new Date(iso);
+    if (isNaN(d)) return String(iso);
+    return d.toLocaleString();
+  }
+  function scoreClass(s) { return s >= 80 ? 'score-good' : s >= 60 ? 'score-warn' : 'score-bad'; }
+  function statusBadge(st) {
+    if (st === 'PASS') return '<span class="badge badge-pass">PASS</span>';
+    if (st === 'WARN') return '<span class="badge badge-warn-status">WARN</span>';
+    return '<span class="badge badge-fail">FAIL</span>';
+  }
+
+  function toast(msg, type) {
+    var el = document.createElement('div');
+    el.className = 'toast ' + (type || 'success');
+    el.textContent = msg;
+    $('#toasts').appendChild(el);
+    setTimeout(function () { el.remove(); }, 4000);
+  }
+
+  function fetchJSON(url, opts) {
+    return fetch(url, opts).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      if (r.status === 204) return null;
+      return r.json();
+    });
+  }
+
+  /* ── Tab switching ──────────────────────────────────────────── */
+  $$('.seg-tab').forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      $$('.seg-tab').forEach(function (t) { t.classList.remove('active'); });
+      $$('.tab-pane').forEach(function (p) { p.classList.remove('active'); });
+      this.classList.add('active');
+      var target = this.dataset.tab;
+      $('#' + target).classList.add('active');
+    });
+  });
+
+  /* ══════════════════════════════════════════════════════════════
+     SECTION 1: Validation Rules
+     ══════════════════════════════════════════════════════════════ */
+
+  var qRules = [];
+  var editingRuleId = null;
+  var allowedValues = [];
+
+  function loadQualityRules() {
+    var typeF = $('#qr-filter-type').value;
+    var sevF = $('#qr-filter-severity').value;
+    var activeOnly = $('#qr-filter-active-only').checked;
+
+    fetchJSON(GW + '/api/quality/rules')
+      .then(function (data) {
+        qRules = data || [];
+
+        // client-side filtering
+        var filtered = qRules;
+        if (typeF) filtered = filtered.filter(function (r) { return r.validationType === typeF; });
+        if (sevF) filtered = filtered.filter(function (r) { return r.severity === sevF; });
+        if (activeOnly) filtered = filtered.filter(function (r) { return r.active; });
+
+        renderQualityRuleList(filtered);
+      })
+      .catch(function () {
+        $('#qrule-list').innerHTML = '<div class="empty-state">Could not load rules</div>';
+      });
+  }
+
+  $('#qr-filter-type').addEventListener('change', loadQualityRules);
+  $('#qr-filter-severity').addEventListener('change', loadQualityRules);
+  $('#qr-filter-active-only').addEventListener('change', loadQualityRules);
+
+  function renderQualityRuleList(list) {
+    var el = $('#qrule-list');
+    if (!list.length) {
+      el.innerHTML = '<div class="empty-state">No rules found</div>';
+      return;
+    }
+    el.innerHTML = list.map(function (r) {
+      var sevClass = r.severity === 'ERROR' ? 'badge-error' : 'badge-warning';
+      var pillClass = r.active ? 'pill-active' : 'pill-inactive';
+      return '<div class="qrule-card" data-id="' + r.id + '">' +
+        '<div class="qrule-card-header">' +
+          '<span class="qrule-name">' + escHtml(r.name) + '</span>' +
+          '<span class="pill ' + pillClass + '">' + (r.active ? 'Active' : 'Inactive') + '</span>' +
+        '</div>' +
+        '<div class="qrule-meta">' +
+          '<span class="mono-chip">' + escHtml(r.columnName) + '</span>' +
+          '<span class="badge badge-type">' + escHtml(r.validationType) + '</span>' +
+          '<span class="badge ' + sevClass + '">' + escHtml(r.severity) + '</span>' +
+          '<label class="toggle" title="Toggle active">' +
+            '<input type="checkbox"' + (r.active ? ' checked' : '') + ' data-toggle-qr="' + r.id + '">' +
+            '<span class="slider"></span>' +
+          '</label>' +
+        '</div>' +
+        '<div class="qrule-actions">' +
+          '<button class="btn btn-ghost btn-sm" data-edit-qr="' + r.id + '" title="Edit">✎</button>' +
+          '<button class="btn btn-danger btn-sm" data-del-qr="' + r.id + '" title="Delete">✕</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    // Bind events
+    el.querySelectorAll('[data-toggle-qr]').forEach(function (inp) {
+      inp.addEventListener('change', function (e) {
+        e.stopPropagation();
+        toggleQualityRule(this.dataset.toggleQr);
+      });
+    });
+    el.querySelectorAll('[data-edit-qr]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        loadQualityRuleIntoBuilder(this.dataset.editQr);
+      });
+    });
+    el.querySelectorAll('[data-del-qr]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (!confirm('Delete this validation rule?')) return;
+        deleteQualityRule(this.dataset.delQr);
+      });
+    });
+  }
+
+  function toggleQualityRule(id) {
+    fetch(GW + '/api/quality/rules/' + id + '/toggle', { method: 'PATCH' })
+      .then(function (r) { return r.json(); })
+      .then(function () { toast('Rule toggled'); loadQualityRules(); })
+      .catch(function () { toast('Toggle failed', 'error'); });
+  }
+
+  function deleteQualityRule(id) {
+    fetch(GW + '/api/quality/rules/' + id, { method: 'DELETE' })
+      .then(function (r) {
+        if (!r.ok) throw new Error();
+        toast('Rule deleted');
+        if (editingRuleId === id) resetQualityBuilder();
+        loadQualityRules();
+      })
+      .catch(function () { toast('Delete failed', 'error'); });
+  }
+
+  /* ── Config type mapping ────────────────────────────────────── */
+  var CFG_MAP = {
+    NOT_NULL: 'cfg-not-null',
+    NOT_EMPTY: 'cfg-not-empty',
+    REGEX_MATCH: 'cfg-regex',
+    ALLOWED_VALUES: 'cfg-allowed',
+    NUMERIC_RANGE: 'cfg-numeric-range',
+    MIN_LENGTH: 'cfg-min-length',
+    MAX_LENGTH: 'cfg-max-length',
+    UNIQUE: 'cfg-unique'
+  };
+
+  $('#qr-type').addEventListener('change', function () {
+    $$('.config-section').forEach(function (s) { s.classList.add('hidden'); });
+    var sec = CFG_MAP[this.value];
+    if (sec) $('#' + sec).classList.remove('hidden');
+  });
+
+  /* ── REGEX_MATCH live test ──────────────────────────────────── */
+  function regexLiveTest() {
+    var pattern = $('#cfg-regex-pattern').value;
+    var sample = $('#cfg-regex-sample').value;
+    var result = $('#cfg-regex-result');
+    if (!pattern || !sample) { result.textContent = ''; return; }
+    try {
+      var re = new RegExp(pattern);
+      if (re.test(sample)) {
+        result.textContent = '✅';
+        result.title = 'Match!';
+      } else {
+        result.textContent = '❌';
+        result.title = 'No match';
+      }
+    } catch (e) {
+      result.textContent = '⚠️';
+      result.title = 'Invalid regex: ' + e.message;
+    }
+  }
+  $('#cfg-regex-pattern').addEventListener('input', regexLiveTest);
+  $('#cfg-regex-sample').addEventListener('input', regexLiveTest);
+
+  /* ── ALLOWED_VALUES chip input ──────────────────────────────── */
+  function renderAllowedChips() {
+    var wrap = $('#allowed-chip-wrap');
+    // Remove existing chips
+    wrap.querySelectorAll('.chip').forEach(function (c) { c.remove(); });
+    var input = $('#allowed-chip-input');
+    allowedValues.forEach(function (val, i) {
+      var chip = document.createElement('span');
+      chip.className = 'chip';
+      chip.textContent = val;
+      chip.dataset.idx = i;
+      chip.addEventListener('click', function () {
+        allowedValues.splice(+this.dataset.idx, 1);
+        renderAllowedChips();
+      });
+      wrap.insertBefore(chip, input);
+    });
+  }
+
+  $('#allowed-chip-input').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      var v = this.value.trim();
+      if (v && allowedValues.indexOf(v) === -1) {
+        allowedValues.push(v);
+        renderAllowedChips();
+      }
+      this.value = '';
+    }
+  });
+
+  $('#allowed-chip-wrap').addEventListener('click', function () {
+    $('#allowed-chip-input').focus();
+  });
+
+  /* ── Build params JSON ──────────────────────────────────────── */
+  function buildQualityParams() {
+    var type = $('#qr-type').value;
+    var params = {};
+    switch (type) {
+      case 'NOT_NULL':
+        params.maxNullRatePct = parseFloat($('#cfg-not-null-rate').value) || 0;
+        break;
+      case 'NOT_EMPTY':
+        params.maxBlankRatePct = parseFloat($('#cfg-not-empty-rate').value) || 0;
+        break;
+      case 'REGEX_MATCH':
+        params.pattern = $('#cfg-regex-pattern').value;
+        params.maxFailRatePct = parseFloat($('#cfg-regex-fail').value) || 0;
+        break;
+      case 'ALLOWED_VALUES':
+        params.allowedValues = allowedValues.slice();
+        params.maxFailRatePct = parseFloat($('#cfg-allowed-fail').value) || 0;
+        break;
+      case 'NUMERIC_RANGE':
+        params.min = parseFloat($('#cfg-range-min').value);
+        params.max = parseFloat($('#cfg-range-max').value);
+        params.maxFailRatePct = parseFloat($('#cfg-range-fail').value) || 0;
+        break;
+      case 'MIN_LENGTH':
+        params.length = parseInt($('#cfg-minlen-val').value) || 0;
+        break;
+      case 'MAX_LENGTH':
+        params.length = parseInt($('#cfg-maxlen-val').value) || 0;
+        break;
+      case 'UNIQUE':
+        params.maxDuplicateRatePct = parseFloat($('#cfg-unique-rate').value) || 0;
+        break;
+    }
+    return JSON.stringify(params);
+  }
+
+  /* ── Load rule into builder ─────────────────────────────────── */
+  function loadQualityRuleIntoBuilder(id) {
+    var rule = qRules.find(function (r) { return r.id === id; });
+    if (!rule) return;
+    editingRuleId = id;
+    $('#qr-builder-title').textContent = 'Edit Rule — ' + shortId(id);
+    $('#qr-name').value = rule.name;
+    $('#qr-column').value = rule.columnName;
+    $('#qr-type').value = rule.validationType;
+    $('#qr-active').checked = rule.active;
+
+    // severity
+    var sevRadios = document.getElementsByName('qr-severity');
+    for (var i = 0; i < sevRadios.length; i++) {
+      sevRadios[i].checked = sevRadios[i].value === rule.severity;
+    }
+
+    // Show config section
+    $$('.config-section').forEach(function (s) { s.classList.add('hidden'); });
+    var sec = CFG_MAP[rule.validationType];
+    if (sec) $('#' + sec).classList.remove('hidden');
+
+    // populate config
+    var p = {};
+    try { p = JSON.parse(rule.params || '{}'); } catch (e) {}
+
+    switch (rule.validationType) {
+      case 'NOT_NULL':
+        $('#cfg-not-null-rate').value = p.maxNullRatePct || 0;
+        break;
+      case 'NOT_EMPTY':
+        $('#cfg-not-empty-rate').value = p.maxBlankRatePct || 0;
+        break;
+      case 'REGEX_MATCH':
+        $('#cfg-regex-pattern').value = p.pattern || '';
+        $('#cfg-regex-fail').value = p.maxFailRatePct || 0;
+        $('#cfg-regex-sample').value = '';
+        $('#cfg-regex-result').textContent = '';
+        break;
+      case 'ALLOWED_VALUES':
+        allowedValues = (p.allowedValues || []).slice();
+        renderAllowedChips();
+        $('#cfg-allowed-fail').value = p.maxFailRatePct || 0;
+        break;
+      case 'NUMERIC_RANGE':
+        $('#cfg-range-min').value = p.min != null ? p.min : '';
+        $('#cfg-range-max').value = p.max != null ? p.max : '';
+        $('#cfg-range-fail').value = p.maxFailRatePct || 0;
+        break;
+      case 'MIN_LENGTH':
+        $('#cfg-minlen-val').value = p.length || '';
+        break;
+      case 'MAX_LENGTH':
+        $('#cfg-maxlen-val').value = p.length || '';
+        break;
+      case 'UNIQUE':
+        $('#cfg-unique-rate').value = p.maxDuplicateRatePct || 0;
+        break;
+    }
+  }
+
+  function resetQualityBuilder() {
+    editingRuleId = null;
+    $('#qr-builder-title').textContent = 'Rule Builder';
+    $('#qr-name').value = '';
+    $('#qr-column').value = '';
+    $('#qr-type').value = '';
+    $('#qr-active').checked = true;
+    document.querySelector('input[name="qr-severity"][value="ERROR"]').checked = true;
+    $$('.config-section').forEach(function (s) { s.classList.add('hidden'); });
+    allowedValues = [];
+    renderAllowedChips();
+  }
+
+  $('#btn-cancel-qrule').addEventListener('click', resetQualityBuilder);
+
+  /* ── Save rule ──────────────────────────────────────────────── */
+  $('#btn-save-qrule').addEventListener('click', function () {
+    var name = $('#qr-name').value.trim();
+    var col = $('#qr-column').value.trim();
+    var type = $('#qr-type').value;
+    var sevRadio = document.querySelector('input[name="qr-severity"]:checked');
+
+    if (!name || !col || !type || !sevRadio) {
+      toast('Name, column, type, and severity are required', 'error');
+      return;
+    }
+
+    var payload = {
+      name: name,
+      columnName: col,
+      validationType: type,
+      params: buildQualityParams(),
+      severity: sevRadio.value,
+      active: $('#qr-active').checked
+    };
+
+    var url = editingRuleId ? GW + '/api/quality/rules/' + editingRuleId : GW + '/api/quality/rules';
+    var method = editingRuleId ? 'PUT' : 'POST';
+
+    var btn = this;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Saving…';
+
+    fetchJSON(url, {
+      method: method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+      .then(function (data) {
+        toast(editingRuleId ? 'Rule updated' : 'Rule created');
+        if (data && data.id) {
+          editingRuleId = data.id;
+          $('#qr-builder-title').textContent = 'Edit Rule — ' + shortId(data.id);
+        }
+        loadQualityRules();
+      })
+      .catch(function (e) { toast('Save failed: ' + e.message, 'error'); })
+      .finally(function () { btn.disabled = false; btn.textContent = 'Save Rule'; });
+  });
+
+  /* ── Use Template modal ─────────────────────────────────────── */
+  $('#btn-use-template').addEventListener('click', function () {
+    $('#template-modal').classList.add('open');
+    $('#template-list').innerHTML = '<div class="loading-center"><span class="spinner spinner-lg"></span></div>';
+
+    fetchJSON(GW + '/api/quality/rules/templates')
+      .then(function (templates) {
+        if (!templates || !templates.length) {
+          $('#template-list').innerHTML = '<div class="empty-state">No templates available</div>';
+          return;
+        }
+        $('#template-list').innerHTML = templates.map(function (t) {
+          return '<div style="padding:12px;background:var(--color-surface-alt);border:1px solid var(--color-border);border-radius:var(--radius-sm);margin-bottom:8px;cursor:pointer;transition:all .2s" ' +
+            'class="template-item" data-template=\'' + escHtml(JSON.stringify(t)) + '\'>' +
+            '<div style="font-weight:600;font-size:.84rem">' + escHtml(t.name) + '</div>' +
+            '<div style="font-size:.72rem;color:var(--color-text-dim);margin-top:2px">' +
+              '<span class="mono-chip">' + escHtml(t.columnName) + '</span> · ' +
+              '<span class="badge badge-type">' + escHtml(t.validationType) + '</span> · ' +
+              '<span class="badge ' + (t.severity === 'ERROR' ? 'badge-error' : 'badge-warning') + '">' + escHtml(t.severity) + '</span>' +
+            '</div>' +
+          '</div>';
+        }).join('');
+
+        // Bind click
+        $$('.template-item').forEach(function (el) {
+          el.addEventListener('click', function () {
+            var t = JSON.parse(this.dataset.template);
+            applyTemplateToBuilder(t);
+            $('#template-modal').classList.remove('open');
+          });
+          el.addEventListener('mouseenter', function () { this.style.borderColor = 'var(--color-accent)'; });
+          el.addEventListener('mouseleave', function () { this.style.borderColor = 'var(--color-border)'; });
+        });
+      })
+      .catch(function () {
+        $('#template-list').innerHTML = '<div class="empty-state">Failed to load templates</div>';
+      });
+  });
+
+  $('#template-modal-close').addEventListener('click', function () {
+    $('#template-modal').classList.remove('open');
+  });
+  $('#template-modal').addEventListener('click', function (e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+
+  function applyTemplateToBuilder(t) {
+    resetQualityBuilder();
+    $('#qr-name').value = t.name || '';
+    $('#qr-column').value = t.columnName || '';
+    $('#qr-type').value = t.validationType || '';
+
+    // severity
+    if (t.severity) {
+      var sevRadios = document.getElementsByName('qr-severity');
+      for (var i = 0; i < sevRadios.length; i++) {
+        sevRadios[i].checked = sevRadios[i].value === t.severity;
+      }
+    }
+    $('#qr-active').checked = t.active !== false;
+
+    // Show config section
+    $$('.config-section').forEach(function (s) { s.classList.add('hidden'); });
+    var sec = CFG_MAP[t.validationType];
+    if (sec) $('#' + sec).classList.remove('hidden');
+
+    // Populate params
+    var p = {};
+    try { p = JSON.parse(t.params || '{}'); } catch (e) {}
+
+    switch (t.validationType) {
+      case 'NOT_NULL':
+        $('#cfg-not-null-rate').value = p.maxNullRatePct || 0;
+        break;
+      case 'NOT_EMPTY':
+        $('#cfg-not-empty-rate').value = p.maxBlankRatePct || 0;
+        break;
+      case 'REGEX_MATCH':
+        $('#cfg-regex-pattern').value = p.pattern || '';
+        $('#cfg-regex-fail').value = p.maxFailRatePct || 0;
+        break;
+      case 'ALLOWED_VALUES':
+        allowedValues = (p.allowedValues || []).slice();
+        renderAllowedChips();
+        $('#cfg-allowed-fail').value = p.maxFailRatePct || 0;
+        break;
+      case 'NUMERIC_RANGE':
+        $('#cfg-range-min').value = p.min != null ? p.min : '';
+        $('#cfg-range-max').value = p.max != null ? p.max : '';
+        $('#cfg-range-fail').value = p.maxFailRatePct || 0;
+        break;
+      case 'MIN_LENGTH':
+        $('#cfg-minlen-val').value = p.length || '';
+        break;
+      case 'MAX_LENGTH':
+        $('#cfg-maxlen-val').value = p.length || '';
+        break;
+      case 'UNIQUE':
+        $('#cfg-unique-rate').value = p.maxDuplicateRatePct || 0;
+        break;
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     SECTION 2: Rule Sets
+     ══════════════════════════════════════════════════════════════ */
+
+  function loadRuleSets() {
+    fetchJSON(GW + '/api/quality/rulesets')
+      .then(function (data) {
+        var el = $('#ruleset-tbody');
+        if (!data || !data.length) {
+          el.innerHTML = '<tr><td colspan="4" class="empty-state">No rule sets</td></tr>';
+          return;
+        }
+        el.innerHTML = data.map(function (rs) {
+          var ruleCount = rs.ruleIds ? rs.ruleIds.length : (rs.rules ? rs.rules.length : 0);
+          return '<tr>' +
+            '<td><strong>' + escHtml(rs.name) + '</strong></td>' +
+            '<td>' + ruleCount + '</td>' +
+            '<td>' + escHtml(rs.description || '—') + '</td>' +
+            '<td><button class="btn btn-ghost btn-sm" data-copy-rsid="' + rs.id + '">📋 Copy ID</button></td>' +
+          '</tr>';
+        }).join('');
+
+        el.querySelectorAll('[data-copy-rsid]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            navigator.clipboard.writeText(this.dataset.copyRsid).then(function () {
+              toast('Rule set ID copied to clipboard');
+            });
+          });
+        });
+      })
+      .catch(function () {
+        $('#ruleset-tbody').innerHTML = '<tr><td colspan="4" class="empty-state">Could not load</td></tr>';
+      });
+  }
+
+  function loadRuleCheckboxes() {
+    fetchJSON(GW + '/api/quality/rules')
+      .then(function (data) {
+        var el = $('#rs-rule-checkboxes');
+        var activeRules = (data || []).filter(function (r) { return r.active; });
+        if (!activeRules.length) {
+          el.innerHTML = '<div class="empty-state">No active rules</div>';
+          return;
+        }
+        el.innerHTML = activeRules.map(function (r) {
+          return '<label class="cb-label" style="margin-bottom:6px">' +
+            '<input type="checkbox" value="' + r.id + '"> ' +
+            escHtml(r.name) + ' <span class="mono-chip" style="margin-left:4px">' + escHtml(r.columnName) + '</span>' +
+          '</label>';
+        }).join('');
+      })
+      .catch(function () {
+        $('#rs-rule-checkboxes').innerHTML = '<div class="empty-state">Could not load</div>';
+      });
+  }
+
+  $('#btn-create-ruleset').addEventListener('click', function () {
+    var name = $('#rs-name').value.trim();
+    if (!name) { toast('Name is required', 'error'); return; }
+
+    var checked = [];
+    $('#rs-rule-checkboxes').querySelectorAll('input:checked').forEach(function (cb) {
+      checked.push(cb.value);
+    });
+    if (!checked.length) { toast('Select at least one rule', 'error'); return; }
+
+    var btn = this;
+    btn.disabled = true;
+
+    fetchJSON(GW + '/api/quality/rulesets', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name, description: $('#rs-desc').value.trim(), ruleIds: checked })
+    })
+      .then(function () {
+        toast('Rule set created');
+        $('#rs-name').value = '';
+        $('#rs-desc').value = '';
+        loadRuleSets();
+      })
+      .catch(function (e) { toast('Failed: ' + e.message, 'error'); })
+      .finally(function () { btn.disabled = false; });
+  });
+
+  /* ══════════════════════════════════════════════════════════════
+     SECTION 3: Column Profiler
+     ══════════════════════════════════════════════════════════════ */
+
+  var datasetsCache = [];
+
+  function loadDatasets() {
+    return fetchJSON(GW + '/api/ingestion/datasets')
+      .then(function (ds) {
+        datasetsCache = ds || [];
+        var options = '<option value="">Select dataset…</option>' +
+          datasetsCache.map(function (d) {
+            return '<option value="' + d.datasetId + '">' + escHtml(d.name) + ' (' + (d.recordCount || 0) + ' records)</option>';
+          }).join('');
+        $('#prof-dataset').innerHTML = options;
+        $('#trend-dataset').innerHTML = options;
+      })
+      .catch(function () {});
+  }
+
+  $('#btn-profile').addEventListener('click', function () {
+    var dsId = $('#prof-dataset').value;
+    if (!dsId) { toast('Select a dataset', 'error'); return; }
+
+    var btn = this;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Profiling…';
+    $('#profiler-results').innerHTML = '<div class="loading-center"><span class="spinner spinner-lg"></span></div>';
+
+    fetchJSON(GW + '/api/quality/validate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ datasetId: dsId, ruleIds: [] })
+    })
+      .then(function (report) {
+        renderProfilerResults(report);
+      })
+      .catch(function (e) {
+        $('#profiler-results').innerHTML = '<div class="empty-state">Profiling failed: ' + escHtml(e.message) + '</div>';
+      })
+      .finally(function () { btn.disabled = false; btn.textContent = '🔬 Profile'; });
+  });
+
+  function renderProfilerResults(report) {
+    var el = $('#profiler-results');
+    if (!report || !report.columnReports || !report.columnReports.length) {
+      el.innerHTML = '<div class="empty-state">No column data available</div>';
+      return;
+    }
+
+    // Build a map of failed rules per column
+    var failMap = {};
+    if (report.ruleResults) {
+      report.ruleResults.forEach(function (rr) {
+        if (!rr.passed && rr.columnName) {
+          if (!failMap[rr.columnName]) failMap[rr.columnName] = [];
+          failMap[rr.columnName].push(rr);
+        }
+      });
+    }
+
+    el.innerHTML = '<div class="profile-grid">' +
+      report.columnReports.map(function (col) {
+        var typeLabel = col.inferredType || 'UNKNOWN';
+        var fails = failMap[col.columnName] || [];
+        var worstFail = fails.length ? fails.reduce(function (a, b) { return b.failRatePct > a.failRatePct ? b : a; }, fails[0]) : null;
+        var failPct = worstFail ? worstFail.failRatePct : 0;
+        var passPct = 100 - failPct;
+
+        var topValsHtml = '';
+        if (col.topValues && col.topValues.length) {
+          topValsHtml = '<div class="top-values">' +
+            col.topValues.slice(0, 3).map(function (tv) {
+              return escHtml(tv.value) + ' → ' + tv.pct.toFixed(1) + '%';
+            }).join('<br>') +
+          '</div>';
+        } else if (col.sampleValues && col.sampleValues.length) {
+          topValsHtml = '<div class="top-values">' +
+            col.sampleValues.slice(0, 3).map(function (v) { return escHtml(v); }).join('<br>') +
+          '</div>';
+        }
+
+        return '<div class="profile-card">' +
+          '<div class="col-name">' + escHtml(col.columnName) + ' <span class="badge badge-inferred">' + escHtml(typeLabel) + '</span></div>' +
+          '<div class="stats-row">' +
+            '<span>null ' + (col.nullRatePct != null ? col.nullRatePct.toFixed(1) : '0') + '%</span>' +
+            '<span>unique ' + (col.uniqueRatePct != null ? col.uniqueRatePct.toFixed(1) : '0') + '%</span>' +
+            '<span>' + (col.totalCount || '—') + ' rows</span>' +
+          '</div>' +
+          (failPct > 0 ? (
+            '<div class="fail-bar-track" style="position:relative">' +
+              '<div class="fail-bar-fail" style="width:' + failPct.toFixed(1) + '%"></div>' +
+            '</div>' +
+            '<div class="fail-bar-label">' + failPct.toFixed(1) + '% fail [' + escHtml(worstFail.ruleName) + ']</div>'
+          ) : '<div class="fail-bar-track"></div><div style="font-size:.68rem;color:var(--color-green);margin-bottom:6px">All pass</div>') +
+          topValsHtml +
+          '<button class="btn btn-ghost btn-sm" style="margin-top:8px;width:100%" data-add-rule-col="' + escHtml(col.columnName) + '">+ Add Rule for Column</button>' +
+        '</div>';
+      }).join('') +
+    '</div>';
+
+    // Bind "add rule for column" buttons
+    el.querySelectorAll('[data-add-rule-col]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        resetQualityBuilder();
+        $('#qr-column').value = this.dataset.addRuleCol;
+        // Switch to rules tab
+        $$('.seg-tab').forEach(function (t) { t.classList.remove('active'); });
+        $$('.tab-pane').forEach(function (p) { p.classList.remove('active'); });
+        $$('.seg-tab')[0].classList.add('active');
+        $('#tab-rules').classList.add('active');
+      });
+    });
+  }
+
+  /* ── Auto-suggest rules ─────────────────────────────────────── */
+  var suggestedRules = [];
+
+  $('#btn-auto-suggest').addEventListener('click', function () {
+    var dsId = $('#prof-dataset').value;
+    if (!dsId) { toast('Select a dataset first', 'error'); return; }
+
+    $('#suggest-modal').classList.add('open');
+    $('#suggest-list').innerHTML = '<div class="loading-center"><span class="spinner spinner-lg"></span></div>';
+
+    fetchJSON(GW + '/api/quality/rules/suggest', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ datasetId: dsId })
+    })
+      .then(function (data) {
+        suggestedRules = data || [];
+        if (!suggestedRules.length) {
+          $('#suggest-list').innerHTML = '<div class="empty-state">No suggestions available</div>';
+          return;
+        }
+        $('#suggest-list').innerHTML = suggestedRules.map(function (s, i) {
+          var p = {};
+          try { p = JSON.parse(s.params || '{}'); } catch (e) {}
+          var paramSummary = Object.keys(p).map(function (k) { return k + ': ' + p[k]; }).join(', ');
+
+          return '<div style="padding:12px;background:var(--color-surface-alt);border:1px solid var(--color-border);border-radius:var(--radius-sm);margin-bottom:8px">' +
+            '<label class="cb-label" style="margin-bottom:6px">' +
+              '<input type="checkbox" data-suggest-idx="' + i + '" checked> ' +
+              '<strong>' + escHtml(s.validationType) + '</strong> on ' +
+              '<span class="mono-chip">' + escHtml(s.columnName) + '</span>' +
+            '</label>' +
+            '<div style="font-size:.72rem;color:var(--color-text-dim);margin-top:4px">' +
+              (paramSummary ? '<span>' + escHtml(paramSummary) + '</span> · ' : '') +
+              '<span class="badge badge-confidence-' + escHtml(s.confidence || 'MEDIUM') + '">' + escHtml(s.confidence || 'MEDIUM') + '</span>' +
+              ' · <span class="badge ' + (s.severity === 'ERROR' ? 'badge-error' : 'badge-warning') + '">' + escHtml(s.severity) + '</span>' +
+            '</div>' +
+            (s.rationale ? '<div style="font-size:.74rem;margin-top:6px;color:var(--color-text);font-style:italic">' + escHtml(s.rationale) + '</div>' : '') +
+          '</div>';
+        }).join('');
+      })
+      .catch(function () {
+        $('#suggest-list').innerHTML = '<div class="empty-state">Failed to get suggestions</div>';
+      });
+  });
+
+  $('#suggest-modal-close').addEventListener('click', function () { $('#suggest-modal').classList.remove('open'); });
+  $('#suggest-modal').addEventListener('click', function (e) { if (e.target === this) this.classList.remove('open'); });
+
+  $('#btn-save-suggestions').addEventListener('click', function () {
+    var selected = [];
+    $$('[data-suggest-idx]').forEach(function (cb) {
+      if (cb.checked) {
+        var idx = +cb.dataset.suggestIdx;
+        if (suggestedRules[idx]) selected.push(suggestedRules[idx]);
+      }
+    });
+    if (!selected.length) { toast('Select at least one suggestion', 'error'); return; }
+
+    var btn = this;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Saving…';
+
+    var promises = selected.map(function (s) {
+      return fetchJSON(GW + '/api/quality/rules', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: s.validationType + ' on ' + s.columnName,
+          columnName: s.columnName,
+          validationType: s.validationType,
+          params: s.params || '{}',
+          severity: s.severity || 'WARNING',
+          active: true
+        })
+      });
+    });
+
+    Promise.all(promises)
+      .then(function () {
+        toast(selected.length + ' rule(s) created');
+        $('#suggest-modal').classList.remove('open');
+        loadQualityRules();
+      })
+      .catch(function (e) { toast('Save failed: ' + e.message, 'error'); })
+      .finally(function () { btn.disabled = false; btn.textContent = 'Save Selected'; });
+  });
+
+  /* ══════════════════════════════════════════════════════════════
+     SECTION 4: Quality Report History
+     ══════════════════════════════════════════════════════════════ */
+
+  function loadReports() {
+    fetchJSON(GW + '/api/quality/reports')
+      .then(function (data) {
+        var reports = data || [];
+        // Sort by evaluatedAt descending
+        reports.sort(function (a, b) {
+          return new Date(b.evaluatedAt) - new Date(a.evaluatedAt);
+        });
+        reports = reports.slice(0, 20);
+
+        var el = $('#report-tbody');
+        if (!reports.length) {
+          el.innerHTML = '<tr><td colspan="7" class="empty-state">No reports yet</td></tr>';
+          return;
+        }
+
+        // Build dataset name map
+        var dsMap = {};
+        datasetsCache.forEach(function (d) { dsMap[d.datasetId] = d.name; });
+
+        el.innerHTML = reports.map(function (r) {
+          var sc = r.qualityScore != null ? r.qualityScore : 0;
+          return '<tr>' +
+            '<td>' + escHtml(dsMap[r.datasetId] || shortId(r.datasetId)) + '</td>' +
+            '<td>' + fmtDate(r.evaluatedAt) + '</td>' +
+            '<td>' + statusBadge(r.overallStatus) + '</td>' +
+            '<td><strong class="' + scoreClass(sc) + '">' + sc + '</strong></td>' +
+            '<td>' + (r.totalRecords || 0) + '</td>' +
+            '<td>' + (r.duplicateCount || 0) + '</td>' +
+            '<td><button class="btn btn-ghost btn-sm" data-full-report="' + r.reportId + '">Full Report</button></td>' +
+          '</tr>';
+        }).join('');
+
+        el.querySelectorAll('[data-full-report]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            openFullReport(this.dataset.fullReport);
+          });
+        });
+      })
+      .catch(function () {
+        $('#report-tbody').innerHTML = '<tr><td colspan="7" class="empty-state">Could not load reports</td></tr>';
+      });
+  }
+
+  /* ── Full Report drawer ─────────────────────────────────────── */
+  function openFullReport(reportId) {
+    $('#report-drawer-overlay').classList.add('open');
+    $('#report-drawer').classList.add('open');
+    $('#report-drawer-content').innerHTML = '<div class="loading-center"><span class="spinner spinner-lg"></span></div>';
+
+    fetchJSON(GW + '/api/quality/reports/' + reportId + '/full')
+      .then(function (report) {
+        renderFullReport(report);
+      })
+      .catch(function () {
+        $('#report-drawer-content').innerHTML = '<div class="empty-state">Failed to load report</div>';
+      });
+  }
+
+  function renderFullReport(report) {
+    if (!report) {
+      $('#report-drawer-content').innerHTML = '<div class="empty-state">No data</div>';
+      return;
+    }
+
+    var sc = report.qualityScore != null ? report.qualityScore : 0;
+
+    // Stat cards
+    var html = '<div class="stat-cards">' +
+      '<div class="stat-card"><div class="stat-val ' + scoreClass(sc) + '">' + sc + '</div><div class="stat-label">Quality Score</div></div>' +
+      '<div class="stat-card"><div class="stat-val">' + (report.totalRecords || 0) + '</div><div class="stat-label">Total Records</div></div>' +
+      '<div class="stat-card"><div class="stat-val">' + (report.duplicateCount || 0) + '</div><div class="stat-label">Duplicate Count</div></div>' +
+      '<div class="stat-card"><div class="stat-val">' + (report.ruleResults ? report.ruleResults.length : 0) + '</div><div class="stat-label">Rules Run</div></div>' +
+    '</div>';
+
+    // Failed rules section
+    var failedRules = (report.ruleResults || []).filter(function (rr) { return !rr.passed; });
+    if (failedRules.length) {
+      // Separate by severity
+      var errors = failedRules.filter(function (rr) { return rr.severity === 'ERROR'; });
+      var warnings = failedRules.filter(function (rr) { return rr.severity !== 'ERROR'; });
+
+      html += '<div class="section-title" style="margin-top:18px">Failed Rules (' + failedRules.length + ')</div>';
+
+      if (errors.length) {
+        html += '<div style="font-size:.72rem;font-weight:600;color:var(--color-red);margin-bottom:6px">ERRORS (' + errors.length + ')</div>';
+        html += errors.map(function (rr) {
+          return '<div class="fail-rule-card error-border">' +
+            '<div class="fr-name">' + escHtml(rr.ruleName) + '</div>' +
+            '<div class="fr-meta"><span class="mono-chip">' + escHtml(rr.columnName) + '</span> · Fail rate: ' + rr.failRatePct.toFixed(1) + '% · Failed: ' + rr.failCount + '</div>' +
+            (rr.message ? '<div class="fr-msg">' + escHtml(rr.message) + '</div>' : '') +
+          '</div>';
+        }).join('');
+      }
+
+      if (warnings.length) {
+        html += '<div style="font-size:.72rem;font-weight:600;color:var(--color-yellow);margin:12px 0 6px">WARNINGS (' + warnings.length + ')</div>';
+        html += warnings.map(function (rr) {
+          return '<div class="fail-rule-card warn-border">' +
+            '<div class="fr-name">' + escHtml(rr.ruleName) + '</div>' +
+            '<div class="fr-meta"><span class="mono-chip">' + escHtml(rr.columnName) + '</span> · Fail rate: ' + rr.failRatePct.toFixed(1) + '% · Failed: ' + rr.failCount + '</div>' +
+            (rr.message ? '<div class="fr-msg">' + escHtml(rr.message) + '</div>' : '') +
+          '</div>';
+        }).join('');
+      }
+    } else {
+      html += '<div style="text-align:center;padding:16px;color:var(--color-green);font-weight:600;margin-top:12px">✅ All rules passed</div>';
+    }
+
+    // Column profiles accordion
+    if (report.columnReports && report.columnReports.length) {
+      html += '<div class="section-title" style="margin-top:18px">Column Profiles</div>';
+      report.columnReports.forEach(function (col, i) {
+        html += '<div class="accordion-header" data-acc="acc-col-' + i + '">' +
+          '<span class="arrow">▶</span> <span class="mono-chip">' + escHtml(col.columnName) + '</span>' +
+          ' <span class="badge badge-inferred">' + escHtml(col.inferredType || 'UNKNOWN') + '</span>' +
+        '</div>' +
+        '<div class="accordion-body" id="acc-col-' + i + '">' +
+          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:.78rem">' +
+            '<div>Null rate: ' + (col.nullRatePct != null ? col.nullRatePct.toFixed(1) : '0') + '%</div>' +
+            '<div>Unique rate: ' + (col.uniqueRatePct != null ? col.uniqueRatePct.toFixed(1) : '0') + '%</div>' +
+            '<div>Total: ' + (col.totalCount || '—') + '</div>' +
+            '<div>Null count: ' + (col.nullCount || 0) + '</div>' +
+            '<div>Unique count: ' + (col.uniqueCount || 0) + '</div>' +
+            (col.minLength != null ? '<div>Min length: ' + col.minLength + '</div>' : '') +
+            (col.maxLength != null ? '<div>Max length: ' + col.maxLength + '</div>' : '') +
+            (col.min != null ? '<div>Min: ' + col.min + '</div>' : '') +
+            (col.max != null ? '<div>Max: ' + col.max + '</div>' : '') +
+            (col.mean != null ? '<div>Mean: ' + col.mean.toFixed(2) + '</div>' : '') +
+          '</div>' +
+          (col.topValues && col.topValues.length ?
+            '<div style="margin-top:8px;font-size:.72rem;color:var(--color-text-dim)"><strong>Top values:</strong></div>' +
+            '<div style="font-family:var(--font-mono);font-size:.7rem;margin-top:4px">' +
+              col.topValues.slice(0, 5).map(function (tv) {
+                return escHtml(tv.value) + ' → ' + tv.pct.toFixed(1) + '% (' + tv.count + ')';
+              }).join('<br>') +
+            '</div>' : '') +
+        '</div>';
+      });
+    }
+
+    $('#report-drawer-content').innerHTML = html;
+
+    // Bind accordion
+    $$('.accordion-header').forEach(function (hdr) {
+      hdr.addEventListener('click', function () {
+        var target = $('#' + this.dataset.acc);
+        this.classList.toggle('open');
+        target.classList.toggle('open');
+      });
+    });
+  }
+
+  $('#report-drawer-close').addEventListener('click', function () {
+    $('#report-drawer-overlay').classList.remove('open');
+    $('#report-drawer').classList.remove('open');
+  });
+  $('#report-drawer-overlay').addEventListener('click', function () {
+    this.classList.remove('open');
+    $('#report-drawer').classList.remove('open');
+  });
+
+  /* ══════════════════════════════════════════════════════════════
+     SECTION 5: Trend Chart
+     ══════════════════════════════════════════════════════════════ */
+
+  var trendChart = null;
+
+  $('#btn-load-trend').addEventListener('click', function () {
+    var dsId = $('#trend-dataset').value;
+    if (!dsId) { toast('Select a dataset', 'error'); return; }
+
+    var btn = this;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Loading…';
+
+    fetchJSON(GW + '/api/quality/datasets/' + dsId + '/trend?days=30')
+      .then(function (data) {
+        renderTrendChart(data);
+      })
+      .catch(function (e) {
+        toast('Failed to load trend: ' + e.message, 'error');
+      })
+      .finally(function () { btn.disabled = false; btn.textContent = '📈 Load Trend'; });
+  });
+
+  function renderTrendChart(data) {
+    if (!data || !data.trendPoints || !data.trendPoints.length) {
+      toast('No trend data available', 'error');
+      return;
+    }
+
+    var points = data.trendPoints;
+    var labels = points.map(function (p) {
+      var d = new Date(p.date);
+      return (d.getMonth() + 1) + '/' + d.getDate();
+    });
+    var scores = points.map(function (p) { return p.qualityScore; });
+    var pointColors = points.map(function (p) {
+      if (p.overallStatus === 'PASS') return '#34d399';
+      if (p.overallStatus === 'WARN') return '#fbbf24';
+      return '#f87171';
+    });
+    var segmentColors = points.map(function (p) {
+      if (p.overallStatus === 'PASS') return '#34d399';
+      if (p.overallStatus === 'WARN') return '#fbbf24';
+      return '#f87171';
+    });
+
+    if (trendChart) trendChart.destroy();
+
+    var ctx = $('#trend-chart').getContext('2d');
+    trendChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Quality Score',
+          data: scores,
+          borderColor: function (context) {
+            var idx = context.p0DataIndex;
+            return segmentColors[idx] || '#6c8cff';
+          },
+          segment: {
+            borderColor: function (ctx) {
+              var idx = ctx.p0DataIndex;
+              return segmentColors[idx] || '#6c8cff';
+            }
+          },
+          pointBackgroundColor: pointColors,
+          pointBorderColor: pointColors,
+          pointRadius: 5,
+          pointHoverRadius: 7,
+          borderWidth: 2,
+          fill: false,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            min: 0,
+            max: 100,
+            grid: { color: 'rgba(42,47,62,.5)' },
+            ticks: { color: '#8b90a0' }
+          },
+          x: {
+            grid: { color: 'rgba(42,47,62,.3)' },
+            ticks: { color: '#8b90a0' }
+          }
+        }
+      }
+    });
+
+    // Stats
+    $('#trend-stats').style.display = 'flex';
+    var avg = data.avgScore != null ? data.avgScore : 0;
+    var min = data.minScore != null ? data.minScore : 0;
+    $('#trend-avg').textContent = avg.toFixed(1);
+    $('#trend-avg').className = scoreClass(avg);
+    $('#trend-min').textContent = min.toFixed(1);
+    $('#trend-min').className = scoreClass(min);
+
+    var trend = data.trend || 'UNKNOWN';
+    $('#trend-badge').innerHTML = '<span class="badge badge-trend-' + escHtml(trend) + '">' + escHtml(trend) + '</span>';
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     SECTION 6: Alert Webhooks
+     ══════════════════════════════════════════════════════════════ */
+
+  function loadAlerts() {
+    fetchJSON(GW + '/api/quality/alerts')
+      .then(function (data) {
+        var el = $('#alert-tbody');
+        var alerts = data || [];
+        if (!alerts.length) {
+          el.innerHTML = '<tr><td colspan="6" class="empty-state">No alerts configured</td></tr>';
+          return;
+        }
+        el.innerHTML = alerts.map(function (a) {
+          var urlTrunc = a.webhookUrl && a.webhookUrl.length > 40 ? a.webhookUrl.substring(0, 40) + '…' : (a.webhookUrl || '—');
+          var statusChips = (a.triggerOnStatus || []).map(function (s) {
+            return '<span class="badge ' + (s === 'FAIL' ? 'badge-fail' : 'badge-warn-status') + '">' + escHtml(s) + '</span>';
+          }).join(' ');
+
+          return '<tr>' +
+            '<td><strong>' + escHtml(a.name) + '</strong></td>' +
+            '<td title="' + escHtml(a.webhookUrl) + '"><code style="font-size:.72rem">' + escHtml(urlTrunc) + '</code></td>' +
+            '<td>' + statusChips + '</td>' +
+            '<td>' + (a.triggerOnScoreBelow != null ? a.triggerOnScoreBelow : '—') + '</td>' +
+            '<td>' +
+              '<label class="toggle"><input type="checkbox"' + (a.active ? ' checked' : '') + ' data-alert-toggle="' + a.id + '"><span class="slider"></span></label>' +
+            '</td>' +
+            '<td>' +
+              '<button class="btn btn-ghost btn-sm" data-test-alert="' + a.id + '">🧪 Test</button>' +
+              '<button class="btn btn-danger btn-sm" data-del-alert="' + a.id + '" style="margin-left:4px">✕</button>' +
+            '</td>' +
+          '</tr>';
+        }).join('');
+
+        // Bind toggle
+        el.querySelectorAll('[data-alert-toggle]').forEach(function (inp) {
+          inp.addEventListener('change', function () {
+            var id = this.dataset.alertToggle;
+            var active = this.checked;
+            fetchJSON(GW + '/api/quality/alerts/' + id, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ active: active })
+            })
+              .then(function () { toast('Alert ' + (active ? 'activated' : 'deactivated')); })
+              .catch(function () { toast('Toggle failed', 'error'); loadAlerts(); });
+          });
+        });
+
+        // Bind test
+        el.querySelectorAll('[data-test-alert]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var id = this.dataset.testAlert;
+            var b = this;
+            b.disabled = true;
+            b.textContent = '…';
+            fetchJSON(GW + '/api/quality/alerts/' + id + '/test', { method: 'POST' })
+              .then(function () { toast('Webhook test sent successfully'); })
+              .catch(function () { toast('Webhook test failed', 'error'); })
+              .finally(function () { b.disabled = false; b.textContent = '🧪 Test'; });
+          });
+        });
+
+        // Bind delete
+        el.querySelectorAll('[data-del-alert]').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            if (!confirm('Delete this alert?')) return;
+            var id = this.dataset.delAlert;
+            fetch(GW + '/api/quality/alerts/' + id, { method: 'DELETE' })
+              .then(function (r) {
+                if (!r.ok) throw new Error();
+                toast('Alert deleted');
+                loadAlerts();
+              })
+              .catch(function () { toast('Delete failed', 'error'); });
+          });
+        });
+      })
+      .catch(function () {
+        $('#alert-tbody').innerHTML = '<tr><td colspan="6" class="empty-state">Could not load alerts</td></tr>';
+      });
+  }
+
+  /* ── Create alert ───────────────────────────────────────────── */
+  $('#btn-create-alert').addEventListener('click', function () {
+    var name = $('#alert-name').value.trim();
+    var url = $('#alert-url').value.trim();
+
+    if (!name) { toast('Name is required', 'error'); return; }
+    if (!url) { toast('Webhook URL is required', 'error'); return; }
+
+    // Client-side URL validation
+    try {
+      new URL(url);
+    } catch (e) {
+      toast('Invalid URL format', 'error');
+      return;
+    }
+
+    var statuses = [];
+    if ($('#alert-trig-fail').checked) statuses.push('FAIL');
+    if ($('#alert-trig-warn').checked) statuses.push('WARN');
+
+    var scoreBelow = $('#alert-score-below').value.trim();
+    scoreBelow = scoreBelow ? parseInt(scoreBelow) : null;
+
+    var secret = $('#alert-secret').value;
+
+    var btn = this;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Creating…';
+
+    fetchJSON(GW + '/api/quality/alerts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: name,
+        webhookUrl: url,
+        triggerOnStatus: statuses,
+        triggerOnScoreBelow: scoreBelow,
+        active: true,
+        secret: secret || null
+      })
+    })
+      .then(function () {
+        toast('Alert created');
+        $('#alert-name').value = '';
+        $('#alert-url').value = '';
+        $('#alert-score-below').value = '';
+        $('#alert-secret').value = '';
+        $('#alert-trig-fail').checked = true;
+        $('#alert-trig-warn').checked = false;
+        loadAlerts();
+      })
+      .catch(function (e) { toast('Failed: ' + e.message, 'error'); })
+      .finally(function () { btn.disabled = false; btn.textContent = 'Create Alert'; });
+  });
+
+  /* ── Copy secret ────────────────────────────────────────────── */
+  $('#btn-copy-secret').addEventListener('click', function () {
+    var secret = $('#alert-secret').value;
+    if (!secret) { toast('No secret to copy', 'error'); return; }
+    navigator.clipboard.writeText(secret).then(function () {
+      toast('Secret copied to clipboard');
+    });
+  });
+
+  /* ══════════════════════════════════════════════════════════════
+     SIDEBAR BADGE: Worst quality score
+     ══════════════════════════════════════════════════════════════ */
+
+  function loadQualityBadge() {
+    fetchJSON(GW + '/api/quality/summary')
+      .then(function (data) {
+        if (!data || !data.length) return;
+        var minScore = data.reduce(function (min, d) {
+          return d.latestScore < min ? d.latestScore : min;
+        }, 100);
+        var badge = $('#nav-quality-badge');
+        badge.textContent = minScore;
+        badge.style.display = '';
+        badge.className = 'nav-badge';
+        if (minScore >= 80) badge.classList.add('score-good');
+        else if (minScore >= 60) badge.classList.add('score-warn');
+        else badge.classList.add('score-bad');
+      })
+      .catch(function () {});
+  }
+
+  /* ══════════════════════════════════════════════════════════════
+     INIT
+     ══════════════════════════════════════════════════════════════ */
+
+  loadQualityRules();
+  loadRuleSets();
+  loadDatasets().then(function () {
+    loadReports();
+  });
+  loadAlerts();
+  loadQualityBadge();
+  loadRuleCheckboxes();
+
+  /* ── Handle ?columnName= query param from ingestion popover ── */
+  var urlParams = new URLSearchParams(window.location.search);
+  var preColumn = urlParams.get('columnName');
+  if (preColumn) {
+    // Switch to Rules tab and pre-fill column name
+    $$('.seg-tab').forEach(function (t) { t.classList.remove('active'); });
+    $$('.tab-pane').forEach(function (p) { p.classList.remove('active'); });
+    $$('.seg-tab')[0].classList.add('active');
+    $('#tab-rules').classList.add('active');
+    resetQualityBuilder();
+    $('#qr-column').value = preColumn;
+    $('#qr-name').focus();
+  }
+
+})();
+</script>
+</body>
+</html>
+

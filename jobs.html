@@ -85,17 +85,48 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
 
 /* ── Status badges ────────────────────────────────────────────── */
 .status-badge{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:3px 10px;border-radius:4px;display:inline-block}
-.status-badge.QUEUED{background:var(--color-accent-glow);color:var(--color-accent)}
+.status-badge.QUEUED{background:#F1EFE8;color:#5F5E5A}
 .status-badge.PROCESSING{background:var(--color-yellow-dim);color:var(--color-yellow);animation:pulse-badge 1.8s ease-in-out infinite}
-.status-badge.COMPLETED{background:var(--color-green-dim);color:var(--color-green)}
-.status-badge.FAILED{background:var(--color-red-dim);color:var(--color-red)}
+.status-badge.COMPLETED{background:#EAF3DE;color:#3B6D11}
+.status-badge.QUALITY_BLOCKED{background:#FCEBEB;color:#A32D2D}
+.status-badge.FAILED{background:#FCEBEB;color:#A32D2D}
 @keyframes pulse-badge{0%,100%{opacity:1}50%{opacity:.55}}
 
-/* ── Progress bar ─────────────────────────────────────────────── */
-.progress-track{height:6px;background:var(--color-bg);border-radius:3px;overflow:hidden;min-width:100px}
-.progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--color-accent),var(--color-green));transition:width .4s ease}
-.progress-text{font-family:var(--font-mono);font-size:.7rem;color:var(--color-text-dim);margin-top:2px}
-.mono{font-family:var(--font-mono);font-size:.76rem}
+/* ── Quality score in table ──────────────────────────────────── */
+.q-score{font-family:var(--font-mono);font-size:.78rem;font-weight:700}
+.q-score.q-good{color:#3B6D11}
+.q-score.q-warn{color:var(--color-yellow)}
+.q-score.q-bad{color:#A32D2D}
+.q-score .q-warn-icon{margin-right:3px}
+
+/* ── Quality report cards (drawer) ───────────────────────────── */
+.qr-stat-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.qr-stat-card{background:var(--color-surface-alt);border-radius:var(--radius-sm);padding:12px;text-align:center}
+.qr-stat-card .qr-val{font-size:1.3rem;font-weight:700;font-family:var(--font-mono)}
+.qr-stat-card .qr-lbl{font-size:.65rem;text-transform:uppercase;letter-spacing:.05em;color:var(--color-text-dim);margin-top:2px}
+.qr-fail-card{border:1px solid;border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px}
+.qr-fail-card.qr-error{border-color:#A32D2D;background:rgba(252,235,235,.06)}
+.qr-fail-card.qr-warning{border-color:var(--color-yellow);background:rgba(251,191,36,.06)}
+.qr-fail-card .qr-fr-name{font-weight:600;font-size:.84rem}
+.qr-fail-card .qr-fr-meta{font-size:.72rem;color:var(--color-text-dim);margin-top:4px}
+.qr-fail-card .qr-fr-msg{font-size:.78rem;margin-top:4px;color:var(--color-text)}
+.quality-summary{font-size:.78rem;margin-bottom:14px;padding:8px 12px;border-radius:var(--radius-sm);background:var(--color-surface-alt)}
+.quality-summary a{color:var(--color-accent);text-decoration:none;font-size:.72rem;margin-left:10px}
+.quality-summary a:hover{text-decoration:underline}
+
+/* ── Skeleton loader ─────────────────────────────────────────── */
+.skeleton{background:linear-gradient(90deg,var(--color-surface-alt) 25%,var(--color-border) 50%,var(--color-surface-alt) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:var(--radius-sm);height:16px;margin-bottom:8px}
+.skeleton.sk-tall{height:80px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ── Toggle switch ────────────────────────────────────────────── */
+.toggle{position:relative;display:inline-block;width:34px;height:18px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0}
+.toggle .slider{position:absolute;inset:0;background:var(--color-border);border-radius:9px;cursor:pointer;transition:var(--transition)}
+.toggle .slider::before{content:'';position:absolute;height:14px;width:14px;left:2px;bottom:2px;background:#fff;border-radius:50%;transition:var(--transition)}
+.toggle input:checked + .slider{background:var(--color-green)}
+.toggle input:checked + .slider::before{transform:translateX(16px)}
+.toggle input:disabled + .slider{opacity:.4;cursor:not-allowed}
 
 /* ── Drawer ───────────────────────────────────────────────────── */
 .drawer-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000}
@@ -213,6 +244,27 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
         <select id="rset-pick"><option value="">None (use individual rules)</option></select>
       </div>
 
+      <!-- Quality gate -->
+      <div class="or-divider">— quality gate —</div>
+
+      <div class="field-group">
+        <label for="qrset-pick">Quality Rule Set</label>
+        <select id="qrset-pick"><option value="">None (skip quality check)</option></select>
+      </div>
+
+      <div class="field-group" style="display:flex;align-items:center;gap:10px">
+        <label class="toggle" id="block-toggle-wrap" title="Block job on quality failure (ERROR rules)">
+          <input type="checkbox" id="block-toggle" checked>
+          <span class="slider"></span>
+        </label>
+        <span style="font-size:.78rem;color:var(--color-text)">Block job on quality failure (ERROR rules)</span>
+      </div>
+
+      <div class="field-group" style="margin-bottom:0">
+        <label for="warn-threshold">Warning threshold (optional)</label>
+        <input type="number" id="warn-threshold" min="0" max="100" placeholder="Warn if quality score drops below…">
+      </div>
+
       <div id="preview-container"></div>
 
       <div class="modal-footer">
@@ -233,6 +285,7 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
     <a href="dashboard.html">Dashboard</a>
     <a href="ingestion.html">Ingestion</a>
     <a href="rules.html">Rules</a>
+    <a href="data-quality.html">Data Quality</a>
     <a href="jobs.html" class="active">Jobs</a>
     <a href="logs.html">Logs</a>
   </nav>
@@ -245,6 +298,7 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
     <button class="filter-chip" data-filter="QUEUED">Queued</button>
     <button class="filter-chip" data-filter="PROCESSING">Running</button>
     <button class="filter-chip" data-filter="COMPLETED">Completed</button>
+    <button class="filter-chip" data-filter="QUALITY_BLOCKED">Blocked</button>
     <button class="filter-chip" data-filter="FAILED">Failed</button>
   </div>
   <button class="btn btn-primary" id="btn-new-job">+ New Job</button>
@@ -261,13 +315,14 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
           <th>Status</th>
           <th>Progress</th>
           <th>Records</th>
+          <th>Quality</th>
           <th>Errors</th>
           <th>Started</th>
           <th>Duration</th>
         </tr>
       </thead>
       <tbody id="job-tbody">
-        <tr><td colspan="8" class="empty-state">Loading…</td></tr>
+        <tr><td colspan="9" class="empty-state">Loading…</td></tr>
       </tbody>
     </table>
   </div>
@@ -278,21 +333,21 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
 (function () {
   'use strict';
 
-  var GW = location.protocol + '//' + location.hostname + ':8080';
+  var GW = location.origin;
 
   /* ── Helpers ────────────────────────────────────────────────── */
   function $(s) { return document.querySelector(s); }
   function $$(s) { return document.querySelectorAll(s); }
-  function escHtml(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
-  function shortId(u) { return u ? u.substring(0, 8) : '—'; }
-  function fmtDate(iso) { if (!iso) return '—'; var d = new Date(iso); return isNaN(d) ? '—' : d.toLocaleString(); }
-  function fmtTime(iso) { if (!iso) return '—'; var d = new Date(iso); return isNaN(d) ? '—' : d.toLocaleTimeString(); }
+  function escHtml(s) { if (s == null) return ''; var d = document.createElement('div'); d.textContent = String(s); return d.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+  function shortId(u) { return u ? u.substring(0, 8) : '\u2014'; }
+  function fmtDate(iso) { if (!iso) return '\u2014'; var d = new Date(iso); return isNaN(d) ? '\u2014' : d.toLocaleString(); }
+  function fmtTime(iso) { if (!iso) return '\u2014'; var d = new Date(iso); return isNaN(d) ? '\u2014' : d.toLocaleTimeString(); }
   function fmtDur(startIso, endIso) {
-    if (!startIso) return '—';
+    if (!startIso) return '\u2014';
     var s = new Date(startIso);
     var e = endIso ? new Date(endIso) : new Date();
     var ms = e - s;
-    if (ms < 0) return '—';
+    if (ms < 0) return '\u2014';
     if (ms < 1000) return ms + 'ms';
     var sec = ms / 1000;
     if (sec < 60) return sec.toFixed(1) + 's';
@@ -312,14 +367,15 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
     var blob = new Blob([content], { type: mime });
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
+    a.href = url; a.download = filename;
     document.body.appendChild(a); a.click();
     setTimeout(function () { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
   }
+  function qScoreClass(s) { return s >= 80 ? 'q-good' : s >= 60 ? 'q-warn' : 'q-bad'; }
 
   /* ── State ──────────────────────────────────────────────────── */
   var allJobs = [];
+  var prevJobStatusMap = {};   // jobId → status (for transition detection)
   var statusFilter = '';
   var selectedJobId = null;
   var pollTimer = null;
@@ -339,11 +395,21 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
     fetch(GW + '/api/standardization/jobs')
       .then(function (r) { return r.json(); })
       .then(function (jobs) {
+        // Detect transitions to QUALITY_BLOCKED
+        jobs.forEach(function (j) {
+          var prev = prevJobStatusMap[j.jobId];
+          if (prev && prev !== 'QUALITY_BLOCKED' && j.status === 'QUALITY_BLOCKED') {
+            toast('Job blocked \u2014 quality check failed (score: ' + (j.qualityScore != null ? j.qualityScore : '?') + ')', 'error');
+          }
+        });
+        // Update previous status map
+        prevJobStatusMap = {};
+        jobs.forEach(function (j) { prevJobStatusMap[j.jobId] = j.status; });
         allJobs = jobs;
         renderTable();
       })
       .catch(function () {
-        $('#job-tbody').innerHTML = '<tr><td colspan="8" class="empty-state">Could not load jobs</td></tr>';
+        $('#job-tbody').innerHTML = '<tr><td colspan="9" class="empty-state">Could not load jobs</td></tr>';
       });
   }
 
@@ -352,22 +418,29 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
     pollTimer = setInterval(loadJobs, 3000);
   }
 
+  /* ── Render quality score cell ──────────────────────────────── */
+  function renderQualityCell(job) {
+    if (job.qualityScore == null) return '\u2014';
+    var cls = qScoreClass(job.qualityScore);
+    var warn = job.status === 'QUALITY_BLOCKED' ? '<span class="q-warn-icon">\u26A0</span>' : '';
+    return '<span class="q-score ' + cls + '">' + warn + job.qualityScore + '</span>';
+  }
+
   function renderTable() {
     var filtered = statusFilter
       ? allJobs.filter(function (j) { return j.status === statusFilter; })
       : allJobs;
 
-    // sort: running/queued first, then by createdAt desc
-    var order = { PROCESSING: 0, QUEUED: 1, COMPLETED: 2, FAILED: 3 };
+    var order = { PROCESSING: 0, QUEUED: 1, QUALITY_BLOCKED: 2, COMPLETED: 3, FAILED: 4 };
     filtered.sort(function (a, b) {
-      var o = (order[a.status] || 9) - (order[b.status] || 9);
+      var o = (order[a.status] != null ? order[a.status] : 9) - (order[b.status] != null ? order[b.status] : 9);
       if (o !== 0) return o;
       return new Date(b.createdAt) - new Date(a.createdAt);
     });
 
     var tbody = $('#job-tbody');
     if (!filtered.length) {
-      tbody.innerHTML = '<tr><td colspan="8" class="empty-state">No jobs found</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="9" class="empty-state">No jobs found</td></tr>';
       return;
     }
 
@@ -380,6 +453,7 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
         '<td><span class="status-badge ' + escHtml(j.status) + '">' + escHtml(j.status) + '</span></td>' +
         '<td><div class="progress-track"><div class="progress-fill" style="width:' + pct + '%"></div></div><div class="progress-text">' + pct + '%</div></td>' +
         '<td>' + (j.processedRecords || 0) + ' / ' + (j.totalRecords || 0) + '</td>' +
+        '<td>' + renderQualityCell(j) + '</td>' +
         '<td>' + (j.errorCount || 0) + '</td>' +
         '<td style="font-size:.74rem">' + fmtTime(j.startedAt) + '</td>' +
         '<td style="font-size:.74rem">' + fmtDur(j.startedAt, j.completedAt) + '</td>' +
@@ -397,14 +471,26 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
   /* ── Detail drawer ──────────────────────────────────────────── */
   function openDrawer(jobId) {
     selectedJobId = jobId;
-    renderTable(); // highlight
+    renderTable();
     var job = allJobs.find(function (j) { return j.jobId === jobId; });
     if (!job) return;
 
-    var traceId = jobId; // use jobId as trace correlation
+    var traceId = jobId;
     var dc = $('#drawer-content');
 
     var html = '<div class="drawer-header"><h2>Job ' + shortId(jobId) + '</h2></div>';
+
+    // Quality summary line for non-blocked jobs
+    if (job.status !== 'QUALITY_BLOCKED' && job.qualityScore != null) {
+      var qCls = qScoreClass(job.qualityScore);
+      var qLabel = job.qualityStatus || '';
+      html += '<div class="quality-summary">' +
+        'Quality: <strong class="q-score ' + qCls + '">' + job.qualityScore + '</strong>' +
+        (qLabel ? ' \u2014 <span class="q-score ' + qCls + '">' + escHtml(qLabel) + '</span>' : '') +
+        '<a href="data-quality.html?datasetId=' + job.datasetId + '">View quality report</a>' +
+      '</div>';
+    }
+
     html += '<div class="detail-grid">';
     html += detailItem('Job ID', jobId, true);
     html += detailItem('Dataset ID', job.datasetId, true);
@@ -418,31 +504,90 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
     html += detailItem('X-Trace-Id', traceId, true);
     html += '</div>';
 
+    // QUALITY_BLOCKED: show report section + footer
+    if (job.status === 'QUALITY_BLOCKED') {
+      html += '<div class="section-title">Quality Report</div>';
+      html += '<div id="qr-section">' +
+        '<div class="skeleton sk-tall"></div><div class="skeleton"></div><div class="skeleton"></div>' +
+      '</div>';
+      html += '<div class="drawer-footer" id="qb-footer">' +
+        '<a class="btn btn-ghost btn-sm" id="btn-view-full-report" href="#">View Full Report</a>' +
+        '<button class="btn btn-danger btn-sm" id="btn-resubmit-skip">Resubmit (skip quality check)</button>' +
+      '</div>';
+    }
+
     if (job.status === 'FAILED') {
       html += '<div class="section-title">Error</div>';
-      html += '<div class="error-box" id="error-box">Loading error details…</div>';
+      html += '<div class="error-box" id="error-box">Loading error details\u2026</div>';
     }
 
     if (job.status === 'COMPLETED') {
       html += '<div class="section-title">Result</div>';
       html += '<div class="export-bar">' +
-        '<button class="btn btn-success btn-sm" id="btn-export-csv">⬇ Export CSV</button>' +
-        '<button class="btn btn-success btn-sm" id="btn-export-json">⬇ Export JSON</button>' +
+        '<button class="btn btn-success btn-sm" id="btn-export-csv">\u2B07 Export CSV</button>' +
+        '<button class="btn btn-success btn-sm" id="btn-export-json">\u2B07 Export JSON</button>' +
       '</div>';
-      html += '<div class="result-table-wrap" id="result-wrap">Loading results…</div>';
+      html += '<div class="result-table-wrap" id="result-wrap">Loading results\u2026</div>';
     }
 
     dc.innerHTML = html;
 
-    // bind copy buttons
+    // bind copy
     dc.querySelectorAll('.copy-btn').forEach(function (btn) {
-      btn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        copyText(this.dataset.copy);
-      });
+      btn.addEventListener('click', function (e) { e.stopPropagation(); copyText(this.dataset.copy); });
     });
 
-    // fetch result for COMPLETED or error for FAILED
+    // QUALITY_BLOCKED: fetch quality report
+    if (job.status === 'QUALITY_BLOCKED' && job.qualityReportId) {
+      var reportLink = $('#btn-view-full-report');
+      if (reportLink) reportLink.href = 'data-quality.html?reportId=' + job.qualityReportId;
+
+      fetch(GW + '/api/quality/reports/' + job.qualityReportId + '/full')
+        .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function (report) { renderQualityReportSection(report, job); })
+        .catch(function () {
+          var sec = $('#qr-section');
+          if (sec) sec.innerHTML = '<div class="empty-state">Could not load quality report</div>';
+        });
+
+      // Resubmit button
+      var resubBtn = $('#btn-resubmit-skip');
+      if (resubBtn) {
+        resubBtn.addEventListener('click', function () {
+          if (!confirm('This will skip quality validation. The output data may contain the issues listed above. Continue?')) return;
+          var rb = this;
+          rb.disabled = true;
+          rb.innerHTML = '<span class="spinner"></span> Resubmitting\u2026';
+          var payload = {
+            datasetId: job.datasetId,
+            skipQualityCheck: true
+          };
+          // Carry forward original rule config from job if available
+          if (job.ruleSetId) payload.ruleSetId = job.ruleSetId;
+          if (job.ruleIds) {
+            try {
+              var ids = typeof job.ruleIds === 'string' ? JSON.parse(job.ruleIds) : job.ruleIds;
+              if (Array.isArray(ids) && ids.length) payload.ruleIds = ids;
+            } catch (e) {}
+          }
+          fetch(GW + '/api/standardization/process', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          })
+            .then(function (r) { if (!r.ok) return r.text().then(function (t) { throw new Error(t); }); return r.json(); })
+            .then(function (data) {
+              toast('New job submitted: ' + shortId(data.jobId) + ' (quality check skipped)');
+              closeDrawer();
+              loadJobs();
+            })
+            .catch(function (e) { toast('Resubmit failed: ' + e.message, 'error'); })
+            .finally(function () { rb.disabled = false; rb.textContent = 'Resubmit (skip quality check)'; });
+        });
+      }
+    }
+
+    // COMPLETED / FAILED: fetch result
     if (job.status === 'COMPLETED' || job.status === 'FAILED') {
       fetch(GW + '/api/standardization/jobs/' + jobId + '/result')
         .then(function (r) { return r.json(); })
@@ -469,6 +614,43 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
     $('#detail-drawer').classList.add('open');
   }
 
+  /* ── Render quality report section in drawer ────────────────── */
+  function renderQualityReportSection(report, job) {
+    var sec = $('#qr-section');
+    if (!sec) return;
+    var sc = report.qualityScore != null ? report.qualityScore : (job.qualityScore || 0);
+    var scCls = qScoreClass(sc);
+
+    var html = '<div class="qr-stat-cards">' +
+      '<div class="qr-stat-card"><div class="qr-val ' + scCls + '">' + sc + '</div><div class="qr-lbl">Score</div></div>' +
+      '<div class="qr-stat-card"><div class="qr-val">' + (report.totalRecords || 0) + '</div><div class="qr-lbl">Records</div></div>' +
+      '<div class="qr-stat-card"><div class="qr-val">' + (report.duplicateCount || 0) + '</div><div class="qr-lbl">Duplicates</div></div>' +
+      '<div class="qr-stat-card"><div class="qr-val">' + (report.ruleResults ? report.ruleResults.length : 0) + '</div><div class="qr-lbl">Rules Run</div></div>' +
+    '</div>';
+
+    var failed = (report.ruleResults || []).filter(function (rr) { return !rr.passed; });
+    if (failed.length) {
+      html += '<div style="font-size:.72rem;font-weight:600;color:var(--color-text-dim);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em">Failed Rules (' + failed.length + ')</div>';
+      html += failed.map(function (rr) {
+        var sevClass = rr.severity === 'ERROR' ? 'qr-error' : 'qr-warning';
+        return '<div class="qr-fail-card ' + sevClass + '">' +
+          '<div class="qr-fr-name">' + escHtml(rr.ruleName) + '</div>' +
+          '<div class="qr-fr-meta">' +
+            '<span style="font-family:var(--font-mono)">' + escHtml(rr.columnName) + '</span> \u00B7 ' +
+            escHtml(rr.severity) + ' \u00B7 ' +
+            (rr.failRatePct != null ? rr.failRatePct.toFixed(1) + '% fail' : '') +
+            (rr.failCount ? ' \u00B7 ' + rr.failCount + ' values' : '') +
+          '</div>' +
+          (rr.message ? '<div class="qr-fr-msg">' + escHtml(rr.message) + '</div>' : '') +
+        '</div>';
+      }).join('');
+    } else {
+      html += '<div style="text-align:center;padding:12px;color:var(--color-green);font-weight:600">\u2705 All rules passed</div>';
+    }
+
+    sec.innerHTML = html;
+  }
+
   function detailItem(label, value, copyable, isHtml) {
     var valHtml;
     if (isHtml) {
@@ -476,7 +658,7 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
     } else if (typeof value === 'string' && value.length > 20) {
       valHtml = '<span title="' + escHtml(value) + '">' + escHtml(value) + '</span>';
     } else {
-      valHtml = escHtml(value == null ? '—' : String(value));
+      valHtml = escHtml(value == null ? '\u2014' : String(value));
     }
     var copyBtn = copyable ? '<button class="copy-btn" data-copy="' + escHtml(typeof value === 'string' ? value : '') + '">copy</button>' : '';
     return '<div class="detail-item"><div class="detail-label">' + escHtml(label) + '</div><div class="detail-value">' + valHtml + copyBtn + '</div></div>';
@@ -486,11 +668,8 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
     var wrap = $('#result-wrap');
     if (!wrap) return;
     if (!records.length) { wrap.innerHTML = '<div class="empty-state">No records</div>'; return; }
-    var cols = [];
-    var colSet = {};
-    records.forEach(function (r) {
-      Object.keys(r).forEach(function (k) { if (!colSet[k]) { colSet[k] = true; cols.push(k); } });
-    });
+    var cols = []; var colSet = {};
+    records.forEach(function (r) { Object.keys(r).forEach(function (k) { if (!colSet[k]) { colSet[k] = true; cols.push(k); } }); });
     var maxR = Math.min(records.length, 100);
     var html = '<table class="result-table"><thead><tr>';
     cols.forEach(function (c) { html += '<th>' + escHtml(c) + '</th>'; });
@@ -539,6 +718,7 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
   var datasetsCache = [];
   var rulesCache = [];
   var ruleSetsCache = [];
+  var qualityRuleSetsCache = [];
 
   function openModal() {
     modalStep = 0;
@@ -546,6 +726,10 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
     pickedRuleIds = [];
     pickedRuleSetId = null;
     $('#rset-pick').value = '';
+    $('#qrset-pick').value = '';
+    $('#block-toggle').checked = true;
+    $('#block-toggle').disabled = true;
+    $('#warn-threshold').value = '';
     $('#preview-container').innerHTML = '';
     showStep(0);
     loadModalData();
@@ -569,6 +753,17 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
   $('#btn-step2').addEventListener('click', function () { if (pickedDatasetId) showStep(1); });
   $('#btn-back1').addEventListener('click', function () { showStep(0); });
 
+  // Quality rule set dropdown controls the toggle
+  $('#qrset-pick').addEventListener('change', function () {
+    var hasQrs = !!this.value;
+    var toggle = $('#block-toggle');
+    toggle.disabled = !hasQrs;
+    if (!hasQrs) {
+      toggle.checked = true; // reset default
+    }
+    $('#block-toggle-wrap').title = hasQrs ? '' : 'Requires a quality rule set to be selected';
+  });
+
   function loadModalData() {
     // datasets
     fetch(GW + '/api/ingestion/datasets').then(function (r) { return r.json(); }).then(function (ds) {
@@ -578,7 +773,7 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
       el.innerHTML = ds.map(function (d) {
         return '<div class="select-card" data-dsid="' + d.datasetId + '">' +
           '<div class="sc-name">' + escHtml(d.name) + '</div>' +
-          '<div class="sc-meta">' + d.recordCount + ' records · ' + escHtml(d.sourceType) + ' · ' + escHtml(d.status) + '</div>' +
+          '<div class="sc-meta">' + d.recordCount + ' records \u00B7 ' + escHtml(d.sourceType) + ' \u00B7 ' + escHtml(d.status) + '</div>' +
         '</div>';
       }).join('');
       el.querySelectorAll('.select-card').forEach(function (card) {
@@ -614,7 +809,7 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
       $('#rule-pick-list').innerHTML = '<div class="empty-state">Failed to load rules</div>';
     });
 
-    // rule sets
+    // standardization rule sets
     fetch(GW + '/api/rules/rulesets').then(function (r) { return r.json(); }).then(function (rsets) {
       ruleSetsCache = rsets;
       var sel = $('#rset-pick');
@@ -622,6 +817,23 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
       rsets.forEach(function (rs) {
         sel.innerHTML += '<option value="' + rs.id + '">' + escHtml(rs.name) + ' (' + (rs.ruleIds ? rs.ruleIds.length : 0) + ' rules)</option>';
       });
+    }).catch(function () {});
+
+    // quality rule sets
+    fetch(GW + '/api/quality/rulesets').then(function (r) { return r.json(); }).then(function (qrsets) {
+      qualityRuleSetsCache = qrsets;
+      var sel = $('#qrset-pick');
+      sel.innerHTML = '<option value="">None (skip quality check)</option>';
+      qrsets.forEach(function (rs) {
+        var cnt = rs.ruleIds ? rs.ruleIds.length : (rs.rules ? rs.rules.length : 0);
+        sel.innerHTML += '<option value="' + rs.id + '">' + escHtml(rs.name) + ' (' + cnt + ' rules)</option>';
+      });
+      // Default to first active if available
+      if (qrsets.length) {
+        sel.value = qrsets[0].id;
+        $('#block-toggle').disabled = false;
+        $('#block-toggle-wrap').title = '';
+      }
     }).catch(function () {});
   }
 
@@ -636,9 +848,8 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
 
     var btn = this;
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span> Previewing…';
+    btn.innerHTML = '<span class="spinner"></span> Previewing\u2026';
 
-    // Fetch original records first
     var t0 = Date.now();
     Promise.all([
       fetch(GW + '/api/ingestion/datasets/' + pickedDatasetId).then(function (r) { return r.json(); }),
@@ -655,7 +866,6 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
       try { original = JSON.parse(ds.rawData || '[]').slice(0, 10); } catch (e) {}
       var container = $('#preview-container');
       if (typeof PreviewPanel !== 'undefined') {
-        // Build changedFields map from selected rules
         var cfMap = {};
         rulesCache.forEach(function (r) {
           if (pickedRuleIds.indexOf(r.id) !== -1) cfMap[r.fieldName] = r.name;
@@ -687,9 +897,18 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
     else if (pickedRuleIds.length) { payload.ruleIds = pickedRuleIds; }
     else { toast('Select rules or a rule set', 'error'); return; }
 
+    // Quality gate fields
+    var qrsVal = $('#qrset-pick').value;
+    if (qrsVal) {
+      payload.qualityRuleSetId = qrsVal;
+      payload.skipQualityCheck = !$('#block-toggle').checked;
+    } else {
+      payload.skipQualityCheck = true;
+    }
+
     var btn = this;
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span> Submitting…';
+    btn.innerHTML = '<span class="spinner"></span> Submitting\u2026';
 
     fetch(GW + '/api/standardization/process', {
       method: 'POST',

@@ -1,0 +1,64 @@
+server:
+  port: 8085
+
+spring:
+  application:
+    name: data-quality-service
+  datasource:
+    url: jdbc:h2:mem:qualitydb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
+
+feign:
+  client:
+    config:
+      default:
+        connect-timeout: 5000
+        read-timeout: 10000
+  micrometer:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  tracing:
+    sampling:
+      probability: 1.0
+    propagation:
+      type: w3c,b3
+
+logging:
+  loki:
+    url: http://localhost:3100/loki/api/v1/push
+  level:
+    com.datastd.quality: DEBUG
+    com.datastd.quality.client: DEBUG
+
+# ── Quality Report Retention ──────────────────────────────────────
+quality:
+  report:
+    retention-days: 90
+

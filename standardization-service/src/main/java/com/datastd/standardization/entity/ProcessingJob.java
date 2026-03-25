@@ -37,6 +37,16 @@ public class ProcessingJob {
     @Column(columnDefinition = "CLOB")
     private String errorLog;
 
+    private UUID qualityReportId;
+
+    private Integer qualityScore;
+
+    private String qualityStatus;
+
+    private boolean skipQualityCheck;
+
+    private UUID qualityRuleSetId;
+
     private LocalDateTime startedAt;
     private LocalDateTime completedAt;
 
@@ -44,7 +54,7 @@ public class ProcessingJob {
     private LocalDateTime createdAt;
 
     public enum JobStatus {
-        QUEUED, PROCESSING, COMPLETED, FAILED
+        QUEUED, PROCESSING, COMPLETED, FAILED, QUALITY_BLOCKED
     }
 
     @PrePersist
@@ -156,6 +166,46 @@ public class ProcessingJob {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public UUID getQualityReportId() {
+        return qualityReportId;
+    }
+
+    public void setQualityReportId(UUID qualityReportId) {
+        this.qualityReportId = qualityReportId;
+    }
+
+    public Integer getQualityScore() {
+        return qualityScore;
+    }
+
+    public void setQualityScore(Integer qualityScore) {
+        this.qualityScore = qualityScore;
+    }
+
+    public String getQualityStatus() {
+        return qualityStatus;
+    }
+
+    public void setQualityStatus(String qualityStatus) {
+        this.qualityStatus = qualityStatus;
+    }
+
+    public boolean isSkipQualityCheck() {
+        return skipQualityCheck;
+    }
+
+    public void setSkipQualityCheck(boolean skipQualityCheck) {
+        this.skipQualityCheck = skipQualityCheck;
+    }
+
+    public UUID getQualityRuleSetId() {
+        return qualityRuleSetId;
+    }
+
+    public void setQualityRuleSetId(UUID qualityRuleSetId) {
+        this.qualityRuleSetId = qualityRuleSetId;
     }
 }
 

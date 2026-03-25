@@ -1,0 +1,301 @@
+customer_id,full_name,email,phone,gender,date_of_birth,city,state,pincode,customer_since,segment
+ef7d3a75-864c-468a-8fa3-313066cdd90c,Zara Garcia,zara.garcia32@hotmail.com,88532-132-1488,,2003-12-05,Surat,Gujarat,127824,2024-04-17,Standard
+e8b0503c-cb98-41bb-b64b-4892afdc3a1c,Ayaan Yamamoto,ayaan.yamamoto76@company.com,+91803842594527,Female,28/04/1969,Delhi,Delhi,476417,2021-11-09,standard
+2eff4c1f-f289-4b33-a2a8-410546cf33c0,Amara Thomas,amara.thomas49@yahoo.com,76821-171-1750,Other,"June 12, 1987",Delhi,Delhi,996865,2020-08-11,
+3c5a7ac1-d8e8-4ed0-845c-795a473990f4,Layla Thomas,layla.thomas46@hotmail.com,90275-646-5010,Male,"May 28, 1961",Bhopal,Madhya Pradesh,771088,2024-03-31,Standard
+76a77641-6d08-4ba2-8fa9-2c951ff56190,Freya Chen,freya.chen41mail.org,90611-505-8517,Male,03/26/1983,Kanpur,Uttar Pradesh,688637,2024-01-17,Basic
+ea1bc63c-dcb7-4762-83b0-5f285ed21c61,Rahul Banerjee,rahul.banerjee18,N/A,Female,1959-03-24,Surat,Gujarat,590785,2023-12-08,Basic
+e9f3471c-acfd-4c03-a80e-d11380139fff,Aarav Garcia,aarav.garcia99@email.net,70839-996-5315,,10/03/1969,Bhopal,Madhya Pradesh,211579,2021-05-07,
+2d104606-9cff-43d4-92b3-f27a5d074af0,Vikram Kapoor,vikram.kapoor21@work.co,80600-119-2832,Male,"January 19, 1955",Hyderabad,Telangana,160738,2020-09-13,standard
+b00fd280-bb8d-408d-9fa5-b1264e5f1b68,Bhavna Wang,bhavna.wang69@outlook.com,86993-721-7932,Male,24-10-1969,Kanpur,Uttar Pradesh,426858,2022-06-23,BASIC
+98bea56d-bcb4-4db3-a4c6-e04a65746170,Riya Wilson,riya.wilson29yahoo.com,771071721964,Other,"August 24, 1975",Indore,Madhya Pradesh,446479,2018-10-18,standard
+4665a165-1fa2-46d3-bced-8e2011dd5da2,Amir Wang,amir.wang93@domain.io,76196-199-8062,Other,07/06/1997,Indore,Madhya Pradesh,864491,2018-08-10,BASIC
+ece7a55b-1fad-4c3d-8c4b-79af0463dd10,Aditi Fernandez,aditi.fernandez44@yahoo.com,74532-287-5563,Female,11/02/2003,Ahmedabad,Gujarat,947272,2024-03-04,Premium
+dbaf8d33-0f79-4730-a47f-a7b260500e15,Sunita Ahmed,sunita.ahmed31@outlook.com,98160-268-7209,Female,06/03/1974,Bhopal,Madhya Pradesh,922157,2023-02-07,Basic
+28d84aa6-a1da-416c-bd50-b8206091dd8e,Chioma Zhang,chioma.zhang38@hotmail.com,93421-158-1821,Female,2003-08-23,Mumbai,Maharashtra,632496,2018-11-25,
+bcd940ac-a016-404f-a1ff-3311c8a6b56f,Vikram Das,vikram.das73@hotmail.com,91697-678-9565,Female,10/05/1962,Lucknow,Uttar Pradesh,850981,2021-07-10,Standard
+7682a86b-4677-4620-83b7-f76ca7ad0e5b,Deepa Mohammed,deepa.mohammed97@yahoo.com,87318-618-5345,Other,1963-12-21,Bhopal,Madhya Pradesh,356150,2022-02-22,Basic
+d9eb23a5-6d1e-4696-828e-20099f3f9459,Sunita Mohammed,sunita.mohammed84@work.co,98237-370-2891,Male,1981-11-10,Chennai,Tamil Nadu,395442,2024-10-13,Standard
+3c5ef9eb-7457-4d71-b965-21d568a50c4b,Ifeoma Lee,ifeoma.lee7@yahoo.com,70441-889-3143,Other,1979-10-28,Kanpur,Uttar Pradesh,563298,2024-03-09,BASIC
+09f9429b-0dce-4d6d-bf88-e6745b0a3040,Aarav Garcia,N/A,87251-540-3088,Female,"February 15, 1988",Bhopal,Madhya Pradesh,475190,2020-05-10,BASIC
+6114a979-8f22-4dd5-98fc-dfc7a64c1db5,Carlos Rao,carlos.rao53@domain.io,95930-281-7755,Female,03/28/1976,Nagpur,Maharashtra,531712,2020-10-13,Basic
+4fc043f2-b966-4647-a73b-ed18e27e12c6,Ayaan Fernandez,ayaan.fernandez61@hotmail.com,799409144728,Female,18-04-1996,Kolkata,West Bengal,444207,2021-02-15,
+24edb80f-e912-4732-8489-c602793804b2,Freya Mehta,freya.mehta52@work.co,75694-371-1626,Female,07-05-1965,Kanpur,Uttar Pradesh,924629,2021-07-08,  Premium 
+5ac61b89-b56a-466c-b361-a5c17e463f6f,Shreya Garcia,shreya.garcia25@company.com,99925-651-4228,Male,"February 25, 1955",Surat,Gujarat,429164,2019-05-26,BASIC
+70f39f43-f2c9-4d7d-85a5-b4aa10758b1e,Shreya Mohammed,N/A,91866-278-5930,Male,20/09/1992,Chennai,Tamil Nadu,400850,2020-05-10,  Premium 
+a0f5ef0c-b0f0-4f38-bbd0-d97e9e7492e1,Vikram Nguyen,vikram.nguyen87@hotmail.com,79627-779-6491,Male,1970-03-23,Lucknow,Uttar Pradesh,425498,2020-07-09,
+fbc6ca9b-2688-4096-928d-2af667d88bc2,Aisha Chakraborty,aisha.chakraborty79@yahoo.com,85509-349-3417,Male,11/06/1972,Nagpur,Maharashtra,545798,2020-06-15,Standard
+e9e5c565-29b6-4e89-b731-0dce7b09dbd7,  Ayaan Wilson  ,ayaan.wilson32,87709-424-8251,,"September 07, 1996",Kolkata,West Bengal,970914,2024-02-23,  Premium 
+d842d629-f210-4fb6-9fd3-790aea5d8f6b,Dalia Verma,dalia.verma32@company.com,78550-179-5681,Male,06/23/1998,Bhopal,Madhya Pradesh,666390,2018-11-27,Standard
+fef37fdb-448a-4579-b7d5-1ef1326676da,OLIVIA HASSAN,olivia.hassan53@email.net,96530-498-1320,Female,08/02/1960,Pune,Maharashtra,413118,2022-05-17,
+e665a3b3-035f-455e-9133-0807ec55d678,Priya Yamamoto,priya.yamamoto29@corporate.in,82444-784-7624,Other,1998-07-27,Bhopal,Madhya Pradesh,233827,2024-12-23,standard
+dbaf8d33-0f79-4730-a47f-a7b260500e15,Uma Ali,uma.ali55@outlook.com,82435-316-8449,Female,06-07-1959,Chennai,Tamil Nadu,888539,2022-09-23,Basic
+7da04f00-2677-4e59-a0df-192a92e8d47c,,none,77304-959-1333,Other,1958-08-12,Ahmedabad,Gujarat,801978,2019-04-14,standard
+79c29c32-a2cb-4704-a2c6-317b10358703,Rohan Lee,rohan.lee78@yahoo.com,88126-419-7149,Other,1982-11-27,Delhi,Delhi,720859,2020-09-21,Premium
+6a8d79c3-98b7-4b99-a03b-f833db672173,Meera Chowdhury,meera.chowdhury73@gmail.com,86763-449-1207,Male,1988-03-30,Kolkata,West Bengal,479781,2023-02-27,BASIC
+a599ece4-fc5a-4491-9f9e-3995e7bcc2cc,Fatima Wilson,fatima.wilson69@corporate.in,97351-950-2419,Other,29-01-1979,Nagpur,Maharashtra,587282,2024-05-23,standard
+1c1ad08d-fa5f-4967-add2-bc12e8d6f5f9,Nadia Bose,nadia.bose24@corporate.in,N/A,Male,06-03-1978,Delhi,Delhi,353080,2022-07-23,  Premium 
+7fe7fb4d-6c6e-4c33-b22c-dad23d994ed1,Kavya Verma,kavya.verma3@yahoo.com,91695-477-8753,Male,29-10-1976,Kanpur,Uttar Pradesh,677124,2021-09-16,Basic
+089f3ddf-6d72-4df7-9455-4140824bd9ca,Layla Mohammed,layla.mohammed93hotmail.com,76321-856-8933,Male,01/28/2003,Delhi,Delhi,973074,2020-03-06,Basic
+cb17e79a-5718-48cb-a537-4d53a577a996,Fatima Mohammed,fatima.mohammed17@company.com,90989-870-9042,Male,03/17/1981,Ahmedabad,Gujarat,601968,2022-12-10,Basic
+3ecc93cd-a135-4354-8bde-60f5230f3312,  Arjun Lee  ,arjun.lee9,74930-676-5978,Male,10/23/1959,Jaipur,Rajasthan,901577,2022-09-01,standard
+c2dbcadd-c494-47f9-bb11-a2cf8e2085c2,Yuki Kim,yuki.kim57@company.com,88735-161-2625,Female,21-06-1993,Lucknow,Uttar Pradesh,185131,2019-10-06,Standard
+c0f464f0-f676-46e8-b061-cdaf88b43623,Ayesha Iyer,ayesha.iyer89@domain.io,92389-819-8438,Female,08-10-1975,Nagpur,Maharashtra,929683,2024-08-12,BASIC
+61b590d1-bf0d-4608-af5d-cb938d2b9d34,Hiroshi Srivastava,hiroshi.srivastava83@outlook.com,  75911-414-5728  ,Other,1961-05-28,Kanpur,Uttar Pradesh,522060,2021-01-20,standard
+b0a1f08b-35a9-487e-be8a-e46ebf6ae309,,riya.desai56@email.net,91956-981-1339,Female,03/12/1963,Nagpur,Maharashtra,893005,2019-12-19,  Premium 
+84493d17-39e2-4736-8810-7b3351b58fc5,Riya Mehta,riya.mehta56@corporate.in,80786-207-3634,m,20-08-1991,Chennai,Tamil Nadu,794769,2022-06-29,
+24603c05-730c-49c4-a972-cd25b20946d9,Amara Thomas,amara.thomas42@yahoo.com,  91990-655-8569  ,Other,2001-03-02,Surat,Gujarat,893188,2023-08-04,BASIC
+ad342e50-cfbf-4350-a8e1-add17b06214c,Arjun Khan,arjun.khan37@corporate.in,95345-826-3594,Other,"August 03, 1957",Delhi,Delhi,335615,2019-04-10,  Premium 
+191f4a17-fdbd-4c56-9054-a7cbb8f0b8ad,Aditi Hassan,aditi.hassan38@work.co,77567-664-3369,Female,15/04/1998,Indore,Madhya Pradesh,173201,2021-02-05,
+1496327e-c387-45bf-9bda-69dfe1c35bf4,Priya Patel,priya.patel1@company.com,84651-595-6654,Male,12/05/1998,Ahmedabad,Gujarat,437408,2020-02-12,BASIC
+cfb2837b-fbda-47f1-91de-fe05e5d77c15,  Olivia Kim  ,olivia.kim96@corporate.in,91911-940-3492,Other,15/03/1989,Jaipur,Rajasthan,718849,2021-09-21,
+30285f01-d924-45b7-82d4-2a803029f9bf,Riya Fernandez,riya.fernandez2@outlook.com,85900-371-6546,Other,1968-11-06,Indore,Madhya Pradesh,444525,2023-12-26,  Premium 
+75e887d6-79c3-4731-a998-f0b3a28f22f3,,zara.wang9@hotmail.com,93192-544-2612,Female,10/12/1980,Ahmedabad,Gujarat,274446,2021-05-11,Premium
+30285f01-d924-45b7-82d4-2a803029f9bf,Arjun Mishra,arjun.mishra19@hotmail.com,75180-724-7267,f,02/26/1971,Bhopal,Madhya Pradesh,711484,2019-08-10,Standard
+ba2367a7-e586-4376-85b0-b3a21c029f1c,Kenji Thomas,kenji.thomas60@company.com,81701-406-7951,Other,17/08/1961,Hyderabad,Telangana,503380,2023-06-03,Premium
+34b9287b-0692-4cab-9311-63ce0e2cbbb7,Tanvi Rao,tanvi.rao90@company.com,70679-985-1803,Female,05-07-1990,Nagpur,Maharashtra,937665,2020-07-31,standard
+e6ff553c-413b-42ef-adf4-f957d37acb78,James Kapoor,none,95551,Male,15-07-1958,Pune,Maharashtra,883790,2022-08-29,Standard
+9aa0dd34-8726-4980-8037-e68042a02480,Sunita Reddy,sunita.reddy35@outlook.com,93991-446-2886,Male,25-03-1998,Nagpur,Maharashtra,336574,2022-06-16,
+b08cbe9e-a0a6-4189-bb4f-0c6ea20f2bdd,  Nguyen Desai  ,nguyen.desai69@yahoo.com,82942-753-7086,M,"July 09, 1978",Mumbai,Maharashtra,749641,2024-04-18,Basic
+2c0c5016-74bc-417c-a2e5-44c9a598da6b,James Das,JAMES.DAS39@MAIL.ORG,N/A,Other,04-05-1958,Pune,Maharashtra,803055,2024-01-22,  Premium 
+76bceb14-d88b-4127-8ca1-db8ba27c6d43,Chioma Hassan,chioma.hassan63@domain.io,92479-322-8264,Other,1980-02-05,Delhi,Delhi,818987,2022-02-13,standard
+43f9dd4e-7078-49d0-9973-f22dd733cd4a,Aditi Rao,aditi.rao25@yahoo.com,90754-711-1349,Other,03/23/1963,Bangalore,Karnataka,925206,2024-05-01,Standard
+5f068029-2ed2-4188-9767-49b8150dad02,Elan Zhang,elan.zhang30@email.net,97248-233-9850,Female,03-04-1955,Lucknow,Uttar Pradesh,127032,2019-06-24,Premium
+b263dff9-1835-4f4f-a380-3d08f5e0c63c,kavya banerjee,kavya.banerjee34@gmail.com,93165-587-8344,Male,2002-03-13,Ahmedabad,Gujarat,628313,2020-06-26,standard
+30285f01-d924-45b7-82d4-2a803029f9bf,Amir Wilson,amir.wilson4@gmail.com,85829-554-2204,Female,1993-03-30,Delhi,Delhi,232321,2021-01-31,standard
+bbcd5ab6-07d1-4c7e-ab9f-22b5e138f966,Takeshi Nguyen,takeshi.nguyen68@company.com,95818-217-4522,Female,1993-08-05,Kolkata,West Bengal,455395,2023-02-01,  Premium 
+3536f4f6-676f-40be-a7b9-2d8ee3c312db,Carlos Nguyen,carlos.nguyen33@email.net,  72951-187-2527  ,Other,1997-07-19,Nagpur,Maharashtra,236435,2024-03-28,Premium
+d0444ca7-db07-41cf-9517-3605a3250cf2,Takeshi Zhang,takeshi.zhang53@email.net,79714-419-6761,Male,1992-12-10,Bangalore,Karnataka,788637,2023-05-30,Standard
+cce5449c-a992-4be3-aa37-60757ca66851,neha zhang,neha.zhang36@domain.io,99773-949-5381,Female,"May 10, 1957",Bhopal,Madhya Pradesh,456331,2021-12-08,Premium
+9a5ec73d-3f6b-448d-9444-1593883a59cf,  Divya Ali  ,divya.ali95@gmail.com,83564-449-3578,Other,20/04/1974,Nagpur,Maharashtra,695164,2024-09-08,Premium
+22b88d4f-332d-474d-8fb6-d730270e083e,,divya.iyer11@company.com,N/A,Other,"July 28, 1998",Delhi,Delhi,397005,2024-08-26,  Premium 
+d9bf775e-0cc2-4e43-8fef-b50a97144302,Meera Chakraborty,meera.chakraborty77@gmail.com,94361-396-6375,Other,12/13/1973,Bangalore,Karnataka,235461,2022-04-07,standard
+5e402bff-ba07-40df-ae6a-f9687d3a3060,shreya zhang,shreya.zhang95,88539-687-7626,Other,26-12-1961,Delhi,Delhi,524707,2018-03-27,Basic
+b9c3ca15-209d-4e54-9fb7-281edc2076a8,yuki thomas,yuki.thomas14@hotmail.com,82991-417-6562,Female,2002-01-03,Delhi,Delhi,635280,2019-04-13,standard
+685931e4-7f3e-4c8c-b940-95c4041d50a8,Freya Rao,  freya.rao83@outlook.com  ,75716-256-2234,m,12/18/1977,Ahmedabad,Gujarat,891093,2024-04-28,
+b1341267-192c-4e99-abc1-b1893c2f4fda,Ananya Ali,ananya.ali81@email.net,N/A,,25/01/1997,Delhi,Delhi,425486,2023-03-07,  Premium 
+191f4a17-fdbd-4c56-9054-a7cbb8f0b8ad,Liam Das,liam.das65@mail.org,99929-685-4084,Unknown,06/09/1958,Bangalore,Karnataka,164879,2023-01-20,Premium
+29dd23d7-5020-4824-9b0d-4f273fc04420,Nadia Desai,nadia.desai6@hotmail.com,86724-262-6962,Male,"June 03, 1994",Kolkata,West Bengal,912085,2021-10-17,BASIC
+29c5569c-fd87-4c51-b019-9721dd8cedd5,Zara Patel,zara.patel72@mail.org,72696-779-3317,Female,28-06-1968,Bangalore,Karnataka,723945,2018-12-14,Basic
+d154f0d1-9d4b-4318-98ac-ee1f6c004618,Aditi Patel,aditi.patel95@work.co,81118-471-6060,Male,"December 26, 1992",Nagpur,Maharashtra,609892,2020-02-26,Standard
+6e8fff06-63bb-49fe-b6c1-01bd6ddfbec8,Divya Das,divya.das13@work.co,91444-997-3147,Other,2002-03-28,Bangalore,Karnataka,971728,2019-11-10,BASIC
+b5310147-94d6-43d7-b8fe-23f7ea74d419,Priya Reddy,priya.reddy79@company.com,87344-416-8684,Female,04/11/1995,Ahmedabad,Gujarat,906814,2021-02-28,
+fb67f818-4aa5-45ba-8fa6-4834ef57d027,Sofia Smith,sofia.smith78@outlook.com,87205-828-9452,Other,11-02-1998,Chennai,Tamil Nadu,571145,2023-10-04,Standard
+625eb87e-ea61-4072-91bd-5fc2501d5cfc,Bhavna Kim,bhavna.kim4@mail.org,82183-483-4678,Female,07/19/1988,Indore,Madhya Pradesh,849421,2021-10-05,
+1b437a19-3c77-4a35-83f5-2abf0f79ce6a,Amara Mishra,amara.mishra18@corporate.in,78320-955-3449,Male,1962-02-09,Delhi,Delhi,913875,2021-03-26,Standard
+c2d39fa6-48f5-43ac-981f-44a75f419dc3,Arjun Kumar,ARJUN.KUMAR80@CORPORATE.IN,87116-747-9443,Male,"November 04, 1999",Chennai,Tamil Nadu,550089,2018-01-07,standard
+c157e433-3d73-458c-a578-189e4ecf4337,Tanvi Smith,tanvi.smith11work.co,86905-619-1333,Other,"March 12, 2002",Lucknow,Uttar Pradesh,505674,2022-03-10,Basic
+0a1da5d5-7f03-4b30-949f-4f87427ca719,Neha Das,neha.das85@yahoo.com,71460-659-6546,Female,10/30/1984,Kanpur,Uttar Pradesh,601776,2020-01-17,
+6167450f-a416-4f4d-8eb4-79d405245fff,Bilal Thomas,bilal.thomas6@hotmail.com,+91829346568756,Male,"October 26, 1982",Chennai,Tamil Nadu,474314,2018-07-15,
+e00a36f0-6a55-4ecc-b9bb-e39373f7f3fc,Layla Garcia,layla.garcia52@corporate.in,92609-476-9507,Male,05/10/1971,Delhi,Delhi,551524,2024-10-03,
+ac287634-610b-477c-a8d8-d6068bbd3e78,Liam Nguyen,liam.nguyen85@company.com,92554-459-8325,Male,03/24/1993,Surat,Gujarat,556068,2021-01-29,BASIC
+f384be10-cf83-4f8e-9e84-051df958a727,Arjun Das,arjun.das96@outlook.com,74168-341-7001,Other,1994-04-24,Surat,Gujarat,260891,2023-01-17,Basic
+ed1d4fb0-205f-4e52-a820-d60f5efcf1c5,Elan Das,elan.das47@mail.org,70853-290-9176,Male,1977-05-24,Chennai,Tamil Nadu,912609,2020-12-02,BASIC
+375db5cf-87ea-4beb-832b-48cd0f0c92f4,Yuki Mishra,yuki.mishra18@yahoo.com,95798-965-6236,Female,1994-12-07,Jaipur,Rajasthan,668507,2021-04-04,Basic
+c10b94d3-0225-4e5c-b905-9bd7074d0d35,Bilal Jain,bilal.jain16@hotmail.com,81667-686-7044,Male,1999-04-28,Surat,Gujarat,190403,2018-09-27,Basic
+86b5939e-05cc-4b92-a1dc-7335eb33abc6,Bilal Verma,BILAL.VERMA53@DOMAIN.IO,+91845777969476,Female,1983-06-11,Nagpur,Maharashtra,235300,2022-11-08,standard
+a30d2e6e-72d1-452c-9e9a-d584b968e986,Arjun Garcia,arjun.garcia22@outlook.com,86390-966-2292,Female,25-03-1975,Bangalore,Karnataka,755383,2021-05-25,standard
+89fc0fb2-45ae-4c40-b2e3-11f3cc4adf0c,Shreya Iyer,shreya.iyer20@outlook.com,71945-984-1464,Female,"April 16, 1985",Lucknow,Uttar Pradesh,321048,2024-06-01,  Premium 
+c0cf6579-df6f-487f-838c-0ad0460a171e,Aisha Wang,aisha.wang39@corporate.in,84174-805-1981,female,07-06-1991,Ahmedabad,Gujarat,313933,2021-10-25,standard
+0f5f03a5-ce26-4e7b-bd16-d6ff91d22737,Bilal Nguyen,bilal.nguyen17@email.net,842253738366,Male,08/18/1983,Chennai,Tamil Nadu,502810,2024-11-25,  Premium 
+d9999ba0-20b3-476d-b0a2-b282979c169e,Elena Nguyen,elena.nguyen25@outlook.com,98415-609-1379,,17/11/1996,Ahmedabad,Gujarat,352422,2020-05-31,standard
+b52f4ee1-cf0e-46f8-b5b1-f73fa7999216,Arjun Mishra,arjun.mishra84@corporate.in,74370-844-6992,Male,23/08/1964,Mumbai,Maharashtra,697983,2024-04-20,Standard
+70d77544-9891-4844-88bf-1d3acd702ea5,Liam Das,liam.das98@work.co,73503-482-6555,Male,08/29/1965,Hyderabad,Telangana,731728,2023-09-17,  Premium 
+aa02b004-2112-437b-9081-a7afcda9da2b,Amara Chakraborty,amara.chakraborty61@work.co,80727-426-3662,Female,04/01/2001,Surat,Gujarat,452713,2023-09-09,
+2e8e26e5-0cad-495e-9a4a-311b41aa8224,Sara Ali,sara.ali3@email.net,79915-842-1436,Female,"May 15, 1992",Kanpur,Uttar Pradesh,153849,2024-07-18,  Premium 
+00611bdd-4b1b-4d6c-8a40-1bcb992bb19f,Zara Dey,zara.dey88@hotmail.com,70551-421-7861,Female,11/10/1964,Kolkata,West Bengal,626195,2024-11-09,  Premium 
+223f411a-356b-4367-82ec-5b0f8ef77ad4,Dalia Chen,dalia.chen72@email.net,75570-645-6608,Female,21-10-1988,Surat,Gujarat,607699,2020-02-27,Standard
+895d8c57-80ce-49ea-b280-dbba158c10e9,Meera Kim,meera.kim91@hotmail.com,+91816739145480,Female,11/06/1983,Bhopal,Madhya Pradesh,513697,2021-11-14,
+f9ded513-f653-4464-8cb2-3c63f00ebd5f,Liam Chakraborty,liam.chakraborty11@email.net,76947-651-5442,Other,12/24/1997,Delhi,Delhi,745584,2024-07-31,Standard
+2d1efb70-bc6a-40a8-9ea1-ddbca4853c15,Amir Wilson,amir.wilson7@yahoo.com,91889-240-1084,Female,1997-05-19,Kolkata,West Bengal,784607,2023-05-03,  Premium 
+978c5e9a-a418-4d63-8732-29a4f627e983,Elan Mishra,elan.mishra8@yahoo.com,99279-527-3880,Other,2003-01-04,Nagpur,Maharashtra,619447,2020-02-03,BASIC
+76df1c70-45a9-48ea-963f-047aa0981e30,Liam Chakraborty,liam.chakraborty78@yahoo.com,85237-971-9261,Female,"September 28, 2003",Pune,Maharashtra,270387,2023-02-23,BASIC
+8703fb70-c894-4877-a460-38c3476f8c77,Fatima Ahmed,fatima.ahmed73@hotmail.com,86435,Other,19/05/1991,Ahmedabad,Gujarat,439320,2020-10-13,Premium
+cc04a095-81a5-47f4-975d-3a185d27f03e,Kavya Tanaka,kavya.tanaka39@domain.io,92341-163-2936,Female,19-06-1978,Lucknow,Uttar Pradesh,626930,2021-06-27,BASIC
+08661c3e-fdb6-43bc-87fe-9fea60d05a06,Liam Reddy,liam.reddy18@corporate.in,92662-582-9806,Male,08/07/1988,Lucknow,Uttar Pradesh,891401,2024-09-06,
+f9cd5298-800d-4b8a-855c-99624971f666,Sofia Tanaka,SOFIA.TANAKA10@DOMAIN.IO,88649-253-3695,Other,05/07/2000,Delhi,Delhi,813341,2020-04-21,BASIC
+eb445e52-9bfe-4472-b6ca-1692bd224cab,Bhavna Williams,bhavna.williams59@outlook.com,84788,Other,"March 06, 1960",Indore,Madhya Pradesh,103161,2020-06-11,standard
+3a4a2a26-58fd-444a-b7d7-34f08dc7f3f9,Rahul Rao,rahul.rao8,94238-884-7887,Female,09/06/1991,Ahmedabad,Gujarat,495833,2022-03-19,Premium
+56e58f87-7309-4a05-9891-eb02431a7df6,Amir Yamamoto,amir.yamamoto45@yahoo.com,74845-328-1056,Female,"April 06, 1990",Lucknow,Uttar Pradesh,854024,2024-02-09,  Premium 
+be9e9fd2-e115-4215-9830-7005309fecc4,James Kumar,james.kumar36@hotmail.com,898841164943,Other,21/11/1957,Ahmedabad,Gujarat,726822,2018-07-19,Standard
+c92e3174-8872-4b4c-8987-a27db5f91a4d,Patel Tanaka,patel.tanaka97@gmail.com,96849-689-6224,Female,12/13/1980,Hyderabad,Telangana,416422,2019-08-10,BASIC
+33df32cb-4248-448a-917d-595e897c717b,priya mohammed,priya.mohammed76@outlook.com,81758-787-7244,Female,1999-06-19,Kolkata,West Bengal,256466,2021-05-13,  Premium 
+8e5b67cd-6769-4a50-ae65-fb93fdc35a00,Sunita Verma,sunita.verma39@outlook.com,83526-670-9683,Other,"March 03, 1960",Hyderabad,Telangana,446305,2018-11-20,  Premium 
+6daeecfe-5f42-4282-ae26-e79bef377c12,BHAVNA YAMAMOTO,N/A,95879-701-4555,Female,07/12/1961,Chennai,Tamil Nadu,116078,2020-05-17,Standard
+2e882319-76d6-4601-b7cf-23e088857a40,Chen Verma,chen.verma91@hotmail.com,82577-646-6886,f,08-11-1983,Ahmedabad,Gujarat,203398,2023-04-08,
+28747dce-1b8e-482c-9ef2-6567ff8c16ba,Ifeoma Reddy,ifeoma.reddy73@hotmail.com,99698-693-7841,Male,"May 25, 1978",Hyderabad,Telangana,498290,2024-05-22,
+62d24624-943c-49b1-bf3f-c12737de38dd,Takeshi Patel,takeshi.patel63@corporate.in,74837-659-9000,Male,08/06/1986,Jaipur,Rajasthan,135466,2018-11-01,
+9804b83b-5631-4db7-9cf0-b76aaa5d95e0,Elan Ahmed,elan.ahmed81@hotmail.com,86566-482-1990,female,10/27/1955,Lucknow,Uttar Pradesh,611552,2018-03-06,Premium
+4a551ec3-1573-4806-a73a-4c2db34c8621,Priya Ahmed,priya.ahmed36work.co,73198-636-3439,Female,08/18/1993,Indore,Madhya Pradesh,471658,2020-12-30,
+29b7d6c6-762a-4017-9f36-ef7235fca2f9,Nguyen Singh,nguyen.singh90@hotmail.com,72515-488-7179,Other,1962-03-26,Kanpur,Uttar Pradesh,279708,2018-12-05,  Premium 
+23bf21b8-03a6-4c35-9122-09c464a93194,Aditi Patel,aditi.patel13@work.co,71176-800-5593,Other,29-08-1997,Bangalore,Karnataka,991737,2021-07-12,Premium
+fa187889-7325-42e9-85d1-b49f12d494e0,Uma Hassan,uma.hassan39@outlook.com,80493-873-3292,Unknown,"November 29, 1989",Kanpur,Uttar Pradesh,462659,2018-08-08,Premium
+3c400187-53ea-43d0-a642-33b352f9a3f1,Ayesha Patel,ayesha.patel77@mail.org,85333-464-7150,Female,10/07/1979,Delhi,Delhi,909676,2024-12-08,Basic
+d47359a0-ed6f-4ede-8ba9-904777cbf734,Bilal Das,bilal.das49@outlook.com,72105-415-8286,Other,1987-05-12,Bangalore,Karnataka,191537,2020-02-07,  Premium 
+c2af0c90-bf4e-49cf-a047-7dc69fe66582,  Takeshi Williams  ,N/A,70398-523-7353,Other,08/02/1984,Surat,Gujarat,646417,2019-11-26,BASIC
+25ad92ac-3178-4143-add7-075b8049c682,Deepa Mehta,deepa.mehta19@yahoo.com,85901-178-6916,m,11-10-1992,Surat,Gujarat,746624,2020-03-11,  Premium 
+70207066-0380-4415-b9bb-e2cecec64e4c,Meera Ahmed,meera.ahmed80@mail.org,83935-943-3230,Male,30-06-1994,Ahmedabad,Gujarat,429445,2019-12-29,  Premium 
+a9f9908e-d81f-4961-b929-27b8f4f8f5cf,Liam Wang,liam.wang42@mail.org,73677-304-9939,Male,02-04-1990,Kanpur,Uttar Pradesh,584045,2020-05-08,  Premium 
+c63e8fb1-fff0-4bb9-9521-f2d77b3ce9b1,Ayaan Das,ayaan.das18@company.com,95486-175-8357,Male,29/10/1968,Jaipur,Rajasthan,631221,2022-09-10,standard
+375db5cf-87ea-4beb-832b-48cd0f0c92f4,Ayaan Yamamoto,ayaan.yamamoto11@yahoo.com,90727-145-7547,Other,11/06/1986,Delhi,Delhi,111060,2019-02-08,Basic
+650fdf29-2d7d-4d52-848e-4cb2dbac1123,Dalia Wilson,dalia.wilson74@hotmail.com,92612-254-6651,Male,"July 17, 1996",Kolkata,West Bengal,190025,2019-04-21,
+c1ca9e9c-be4a-4ccd-969e-4ca85ac11cef,Divya Rao,divya.rao27@work.co,93813-563-6225,Other,04/10/1963,Mumbai,Maharashtra,990429,2021-11-06,BASIC
+fa438166-a199-4333-85fc-3fa01496ac76,Elena Kumar,elena.kumar21@email.net,95514-744-4022,Other,06/14/1996,Kolkata,West Bengal,130610,2024-11-20,Standard
+853ba100-3c85-4c7e-8dfc-48d03c2c5f23,Rahul Sharma,rahul.sharma27@company.com,73918-992-9796,Other,"August 12, 1960",Ahmedabad,Gujarat,219490,2020-12-10,BASIC
+e91bafe0-8df5-433b-8595-1aee9add63d2,Sofia Nguyen,sofia.nguyen51@domain.io,75933-789-5873,Female,"January 29, 1996",Pune,Maharashtra,223586,2020-09-04,Basic
+b2ee7cfb-6326-4711-b2c0-742e74fb3b33,Nguyen Hassan,nguyen.hassan77@outlook.com,90650-810-3838,Female,31/08/1971,Bangalore,Karnataka,296187,2021-07-12,
+e8f64553-ea58-45f7-ad81-df883f4f6d3b,Arjun Rao,arjun.rao25@mail.org,91603-525-8272,Female,29/05/1999,Nagpur,Maharashtra,898025,2020-06-22,Basic
+b08cbe9e-a0a6-4189-bb4f-0c6ea20f2bdd,Sunita Mishra,sunita.mishra73@corporate.in,94656-943-7010,Female,31-03-1965,Nagpur,Maharashtra,853905,2022-12-13,standard
+aa64bf26-8884-4e24-ae04-10e45aaa5c94,Rahul Fernandez,rahul.fernandez5@corporate.in,97220-894-4882,Other,21/10/1962,Indore,Madhya Pradesh,845279,2024-11-04,BASIC
+f658c3d3-2b48-4e57-9ef7-147e9233c923,Yuki Gupta,yuki.gupta8@domain.io,80820-399-5740,Male,05/03/2003,Bangalore,Karnataka,886530,2022-08-13,Premium
+590af1dc-9727-490c-b556-61d5bbc5798e,Aditi Gupta,aditi.gupta92@email.net,74691-747-5402,Female,26/03/1990,Delhi,Delhi,764406,2019-01-17,  Premium 
+d1b2a02a-ea4a-4c22-9add-08a7fa01d6e8,Layla Reddy,layla.reddy42@domain.io,90780-814-6869,Other,11/05/1963,Hyderabad,Telangana,550513,2020-05-17,  Premium 
+0d1a0f2e-21d8-4868-8fb5-0ec56efc00b5,Liam Patel,liam.patel73@corporate.in,73741-902-8529,Female,1959-05-06,Ahmedabad,Gujarat,578693,2018-01-03,  Premium 
+f6e641ce-45ac-44d5-9741-4c1937380ee5,Ayaan Gupta,ayaan.gupta36@yahoo.com,91764-269-1848,Other,24-05-1962,Kolkata,West Bengal,787326,2019-01-09,BASIC
+ff554609-64af-4fea-865d-c01e3cd750dc,Ifeoma Verma,ifeoma.verma29@work.co,96223,Male,22-09-1955,Hyderabad,Telangana,501677,2019-01-01,BASIC
+9f8287a3-1d22-4328-a21a-5479ee69b145,Carlos Nguyen,carlos.nguyen18@mail.org,72643-676-1138,Female,12/11/1966,Pune,Maharashtra,857524,2020-05-22,BASIC
+bc098b02-5943-4054-957e-844cbeec3a3c,Priya Dey,priya.dey12@yahoo.com,83422-910-3290,Male,14-06-1989,Hyderabad,Telangana,680278,2024-09-27,standard
+dcffa329-6d18-4f3b-b7af-adc6101a61ef,Liam Bose,liam.bose78@work.co,  95912-345-9108  ,f,1981-07-07,Lucknow,Uttar Pradesh,722780,2018-10-18,standard
+79a85c09-ed7a-46b1-943b-5648fdb18791,Aarav Reddy,aarav.reddy73@mail.org,94174-117-2106,Female,02/07/1970,Bhopal,Madhya Pradesh,163406,2022-06-19,standard
+313b476e-c63a-4d3d-9eac-182fb7accbed,Bilal Williams,bilal.williams52@yahoo.com,72417-180-9377,Male,12-09-1968,Jaipur,Rajasthan,442622,2022-05-20,standard
+25c3bfef-402e-46c4-ba73-d630a430c2ef,Aditi Das,aditi.das94@hotmail.com,84726-723-1901,Other,1993-12-24,Delhi,Delhi,113280,2019-07-17,BASIC
+4a551ec3-1573-4806-a73a-4c2db34c8621,Neha Wilson,neha.wilson93@company.com,94130-443-8034,Female,1979-02-10,Kanpur,Uttar Pradesh,704663,2018-11-12,  Premium 
+d0ff33ee-a8aa-471c-b44a-5db1e9e589f7,Nguyen Chen,nguyen.chen22@email.net,91840-218-4742,Other,"March 25, 1964",Indore,Madhya Pradesh,112884,2020-09-28,Premium
+c0d5d990-6371-4e39-b530-1f18f350fd79,Olivia Hassan,olivia.hassan5@work.co,80354-526-6241,Other,08/15/1992,Delhi,Delhi,626428,2018-08-04,Standard
+ec4e2af1-2d57-4f26-92e2-1bce69a939f3,  Sofia Chakraborty  ,sofia.chakraborty60@company.com,87567-108-7044,Other,1984-05-12,Kanpur,Uttar Pradesh,752966,2020-09-20,  Premium 
+3fc22b29-c46a-4508-a21b-32907a64bf49,Sara Kapoor,sara.kapoor32@outlook.com,+91874547511157,Male,02/22/1957,Indore,Madhya Pradesh,873935,2021-06-13,Premium
+4460163b-0133-4156-aff4-236b59c17106,Kavya Smith,KAVYA.SMITH19@COMPANY.COM,83817,Male,"October 07, 1975",Jaipur,Rajasthan,239999,2022-06-04,Premium
+be335b4a-98cc-42ca-bddb-6930f7d035b6,Arjun Srivastava,arjun.srivastava34@email.net,843783392223,Male,08-04-1984,Bangalore,Karnataka,210790,2019-11-05,  Premium 
+548c64ff-6779-4d66-861c-977f13a396a1,Priya Garcia,priya.garcia99@hotmail.com,72261-926-5984,Female,1978-10-10,Hyderabad,Telangana,976530,2021-09-04,Standard
+1e31b8f8-3402-4a17-a8fc-58c0ddf065d5,Kavya Rao,kavya.rao87@company.com,82975-563-5093,Other,1970-08-07,Delhi,Delhi,112537,2018-09-10,
+57640075-e5e9-40e6-90e8-dd83e224539c,James Gupta,james.gupta48@yahoo.com,723027618265,Male,1961-09-23,Delhi,Delhi,144770,2023-03-04,Premium
+05770bad-6368-41f0-9de3-0876b75c5c46,Tanvi Srivastava,tanvi.srivastava49@mail.org,78556-252-1567,Other,16-10-1971,Lucknow,Uttar Pradesh,409440,2023-08-06,  Premium 
+b4f1d0ac-2b02-4a86-a4c4-384db8505cec,Sakura Chen,sakura.chen18@mail.org,90921-656-1319,Female,03/04/2002,Ahmedabad,Gujarat,670968,2023-06-09,Basic
+1b7d46a7-7bac-4d57-ab28-43f4ee3400af,Shreya Nguyen,shreya.nguyen4@email.net,95583-642-6856,Female,1980-03-15,Delhi,Delhi,359896,2020-09-14,Basic
+1ec4954b-1bf9-46b3-a134-e8d2d5401a4e,Dalia Chen,dalia.chen50@email.net,N/A,Male,08/02/1970,Surat,Gujarat,690984,2019-08-06,standard
+4ce9999b-7267-424e-9d07-71685fa0d95b,Sara Yamamoto,sara.yamamoto5@yahoo.com,86589-100-6435,Male,1974-08-18,Pune,Maharashtra,851763,2019-12-28,
+cc35aa48-7f9d-423c-a518-5b94d6756fb9,Mohammed Chen,mohammed.chen91@outlook.com,N/A,Other,20-03-2002,Pune,Maharashtra,243079,2019-10-08,BASIC
+6936bbb2-2232-4441-af6c-42e5565c6bbc,Zara Wang,zara.wang72@domain.io,79851-805-5825,Male,24/09/1970,Kanpur,Uttar Pradesh,700660,2022-05-23,
+68e8001c-b95c-4ed1-80b5-9452bae8d49d,Tanvi Chakraborty,tanvi.chakraborty79@hotmail.com,80863-179-4899,Male,07/07/1999,Lucknow,Uttar Pradesh,193035,2021-10-07,  Premium 
+ba2367a7-e586-4376-85b0-b3a21c029f1c,Kavya Das,kavya.das14@gmail.com,98523-604-7204,Female,08/25/1992,Indore,Madhya Pradesh,602780,2024-06-25,BASIC
+ddc4d9be-4912-44c7-9c1b-248c0c1df471,  James Iyer  ,james.iyer5@company.com,80274,Other,1964-05-24,Pune,Maharashtra,722886,2024-11-18,  Premium 
+fa5d305d-6a06-45f6-a721-2e8e074d4f61,Rahul Iyer,rahul.iyer21@gmail.com,92667-839-9849,Female,17/01/1972,Hyderabad,Telangana,200575,2018-07-23,  Premium 
+c11840d7-d5ba-4ba0-a968-e849b29b327d,Sara Hassan,sara.hassan55@yahoo.com,73126-311-3798,Other,02/03/1998,Ahmedabad,Gujarat,984756,2019-04-19,Basic
+8d14b7e0-197c-4756-8600-f8fc10e1dd09,sakura wang,sakura.wang70@mail.org,75556-145-5313,Male,22-03-1989,Indore,Madhya Pradesh,381607,2024-04-30,Premium
+5ea749b4-4483-498c-ae48-3dbfa491adc6,Ayaan Fernandez,ayaan.fernandez70@mail.org,96635-528-9773,F,21/06/1960,Surat,Gujarat,347088,2023-05-05,Basic
+5487af48-8011-4b79-8d06-9683d5626c55,Bilal Chakraborty,bilal.chakraborty67@domain.io,94559-277-3738,Other,1968-03-24,Mumbai,Maharashtra,543940,2018-11-17,BASIC
+c9c46497-94e4-4b82-85ce-d1a1f53d2f37,Zara Hassan,zara.hassan94@yahoo.com,80977-382-9514,Male,"August 25, 1990",Nagpur,Maharashtra,834435,2024-12-27,standard
+37196fb5-eded-40ae-a560-4227922531fe,Priya Garcia,priya.garcia73@domain.io,88898-203-5687,Male,1963-12-28,Chennai,Tamil Nadu,501650,2023-06-12,standard
+865a727f-539e-4249-be7b-79b843cbdc9b,Amara Jain,amara.jain80@domain.io,98439-807-4892,Other,24/06/1958,Bhopal,Madhya Pradesh,490532,2018-03-24,Basic
+c90a0ac3-31e8-485e-9a79-f3dd111645c8,Meera Mohammed,meera.mohammed90@yahoo.com,94945-428-5414,Female,16/12/1981,Hyderabad,Telangana,563173,2020-05-15,
+32903092-d044-4df8-8cf5-6571fc5fa69b,Sara Wilson,sara.wilson66@outlook.com,N/A,Female,19/06/2000,Bhopal,Madhya Pradesh,973390,2020-04-02,
+c756aae6-005f-4328-998b-908a47bf73aa,Amara Thomas,amara.thomas91@hotmail.com,82750-226-1500,Male,"August 24, 1996",Bangalore,Karnataka,597635,2024-07-31,standard
+ebc57c9b-95f1-4402-b607-27790f713b2e,Elena Lee,elena.lee50@gmail.com,90330-793-4387,Other,03/24/1974,Indore,Madhya Pradesh,918207,2018-02-06,  Premium 
+14cdff3d-9087-4f4e-9937-15ebef558776,Aditi Jain,aditi.jain29@company.com,83485-972-6713,Other,28-05-1982,Chennai,Tamil Nadu,810091,2023-11-03,
+dfed3503-d32e-4fae-a243-73232c08bf81,Uma Fernandez,uma.fernandez85@email.net,91210-593-2045,Other,11-05-1980,Indore,Madhya Pradesh,390334,2020-12-05,BASIC
+12293598-194c-4f0e-a254-c7f1f7c6f6af,Aditi Mohammed,aditi.mohammed98@hotmail.com,91243-838-1417,Male,03-04-1991,Chennai,Tamil Nadu,538897,2022-07-16,  Premium 
+bb9dffca-70ab-4e1c-8889-56ad614b0fd3,Uma Ali,uma.ali92@hotmail.com,86407-965-3785,Female,05-09-1997,Chennai,Tamil Nadu,202344,2023-04-13,Standard
+9289ad7e-5353-468d-9d8e-908f68dd2e95,Chioma Zhang,chioma.zhang43@yahoo.com,95439-480-5269,Male,20/07/1982,Ahmedabad,Gujarat,156284,2024-07-18,standard
+318b39d9-f313-49bc-b167-e580dfeacd3d,Ayesha Verma,ayesha.verma88@mail.org,74305-450-7704,Male,11/07/1959,Bangalore,Karnataka,431752,2020-01-09,
+e014cc17-b524-43a4-b917-42bad8f4e184,Nadia Jain,nadia.jain1@corporate.in,94262-601-2442,Female,"February 15, 1970",Kolkata,West Bengal,549865,2023-05-10,  Premium 
+a9f9908e-d81f-4961-b929-27b8f4f8f5cf,Hiroshi Reddy,  hiroshi.reddy97@work.co  ,+91778109986641,Other,05/16/1955,Jaipur,Rajasthan,717265,2021-06-07,Standard
+3d25bf02-a7c0-46ca-8556-41586a58d155,Amara Mohammed,amara.mohammed67@domain.io,98601-467-4087,Female,02-01-1967,Mumbai,Maharashtra,339513,2020-07-07,BASIC
+4f4ca480-2fb8-421d-b0b1-e39c59e44315,Ifeoma Bose,ifeoma.bose16@email.net,N/A,Male,09/05/1958,Lucknow,Uttar Pradesh,213365,2018-03-22,Premium
+ed42cfa2-cb49-47b0-af61-d155861cc964,Priya Tanaka,priya.tanaka33@corporate.in,83777-203-9524,Other,01-11-1955,Kolkata,West Bengal,971002,2019-03-06,standard
+19a2283f-b510-47c7-911c-2878d80bbbfd,Chen Mishra,chen.mishra64@hotmail.com,76466-820-7713,f,"August 05, 1978",Bhopal,Madhya Pradesh,317782,2023-05-23,Basic
+94dd5669-461f-45d6-a318-3b0058d0528f,Aarav Desai,aarav.desai86@corporate.in,93840-203-5192,Male,2000-11-27,Chennai,Tamil Nadu,586830,2018-07-25,Premium
+66ce9a1c-e4cf-4f57-b6b0-523facb34a9d,Amara Mishra,none,97241-779-3793,Female,1959-02-12,Surat,Gujarat,381342,2019-01-16,Basic
+45efd011-1ce3-4b9e-aed6-5e7a5c26e87e,Fatima Garcia,fatima.garcia59@company.com,90916-270-2852,Male,27/11/1997,Indore,Madhya Pradesh,267138,2019-03-01,  Premium 
+f78ad0cb-5001-40a2-82fa-900035e75747,Sakura Ali,N/A,  99599-215-7738  ,Male,21/09/1966,Lucknow,Uttar Pradesh,429502,2018-02-20,BASIC
+dc418c06-266f-4863-9af9-d09954f8f846,Sofia Ali,sofia.ali86@email.net,91844-354-8895,Other,18/07/1963,Bangalore,Karnataka,979789,2024-04-05,standard
+8918c451-d159-4f26-ae27-15301853b30d,Aditi Iyer,aditi.iyer64@outlook.com,80384-151-9305,Male,10/07/1983,Kolkata,West Bengal,956794,2020-08-20,Premium
+a0042ad1-ce80-4200-ac29-4034129d91b4,Tanvi Tanaka,tanvi.tanaka58@email.net,82522-136-9996,Other,1956-08-05,Bhopal,Madhya Pradesh,633030,2024-04-22,Standard
+93284781-0e39-4209-adeb-1bab5f490fd0,Rohan Patel,rohan.patel29@corporate.in,92563-216-2596,Male,12-06-1997,Pune,Maharashtra,970196,2021-04-10,standard
+d085d1ee-56a9-43af-b3d3-bdcac2162fda,Ayaan Fernandez,ayaan.fernandez64@outlook.com,78725-300-4072,Female,1991-09-18,Hyderabad,Telangana,579247,2020-02-20,BASIC
+f6b4fd72-94f7-47b3-b317-f6c5584c1905,Elan Smith,elan.smith87@domain.io,  91703-616-3205  ,Male,02/06/1995,Jaipur,Rajasthan,553834,2024-07-24,  Premium 
+0f034c53-a65c-40be-94df-abda8ba408b6,Freya Jain,freya.jain17@yahoo.com,98493-528-5067,Male,"November 16, 1983",Chennai,Tamil Nadu,574843,2019-07-01,Standard
+39f9867b-1618-451d-a38d-332b30bdbc69,Ayaan Williams,ayaan.williams71@email.net,76739-831-5760,Male,07/01/1974,Kanpur,Uttar Pradesh,781664,2019-12-30,standard
+e249a29e-2a5a-4041-8706-5bd82a56cf4d,Zara Nguyen,zara.nguyen72@corporate.in,79998-967-7920,Male,"June 14, 1992",Kolkata,West Bengal,252386,2018-08-06,BASIC
+f7c18a1d-3861-48d8-8acd-d047f1d3cf56,Layla Iyer,layla.iyer19@gmail.com,71467-933-8415,Male,"April 20, 1973",Kanpur,Uttar Pradesh,778553,2024-04-17,  Premium 
+f1429728-eb8a-4714-8af4-e24e82d0ce03,Ayaan Mishra,ayaan.mishra50@mail.org,71113-861-5117,Other,"January 19, 1983",Indore,Madhya Pradesh,336504,2022-02-15,
+9e6fa490-b62b-46d5-9dd2-5e45d35b54d0,Dalia Chowdhury,dalia.chowdhury25@company.com,  75852-626-2955  ,Other,09/06/1961,Jaipur,Rajasthan,377075,2019-06-17,Standard
+6add927c-7c6d-4fc1-919e-fe2e0590304c,Kenji Ahmed,kenji.ahmed20@gmail.com,96777-408-9037,Male,"July 25, 1959",Nagpur,Maharashtra,842057,2021-07-25,standard
+3ba6e885-8d95-4f0b-86b7-536700fa3030,Fatima Wilson,fatima.wilson21@mail.org,77318-779-6437,Female,01-04-1963,Nagpur,Maharashtra,748314,2023-12-13,  Premium 
+c1aa65ae-da4e-4ef4-9cc3-bd658f882c36,Elan Ahmed,elan.ahmed58@hotmail.com,91428-490-2857,Male,1976-11-15,Mumbai,Maharashtra,641975,2022-03-16,standard
+c2670b48-a45f-456f-ad56-18389e26c450,Riya Wang,riya.wang84@hotmail.com,94650,Male,08/11/1963,Indore,Madhya Pradesh,818699,2022-10-04,
+834daccf-7ac4-4061-b6c6-3819f6d46a6b,Sunita Srivastava,sunita.srivastava20@gmail.com,N/A,Female,1958-05-26,Bhopal,Madhya Pradesh,371212,2022-07-28,  Premium 
+e0237a1f-c7d8-4c7e-b8d7-be386a39a214,patel srivastava,N/A,71817-968-2189,Male,"September 03, 1960",Chennai,Tamil Nadu,925115,2021-05-19,standard
+cf7fca97-3348-443a-872b-656f882cf1b3,Elan Tanaka,elan.tanaka85@gmail.com,93500-915-9941,Male,09/22/1974,Chennai,Tamil Nadu,810189,2022-03-09,Premium
+382e2447-2c78-472e-9249-3a52092e76d0,Takeshi Hassan,takeshi.hassan74@domain.io,76866-859-6633,Male,21-08-1962,Bangalore,Karnataka,292930,2020-06-23,standard
+1d29d2f7-bf86-48a0-9745-61e66fd6bb68,Hiroshi Garcia,hiroshi.garcia73@gmail.com,+91723977872103,MALE,"May 19, 1996",Pune,Maharashtra,474486,2019-06-10,BASIC
+9ffe0831-900e-4ada-bd6d-b63dca4e2028,,carlos.mishra25@email.net,74679-680-6971,Female,"June 04, 1982",Mumbai,Maharashtra,428429,2020-10-05,
+53792eb8-bb8f-43ba-b63c-882465fc74f3,Dalia Srivastava,dalia.srivastava18@email.net,85664-211-3879,Other,09-03-1987,Indore,Madhya Pradesh,966589,2019-07-28,standard
+c86ed9f8-33b7-4532-8176-f0076b0b3145,Chioma Das,chioma.das65@gmail.com,76137-664-5269,M,"May 07, 1991",Lucknow,Uttar Pradesh,912853,2019-09-01,Basic
+1303547a-a4f4-4af2-997f-a87bca51d38e,Freya Banerjee,freya.banerjee65@work.co,N/A,Female,2000-01-20,Bangalore,Karnataka,693868,2024-05-06,BASIC
+c7adbb92-25a8-4419-af04-76e07a7238ce,divya verma,  divya.verma98@corporate.in  ,71784-311-9485,Other,02/22/1988,Bhopal,Madhya Pradesh,148693,2018-06-13,BASIC
+1c33dbb7-f4c3-40ef-a485-3e2bf72ee1ed,Bilal Wilson,bilal.wilson34@domain.io,81701-769-2275,Male,16/10/1988,Jaipur,Rajasthan,525556,2021-12-16,
+9b206743-8239-4323-aad8-3613906fb49c,,sara.verma18@corporate.in,76253-291-3578,Male,28-02-2001,Lucknow,Uttar Pradesh,341535,2022-08-26,
+dd2d6f48-803c-4839-b958-9be667b3a2b9,Chen Verma,chen.verma76@outlook.com,71230-687-3639,Female,01/05/1957,Bhopal,Madhya Pradesh,700067,2019-08-25,Premium
+357ebf39-f280-43b3-991a-d8ce69336fba,Fatima Wilson,fatima.wilson73@gmail.com,76559-721-8723,Male,1980-06-06,Surat,Gujarat,249644,2024-07-14,
+8587bdb4-5e32-4fa1-abdf-2a2223ade423,Yuki Williams,yuki.williams88@email.net,82494-235-2778,,03/05/1961,Lucknow,Uttar Pradesh,540186,2019-09-05,standard
+f947f4c1-1cee-4152-8252-b98566061495,,sakura.dey69@work.co,98717-652-1019,Other,04/07/1998,Pune,Maharashtra,145548,2023-12-11,  Premium 
+8b2e677a-2624-4985-ba61-f453a8373cce,Sakura Sharma,sakura.sharma95@domain.io,94338-979-2373,Other,01/11/1977,Chennai,Tamil Nadu,298202,2018-01-23,BASIC
+9735aa59-9054-4666-a991-89a267a75758,,aarav.ali1@mail.org,81209-258-7980,Male,05/05/1983,Indore,Madhya Pradesh,662146,2022-10-01,standard
+1cd5a5bb-b9ad-46fb-b125-64ed20746a34,Layla Singh,layla.singh72@corporate.in,79691,Male,26-05-1998,Kanpur,Uttar Pradesh,340932,2023-01-04,
+81d7eb1e-2a23-4b6d-9fc6-6be793e422f6,Elena Fernandez,elena.fernandez44@work.co,82751-105-2492,Male,09/02/1959,Delhi,Delhi,167193,2020-12-13,Standard
+a4f9bdd9-7bee-4824-bbb2-ad5bfa73dc5b,Vikram Chakraborty,vikram.chakraborty52@domain.io,90606-549-1175,Female,02/26/1960,Hyderabad,Telangana,135241,2024-09-21,standard
+06a91b0f-d0be-4646-b0cc-34216fa7cff2,James Dey,none,78898-509-6785,Male,1969-02-15,Jaipur,Rajasthan,116112,2018-10-09,Premium
+da958260-e82e-4817-81d8-bef419af2ee3,Chioma Zhang,chioma.zhang36@hotmail.com,88104-367-3867,Male,19/10/1995,Jaipur,Rajasthan,408545,2021-10-24,Premium
+0dd0883a-ea62-4134-a6dd-059c4b48bbb7,Kenji Yamamoto,kenji.yamamoto57@mail.org,94569-797-8548,female,28-10-1976,Delhi,Delhi,370343,2018-10-04,  Premium 
+b3e0743d-8567-444e-b7cd-f4b613d107e2,James Kim,N/A,79195-508-6603,Male,08/17/1978,Ahmedabad,Gujarat,429119,2021-12-19,Standard
+e28a1bdf-f8b3-46d7-a156-f733e45c7043,Layla Jain,layla.jain26@hotmail.com,77307-954-5091,Male,10/23/1978,Delhi,Delhi,182300,2023-07-11,standard
+9e6fa490-b62b-46d5-9dd2-5e45d35b54d0,Sunita Chakraborty,sunita.chakraborty41@corporate.in,94623-386-7518,Other,01/12/1999,Mumbai,Maharashtra,651273,2022-09-30,  Premium 
+bcc76ca3-6ef3-48ed-ab71-dd369246fc6d,Amara Williams,amara.williams88@outlook.com,80805-108-1193,Female,28/06/2001,Pune,Maharashtra,479167,2024-11-14,
+da994cba-9896-4df7-b88c-51931d5509a1,Takeshi Lee,takeshi.lee79@email.net,83817-870-7099,Other,01/12/1993,Ahmedabad,Gujarat,288627,2024-05-29,Standard
+a575309a-5d0a-4d5e-b1e9-084b5612faae,Ananya Kim,ananya.kim31@work.co,95856-253-8749,f,08/03/1972,Bangalore,Karnataka,990649,2023-10-19,standard
+2ba4e611-4170-40c7-a246-0dfb35d6da76,Sara Mohammed,sara.mohammed73,76933,Female,1969-08-27,Chennai,Tamil Nadu,478496,2022-01-15,standard
+a8c15370-b673-43c4-80be-497588081499,Kenji Rao,kenji.rao45@domain.io,94391-463-6326,Male,04/22/2003,Bhopal,Madhya Pradesh,182216,2022-04-10,standard
+9cbd93a8-43be-4c0f-9f0d-1e30a2b042f1,Zara Hassan,zara.hassan44@mail.org,72265-451-4739,Other,1991-04-25,Kanpur,Uttar Pradesh,380465,2024-10-15,BASIC
+2211aa32-6786-4d4a-9ad9-1b3ac5d3e788,Riya Reddy,riya.reddy58@mail.org,93340-777-5122,Other,01/26/1957,Hyderabad,Telangana,275018,2022-06-15,Premium
+268e2d81-896b-4b47-978f-243ba922254e,Sakura Zhang,sakura.zhang51@work.co,89259-186-7387,Male,28-04-1964,Ahmedabad,Gujarat,756912,2019-06-02,Standard
+62f82c50-81e7-4352-b505-621878b2438c,Elena Bose,elena.bose42@corporate.in,87555-238-9835,Other,01-07-2003,Lucknow,Uttar Pradesh,885290,2024-04-29,  Premium 
+5d7d3668-8ea0-460e-85dc-a01e6d6c4fb7,Zara Yamamoto,zara.yamamoto62@work.co,+91815223663551,Female,22-08-1994,Pune,Maharashtra,400692,2023-04-06,standard
+bcc76ca3-6ef3-48ed-ab71-dd369246fc6d,elan verma,elan.verma56@company.com,81293-521-8161,Male,"August 25, 1955",Indore,Madhya Pradesh,496737,2020-06-22,Basic
+879479d9-4a08-4be5-807f-f8d5bfe47ab6,Zara Kumar,zara.kumar79@company.com,832929732121,Female,21-09-2002,Lucknow,Uttar Pradesh,577461,2024-12-05,  Premium 
+105a5fcc-72db-4504-95c0-a2427350e944,Yuki Wang,N/A,78228,Other,05-03-1964,Bangalore,Karnataka,115440,2023-07-15,Standard
+15204f83-bda7-4d30-ad3b-f5268a140ef2,Meera Wang,meera.wang5@email.net,78894-501-2169,Female,1968-02-09,Bhopal,Madhya Pradesh,982417,2020-10-21,
+f42a9e5f-69f7-412c-a79e-748a018faccc,Aarav Garcia,aarav.garcia57@hotmail.com,93889-196-9538,F,13/11/1972,Kolkata,West Bengal,814544,2021-07-02,Basic
+e88a5800-69c9-4f79-be36-c6a699434d10,Chioma Chakraborty,chioma.chakraborty33@corporate.in,97782-323-2850,Other,1987-05-03,Mumbai,Maharashtra,275490,2021-02-04,standard
+8772af99-7c03-4e85-b12a-dda54220feb4,Kavya Ahmed,kavya.ahmed89@corporate.in,77261-611-2497,Male,1988-04-26,Mumbai,Maharashtra,472787,2019-09-23,BASIC
+80a303f3-5daa-4bb6-97c5-257d642d520f,Carlos Gupta,carlos.gupta72@email.net,92486-466-3207,MALE,1972-04-24,Kanpur,Uttar Pradesh,558752,2024-04-08,Basic
+e906e5c1-5005-4703-af4a-8a3f9fa6492d,Sara Kapoor,sara.kapoor45@email.net,86258-560-5844,Other,1969-05-21,Mumbai,Maharashtra,913608,2023-09-04,  Premium 
+9b5e1e3b-4868-4146-a000-682763b0469d,Aisha Dey,none,76636-799-9151,Male,09/05/2003,Pune,Maharashtra,529711,2021-08-12,Premium
+28c12229-2ba8-4da9-b6b3-093deed5791e,Amir Das,amir.das17@outlook.com,76201-132-7366,Other,08/08/1964,Mumbai,Maharashtra,484150,2020-06-23,standard
+94e34873-c4e1-4bbc-a4d9-7e69a57627f5,Aarav Khan,aarav.khan11@corporate.in,93525,Other,"May 19, 1987",Jaipur,Rajasthan,142627,2018-10-16,
+e9575420-a23f-4966-b853-277c7d6a6a03,Ifeoma Wilson,ifeoma.wilson30@work.co,88740,Female,03/17/2002,Lucknow,Uttar Pradesh,581003,2022-10-16,Premium
+6f2840a4-fdcd-44cb-ab87-ed7458f08acf,Fatima Zhang,fatima.zhang85@outlook.com,98422-663-6319,Other,29-09-1994,Indore,Madhya Pradesh,861127,2021-08-17,standard
+f66e59b5-b7a9-4f6e-be15-8fcf7ae5378e,Sunita Khan,sunita.khan96@company.com,N/A,Female,23/02/1995,Bhopal,Madhya Pradesh,416503,2018-01-27,Basic
+15e1b309-6fa7-48b8-a49e-ee938a049cd7,Ifeoma Nguyen,ifeoma.nguyen89@company.com,71571-464-3557,Male,1968-11-17,Hyderabad,Telangana,368691,2021-05-15,Premium
+4cae7140-b935-4fcf-8c94-4e6cbd7ec982,Tanvi Khan,tanvi.khan62@outlook.com,90407-138-7251,Female,"July 22, 1963",Pune,Maharashtra,956835,2022-11-14,  Premium 
+ff4a3fe3-d546-43f6-a40e-3ea46da87cc8,Chen Kim,chen.kim82@mail.org,87678-253-6354,Male,11-09-1958,Mumbai,Maharashtra,806357,2022-05-29,  Premium 
+ab67a5ba-9991-4027-9179-6b458ba7d65f,Tanvi Williams,  tanvi.williams38@mail.org  ,88863-150-9980,Male,28/05/1962,Jaipur,Rajasthan,555596,2019-06-19,
+590ed976-3081-433e-829d-2eca6203d323,Takeshi Kapoor,takeshi.kapoor74@hotmail.com,77173-372-8046,Female,01/12/2002,Delhi,Delhi,804378,2022-08-22,  Premium 
+d37a4990-78b7-494f-8291-8fb650f4cffe,Hiroshi Nguyen,hiroshi.nguyen4@company.com,74551-145-4825,Male,"September 03, 1994",Nagpur,Maharashtra,863873,2018-12-18,Premium
+04aa438f-cb54-4346-8021-bf568fdd830a,Kavya Dey,kavya.dey37@gmail.com,84582-123-6437,Male,25-12-1964,Hyderabad,Telangana,672967,2023-11-14,
+dce98752-1341-4b64-b9ff-b787abd4f9b0,Sakura Dey,sakura.dey86@gmail.com,78274-161-5653,Male,2002-04-06,Mumbai,Maharashtra,587546,2018-02-04,Premium
+2547cbce-1192-45c8-9771-718cc0c904a3,Layla Reddy,layla.reddy84@mail.org,98423-596-9709,Unknown,2000-08-15,Ahmedabad,Gujarat,687923,2018-03-30,Premium
+b828c801-c2d7-4bbe-b7e7-7dc5178a2b75,Sofia Mohammed,sofia.mohammed96@outlook.com,90409-341-9212,Other,28-07-1986,Bhopal,Madhya Pradesh,505977,2018-05-01,standard
+3d9f0c2d-72d4-4d29-9d42-8bab3389832e,James Hassan,james.hassan85@outlook.com,97740-802-4726,Male,"September 18, 2001",Kolkata,West Bengal,427557,2024-10-15,Basic
+58c0a20b-8cf1-4807-ab98-78c59c589bd0,Deepa Khan,deepa.khan88@hotmail.com,+91838882483589,Male,12/29/2001,Bangalore,Karnataka,433025,2019-08-20,BASIC
+ec4e2af1-2d57-4f26-92e2-1bce69a939f3,Priya Smith,priya.smith82@company.com,75126-880-5372,Other,07/30/1964,Surat,Gujarat,343461,2020-08-03,BASIC
+c2dbcadd-c494-47f9-bb11-a2cf8e2085c2,Ayaan Verma,ayaan.verma78@corporate.in,85585-240-3683,Other,04/07/1971,Nagpur,Maharashtra,115743,2021-01-10,  Premium 
+1afce26e-6c30-4398-93bc-14177a10833d,AMIR KAPOOR,amir.kapoor57@domain.io,83514-894-1685,Female,01/18/1996,Kanpur,Uttar Pradesh,428096,2022-06-03,standard
+81129df1-1e44-47e3-a0b1-3a78a6f4675d,Tanvi Chowdhury,N/A,98351-631-9812,Female,1995-12-28,Jaipur,Rajasthan,506216,2023-10-16,
+98ec982e-ae1d-4eb8-b543-f7b76038a4f6,Arjun Kapoor,arjun.kapoor39@company.com,99155-806-9470,Female,"May 31, 1981",Delhi,Delhi,857750,2023-08-13,Premium
+6e0cecee-70ec-4c4f-9531-40bcbbffb434,Uma Yamamoto,uma.yamamoto42@corporate.in,72356-431-3686,Other,11/02/1973,Delhi,Delhi,840532,2023-01-15,BASIC
+0bfd3193-15d4-49e1-b3cc-78309e62e0f7,Sofia Sharma,sofia.sharma21@mail.org,88992-775-3459,Male,01-05-1970,Nagpur,Maharashtra,846635,2018-07-30,  Premium 
+c2a0bfb6-a930-44f8-bd62-3c5c86227940,Chioma Tanaka,  chioma.tanaka16@outlook.com  ,84609-975-9169,m,1977-09-15,Hyderabad,Telangana,327408,2024-08-08,BASIC
+88e8912f-503c-48cf-af0c-9b144f47ce49,Priya Tanaka,priya.tanaka1@hotmail.com,75251-156-6718,Other,1973-08-17,Lucknow,Uttar Pradesh,706174,2024-10-07,Basic
+1ac6f073-2a73-4363-9c0a-0707b79b36c5,Bhavna Chen,bhavna.chen23@outlook.com,93692-468-1587,Female,01/12/1970,Pune,Maharashtra,497346,2018-10-05,
+e8f26107-88eb-4130-9a28-0aff1f7b20a3,Takeshi Das,takeshi.das16@company.com,92314-726-1953,Female,01/25/2002,Ahmedabad,Gujarat,859246,2024-10-13,
+ebf28b64-e963-446e-8189-7f71b5aeb763,Liam Srivastava,liam.srivastava34@work.co,89676-608-9514,m,09/30/1986,Nagpur,Maharashtra,288646,2024-11-01,Standard

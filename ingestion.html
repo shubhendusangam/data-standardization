@@ -110,35 +110,37 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
 .preview-wrap{margin-top:20px;overflow-x:auto;max-height:360px;overflow-y:auto}
 .preview-table{width:100%;border-collapse:collapse;font-size:.78rem}
 .preview-table th,.preview-table td{padding:7px 10px;border:1px solid var(--color-border);text-align:left;white-space:nowrap}
-.preview-table th{background:var(--color-surface-alt);color:var(--color-text-dim);font-weight:600;position:sticky;top:0;z-index:1}
+.preview-table th{background:var(--color-surface-alt);color:var(--color-text-dim);font-weight:600;position:sticky;top:0;z-index:1;cursor:pointer;user-select:none;position:relative}
+.preview-table th:hover{background:var(--color-surface)}
 .col-badge{display:inline-block;font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:1px 6px;border-radius:3px;margin-left:6px;vertical-align:middle}
-.col-badge.string{background:var(--color-accent-glow);color:var(--color-accent)}
-.col-badge.number{background:var(--color-green-dim);color:var(--color-green)}
-.col-badge.boolean{background:var(--color-yellow-dim);color:var(--color-yellow)}
-.col-badge.date{background:rgba(167,139,250,.15);color:var(--color-purple)}
+.col-badge.string{background:#E6F1FB;color:#0C447C}
+.col-badge.number,.col-badge.integer,.col-badge.decimal{background:#E1F5EE;color:#085041}
+.col-badge.boolean{background:#F1EFE8;color:#444441}
+.col-badge.date{background:#EEEDFE;color:#3C3489}
 .col-badge.null{background:var(--color-red-dim);color:var(--color-red)}
-.col-badge.mixed{background:rgba(251,146,60,.15);color:var(--color-orange)}
+.col-badge.mixed,.col-badge.unknown{background:#FAEEDA;color:#633806}
 
-/* ── Dataset list ─────────────────────────────────────────────── */
-.ds-list{display:flex;flex-direction:column;gap:10px;max-height:520px;overflow-y:auto}
-.ds-card{background:var(--color-surface-alt);border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:14px 16px;display:flex;align-items:center;gap:14px;transition:border-color var(--transition)}
-.ds-card:hover{border-color:var(--color-accent)}
-.ds-info{flex:1;min-width:0}
-.ds-name{font-weight:600;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ds-meta{font-size:.72rem;color:var(--color-text-dim);display:flex;gap:12px;margin-top:3px;flex-wrap:wrap}
-.ds-badge{font-size:.65rem;font-weight:700;text-transform:uppercase;padding:2px 7px;border-radius:3px;letter-spacing:.04em;flex-shrink:0}
-.ds-badge.PARSED{background:var(--color-green-dim);color:var(--color-green)}
-.ds-badge.FAILED{background:var(--color-red-dim);color:var(--color-red)}
-.ds-badge.CSV,.ds-badge.EXCEL{background:var(--color-accent-glow);color:var(--color-accent)}
-.ds-badge.API{background:var(--color-yellow-dim);color:var(--color-yellow)}
-.ds-actions{flex-shrink:0;display:flex;gap:6px}
-.empty-state{text-align:center;padding:32px 16px;color:var(--color-text-dim);font-size:.85rem}
+/* ── Quality score pill ──────────────────────────────────────── */
+.q-pill{display:inline-flex;align-items:center;gap:4px;font-size:.68rem;font-weight:700;padding:2px 9px;border-radius:9px;letter-spacing:.03em;white-space:nowrap;cursor:default;flex-shrink:0}
+.q-pill.q-gray{background:rgba(139,144,160,.15);color:var(--color-text-dim)}
+.q-pill.q-green{background:var(--color-green-dim);color:var(--color-green)}
+.q-pill.q-amber{background:var(--color-yellow-dim);color:var(--color-yellow)}
+.q-pill.q-red{background:var(--color-red-dim);color:var(--color-red)}
+
+/* ── Column detail popover ───────────────────────────────────── */
+.col-popover{position:absolute;top:100%;left:0;z-index:10;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:14px 16px;min-width:220px;box-shadow:var(--shadow);font-size:.78rem;font-weight:400;text-transform:none;letter-spacing:0;white-space:normal;cursor:default}
+.col-popover .cp-type{margin-bottom:8px}
+.col-popover .cp-stats{display:flex;gap:14px;margin-bottom:8px;color:var(--color-text-dim);font-size:.72rem}
+.col-popover .cp-samples{font-family:var(--font-mono);font-size:.72rem;color:var(--color-text);line-height:1.6;margin-bottom:8px}
+.col-popover .cp-link{font-size:.72rem;color:var(--color-accent);text-decoration:none;cursor:pointer}
+.col-popover .cp-link:hover{text-decoration:underline}
 
 /* ── Toast ────────────────────────────────────────────────────── */
 .toast-container{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px}
 .toast{padding:12px 18px;border-radius:var(--radius-sm);font-size:.8rem;font-weight:600;box-shadow:var(--shadow);animation:toastIn .3s ease;max-width:380px}
 .toast.success{background:var(--color-green-dim);color:var(--color-green);border:1px solid var(--color-green)}
 .toast.error{background:var(--color-red-dim);color:var(--color-red);border:1px solid var(--color-red)}
+.toast.warning{background:var(--color-yellow-dim);color:var(--color-yellow);border:1px solid var(--color-yellow)}
 @keyframes toastIn{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
 
 /* ── Spinner ──────────────────────────────────────────────────── */
@@ -163,6 +165,7 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
     <a href="dashboard.html">Dashboard</a>
     <a href="ingestion.html" class="active">Ingestion</a>
     <a href="rules.html">Rules</a>
+    <a href="data-quality.html">Data Quality</a>
     <a href="jobs.html">Jobs</a>
     <a href="logs.html">Logs</a>
   </nav>
@@ -268,7 +271,7 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
 (function () {
   'use strict';
 
-  var GW = location.protocol + '//' + location.hostname + ':8080';
+  var GW = location.origin;
 
   /* ── Helpers ────────────────────────────────────────────────── */
   function $(s) { return document.querySelector(s); }
@@ -530,13 +533,24 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
       .finally(function () { btn.disabled = false; btn.textContent = 'Ingest Table'; });
   });
 
+  /* ── Quality state ──────────────────────────────────────────── */
+  var qualityReportsCache = {};
+  var columnReportsCache = {};
+  var currentPreviewDatasetId = null;
+  var currentPreviewRecords = null;
+
   /* ── Preview ────────────────────────────────────────────────── */
   function fetchAndPreview(datasetId) {
+    currentPreviewDatasetId = datasetId;
     fetch(GW + '/api/ingestion/datasets/' + datasetId)
       .then(function (r) { return r.json(); })
       .then(function (ds) {
         if (ds.rawData) {
-          try { showPreview(JSON.parse(ds.rawData)); } catch (e) {}
+          try {
+            var records = JSON.parse(ds.rawData);
+            currentPreviewRecords = records;
+            showPreview(records, columnReportsCache[datasetId] || null);
+          } catch (e) {}
         }
       })
       .catch(function () {});
@@ -549,7 +563,6 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
       if (typeof v === 'boolean') { types['boolean'] = true; return; }
       if (typeof v === 'number' || (typeof v === 'string' && v !== '' && !isNaN(Number(v)))) { types['number'] = true; return; }
       if (typeof v === 'string') {
-        // simple date heuristic
         if (/^\d{4}[-\/]\d{2}[-\/]\d{2}/.test(v) || /^\d{2}[-\/]\d{2}[-\/]\d{4}/.test(v)) { types['date'] = true; return; }
         types['string'] = true;
       }
@@ -560,7 +573,7 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
     return 'mixed';
   }
 
-  function showPreview(records) {
+  function showPreview(records, qualityColMap) {
     if (!records || !records.length) return;
     var panel = $('#preview-panel');
     var wrap = $('#preview-wrap');
@@ -574,17 +587,23 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
       });
     });
 
-    // infer types
     var colTypes = {};
     cols.forEach(function (c) {
-      var vals = records.map(function (r) { return r[c]; });
-      colTypes[c] = inferType(vals);
+      if (qualityColMap && qualityColMap[c] && qualityColMap[c].inferredType) {
+        colTypes[c] = qualityColMap[c].inferredType.toLowerCase();
+      } else {
+        var vals = records.map(function (r) { return r[c]; });
+        colTypes[c] = inferType(vals);
+      }
     });
 
+    var hasQuality = !!qualityColMap;
     var maxRows = Math.min(records.length, 50);
     var html = '<table class="preview-table"><thead><tr>';
     html += cols.map(function (c) {
-      return '<th>' + escHtml(c) + '<span class="col-badge ' + colTypes[c] + '">' + colTypes[c] + '</span></th>';
+      var thAttrs = hasQuality ? ' data-col-pop="' + escHtml(c) + '" style="position:relative"' : '';
+      return '<th' + thAttrs + '>' + escHtml(c) +
+        '<span class="col-badge ' + colTypes[c] + '">' + colTypes[c] + '</span></th>';
     }).join('');
     html += '</tr></thead><tbody>';
     for (var i = 0; i < maxRows; i++) {
@@ -600,6 +619,162 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
       html += '<div style="text-align:center;padding:8px;color:var(--color-text-dim);font-size:.75rem">Showing ' + maxRows + ' of ' + records.length + ' records</div>';
     }
     wrap.innerHTML = html;
+
+    if (hasQuality) {
+      bindColumnPopovers(qualityColMap);
+    }
+  }
+
+  /* ── Column detail popover ──────────────────────────────────── */
+  var activePopover = null;
+
+  function closePopover() {
+    if (activePopover) {
+      activePopover.remove();
+      activePopover = null;
+    }
+  }
+
+  function bindColumnPopovers(qualityColMap) {
+    $$('[data-col-pop]').forEach(function (th) {
+      th.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var colName = this.dataset.colPop;
+        var colReport = qualityColMap[colName];
+        if (activePopover && activePopover.parentNode === this) { closePopover(); return; }
+        closePopover();
+        if (!colReport) return;
+
+        var pop = document.createElement('div');
+        pop.className = 'col-popover';
+        var typeLabel = (colReport.inferredType || 'UNKNOWN').toLowerCase();
+        var nullPct = colReport.nullRatePct != null ? colReport.nullRatePct.toFixed(1) : '0';
+        var uniqPct = colReport.uniqueRatePct != null ? colReport.uniqueRatePct.toFixed(1) : '0';
+
+        var samplesHtml = '';
+        if (colReport.topValues && colReport.topValues.length) {
+          samplesHtml = colReport.topValues.slice(0, 3).map(function (tv) {
+            return escHtml(tv.value) + ' <span style="color:var(--color-text-dim)">(' + tv.pct.toFixed(1) + '%)</span>';
+          }).join('<br>');
+        } else if (colReport.sampleValues && colReport.sampleValues.length) {
+          samplesHtml = colReport.sampleValues.slice(0, 3).map(function (v) { return escHtml(v); }).join('<br>');
+        }
+
+        pop.innerHTML =
+          '<div class="cp-type"><span class="col-badge ' + typeLabel + '">' + typeLabel + '</span></div>' +
+          '<div class="cp-stats"><span>null ' + nullPct + '%</span><span>unique ' + uniqPct + '%</span></div>' +
+          (samplesHtml ? '<div class="cp-samples">' + samplesHtml + '</div>' : '') +
+          '<a class="cp-link" href="data-quality.html?columnName=' + encodeURIComponent(colName) + '">+ Add quality rule for this column</a>';
+
+        this.appendChild(pop);
+        activePopover = pop;
+        pop.addEventListener('click', function (ev) { ev.stopPropagation(); });
+      });
+    });
+  }
+
+  document.addEventListener('click', closePopover);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closePopover(); });
+
+  /* ── Quality score helpers ──────────────────────────────────── */
+  function scorePillClass(score) {
+    if (score >= 80) return 'q-green';
+    if (score >= 60) return 'q-amber';
+    return 'q-red';
+  }
+
+  function buildScorePillHtml(report) {
+    if (!report) return '<span class="q-pill q-gray">Not checked</span>';
+    var s = report.qualityScore != null ? report.qualityScore : 0;
+    return '<span class="q-pill ' + scorePillClass(s) + '" title="' + escHtml(String(report.overallStatus || '')) + '">' + s + '</span>';
+  }
+
+  function fetchQualityScores(datasets) {
+    var promises = datasets.map(function (d) {
+      return fetch(GW + '/api/quality/reports/' + d.datasetId)
+        .then(function (r) { return (r.status === 404 || !r.ok) ? null : r.json(); })
+        .catch(function () { return null; });
+    });
+    Promise.all(promises).then(function (reports) {
+      reports.forEach(function (report, i) {
+        var dsId = datasets[i].datasetId;
+        qualityReportsCache[dsId] = report;
+        if (report && report.columnReports) {
+          var map = {};
+          report.columnReports.forEach(function (cr) { map[cr.columnName] = cr; });
+          columnReportsCache[dsId] = map;
+        }
+        var pillEl = document.querySelector('[data-qpill="' + dsId + '"]');
+        if (pillEl) {
+          pillEl.innerHTML = buildScorePillHtml(report);
+          if (report && report.overallStatus === 'FAIL' && report.ruleResults) {
+            var failedNames = report.ruleResults.filter(function (rr) { return !rr.passed; })
+              .map(function (rr) { return rr.ruleName || rr.validationType; });
+            if (failedNames.length) {
+              var pill = pillEl.querySelector('.q-pill');
+              if (pill) pill.title = 'Failed: ' + failedNames.join(', ');
+            }
+          }
+        }
+      });
+    });
+  }
+
+  function runQualityCheck(datasetId) {
+    var checkBtn = document.querySelector('[data-qcheck="' + datasetId + '"]');
+    if (checkBtn) { checkBtn.disabled = true; checkBtn.innerHTML = '<span class="spinner"></span>'; }
+
+    fetch(GW + '/api/quality/rulesets')
+      .then(function (r) { return r.ok ? r.json() : []; })
+      .catch(function () { return []; })
+      .then(function (rulesets) {
+        var body = { datasetId: datasetId };
+        if (rulesets && rulesets.length) { body.ruleSetId = rulesets[0].id; }
+        else { body.ruleIds = []; }
+        return fetch(GW + '/api/quality/validate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+      })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (report) {
+        qualityReportsCache[datasetId] = report;
+        if (report.columnReports) {
+          var map = {};
+          report.columnReports.forEach(function (cr) { map[cr.columnName] = cr; });
+          columnReportsCache[datasetId] = map;
+        }
+        var pillEl = document.querySelector('[data-qpill="' + datasetId + '"]');
+        if (pillEl) {
+          pillEl.innerHTML = buildScorePillHtml(report);
+          if (report.overallStatus === 'FAIL' && report.ruleResults) {
+            var failedNames = report.ruleResults.filter(function (rr) { return !rr.passed; })
+              .map(function (rr) { return rr.ruleName || rr.validationType; });
+            if (failedNames.length) {
+              var pill = pillEl.querySelector('.q-pill');
+              if (pill) pill.title = 'Failed: ' + failedNames.join(', ');
+            }
+          }
+        }
+        var score = report.qualityScore != null ? report.qualityScore : 0;
+        var status = String(report.overallStatus || 'PASS');
+        if (status === 'PASS') {
+          toast('Quality check passed \u2014 score ' + score, 'success');
+        } else if (status === 'WARN') {
+          var warnCount = (report.ruleResults || []).filter(function (rr) { return !rr.passed; }).length;
+          toast('Quality check complete \u2014 ' + warnCount + ' warning' + (warnCount !== 1 ? 's' : '') + ', score ' + score, 'warning');
+        } else {
+          toast('Quality check failed \u2014 job will be blocked (score ' + score + ')', 'error');
+        }
+        if (currentPreviewDatasetId === datasetId && currentPreviewRecords) {
+          showPreview(currentPreviewRecords, columnReportsCache[datasetId] || null);
+        }
+      })
+      .catch(function (e) { toast('Quality check failed: ' + e.message, 'error'); })
+      .finally(function () {
+        if (checkBtn) { checkBtn.disabled = false; checkBtn.textContent = 'Check'; }
+      });
   }
 
   /* ── Dataset list ───────────────────────────────────────────── */
@@ -618,27 +793,29 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
               '<div class="ds-name">' + escHtml(d.name) + '</div>' +
               '<div class="ds-meta">' +
                 '<span>' + d.recordCount + ' records</span>' +
+                '<span data-qpill="' + d.datasetId + '"><span class="q-pill q-gray">Not checked</span></span>' +
                 '<span>' + fmtDate(d.createdAt) + '</span>' +
               '</div>' +
             '</div>' +
             '<span class="ds-badge ' + escHtml(d.sourceType) + '">' + escHtml(d.sourceType) + '</span>' +
             '<span class="ds-badge ' + escHtml(d.status) + '">' + escHtml(d.status) + '</span>' +
             '<div class="ds-actions">' +
-              '<button class="btn btn-ghost btn-sm" data-view="' + d.datasetId + '" title="Preview">👁</button>' +
-              '<button class="btn btn-danger btn-sm" data-delete="' + d.datasetId + '" title="Delete">✕</button>' +
+              '<button class="btn btn-ghost btn-sm" data-qcheck="' + d.datasetId + '" title="Run quality check">Check</button>' +
+              '<button class="btn btn-ghost btn-sm" data-view="' + d.datasetId + '" title="Preview">\uD83D\uDC41</button>' +
+              '<button class="btn btn-danger btn-sm" data-delete="' + d.datasetId + '" title="Delete">\u2715</button>' +
             '</div>' +
           '</div>';
         }).join('');
 
-        // view handlers
+        el.querySelectorAll('[data-qcheck]').forEach(function (btn) {
+          btn.addEventListener('click', function () { runQualityCheck(this.dataset.qcheck); });
+        });
         el.querySelectorAll('[data-view]').forEach(function (btn) {
           btn.addEventListener('click', function () { fetchAndPreview(this.dataset.view); });
         });
-
-        // delete handlers
         el.querySelectorAll('[data-delete]').forEach(function (btn) {
           btn.addEventListener('click', function () {
-            var id = this.dataset.delete;
+            var id = this.dataset['delete'];
             if (!confirm('Delete dataset ' + shortId(id) + '?')) return;
             fetch(GW + '/api/ingestion/datasets/' + id, { method: 'DELETE' })
               .then(function (r) {
@@ -649,6 +826,8 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
               .catch(function (e) { toast('Delete failed: ' + e.message, 'error'); });
           });
         });
+
+        fetchQualityScores(datasets);
       })
       .catch(function () {
         $('#ds-list').innerHTML = '<div class="empty-state">Could not load datasets</div>';

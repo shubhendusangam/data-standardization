@@ -4,6 +4,7 @@ import com.datastd.ingestion.dto.JsonDataRequest;
 import com.datastd.ingestion.entity.IngestedDataset;
 import com.datastd.ingestion.entity.IngestedDataset.DatasetStatus;
 import com.datastd.ingestion.entity.IngestedDataset.SourceType;
+import com.datastd.ingestion.exception.ResourceNotFoundException;
 import com.datastd.ingestion.repository.IngestedDatasetRepository;
 import com.datastd.ingestion.service.FileParserService;
 import com.datastd.ingestion.service.IngestionService;
@@ -81,7 +82,13 @@ public class IngestionServiceImpl implements IngestionService {
 
     @Override
     public IngestedDataset ingestJsonData(JsonDataRequest request) {
-        log.info("Ingesting JSON data: name={}, recordCount={}", request.getName(), request.getRecords().size());
+        log.info("Ingesting JSON data: name={}, recordCount={}", request.getName(),
+                request.getRecords() != null ? request.getRecords().size() : 0);
+
+        if (request.getRecords() == null || request.getRecords().isEmpty()) {
+            throw new IllegalArgumentException("Records list cannot be null or empty");
+        }
+
         IngestedDataset dataset = new IngestedDataset();
         dataset.setName(request.getName());
         dataset.setSourceType(SourceType.API);
@@ -113,7 +120,7 @@ public class IngestionServiceImpl implements IngestionService {
         return repository.findById(id)
                 .orElseThrow(() -> {
                     log.warn("Dataset not found: id={}", id);
-                    return new RuntimeException("Dataset not found with id: " + id);
+                    return new ResourceNotFoundException("Dataset not found with id: " + id);
                 });
     }
 
@@ -121,7 +128,7 @@ public class IngestionServiceImpl implements IngestionService {
     public void deleteDataset(UUID id) {
         if (!repository.existsById(id)) {
             log.warn("Delete failed — dataset not found: id={}", id);
-            throw new RuntimeException("Dataset not found with id: " + id);
+            throw new ResourceNotFoundException("Dataset not found with id: " + id);
         }
         repository.deleteById(id);
         log.info("Dataset deleted: id={}", id);

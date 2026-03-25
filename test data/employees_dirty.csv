@@ -1,0 +1,201 @@
+employee_id,full_name,email,department,designation,join_date,salary,manager_email,work_location,employment_type,is_active
+EMP53750,Hiroshi Ahmed,HIROSHI.AHMED@CORP.COM,Finance,,08/12/2023,2436000,mgr.ahmed@corp.com,Lucknow,Contract,true
+EMP98142,Takeshi Nguyen,takeshi.nguyen@corp.com,Support,Associate,27/09/2018,1091000,mgr.nguyen@corp.com,Lucknow,Part-Time,false
+EMP56346,Dalia Chen,dalia.chen@corp.com,product,Lead,2023-02-17,3174000,mgr.chen@corp.com,Mumbai,Intern,true
+EMP58704,FATIMA CHOWDHURY,FATIMA.CHOWDHURY@CORP.COM,Product,Director,2018-06-16,2188000,mgr.chowdhury@corp.com,Chennai,Contract,true
+EMP28781,Shreya Bose,shreya.bose@corp.com,Legal,Senior Engineer,23/09/2016,4983000,mgr.bose@corp.com,Jaipur,Part-Time,true
+EMP96374,CHEN AHMED,  chen.ahmed@corp.com  ,Support,Engineer,2024-07-05,439000,mgr.ahmed@corp.com,Chennai,Part-Time,true
+EMP28554,Mohammed Tanaka,mohammed.tanaka@corp.com,Support,Director,07/10/2016,365000,mgr.tanaka@corp.com,BANGALORE,Contract,False
+EMP97932,Carlos Sharma,CARLOS.SHARMA@CORP.COM,Engineering,Senior Engineer,2017-01-03,3227000,mgr.sharma@corp.com,Nagpur,part-time,TRUE
+EMP52567,Sakura Kim,sakura.kim@corp.com,Legal,Engineer,01/12/2021,2688000,MGR.KIM@CORP.COM,Delhi,Intern,false
+EMP64190,Tanvi Gupta,tanvi.gupta@corp.com,Analytics,Manager,2023-01-04,2084000,mgr.gupta@corp.com,Ahmedabad,Contract,false
+EMP22799,Tanvi Patel,tanvi.patel@corp.com,Product,Lead,2022-06-07,N/A,mgr.patel@corp.com,KOLKATA,Full-Time,false
+EMP90684,Bhavna Khan,bhavna.khan@corp.com,Engineering,Manager,2023-06-20,800000,mgr.khan@corp.com,Bhopal,Contract,false
+EMP83404,  Bhavna Banerjee  ,BHAVNA.BANERJEE@CORP.COM,Operations,Analyst,2019-07-14,1002000,MGR.BANERJEE@CORP.COM,Chennai,Part-Time,false
+EMP47810,Patel Sharma,patel.sharma@corp.com,Product,,2016-12-11,1670000,MGR.SHARMA@CORP.COM,MUMBAI,Full-Time,false
+EMP68988,Bhavna Gupta,bhavna.gupta@corp.com,Marketing,Manager,2020-02-11,1837000,mgr.gupta@corp.com,SURAT,Intern,true
+EMP28623,Priya Yamamoto,  priya.yamamoto@corp.com  ,Finance,engineer,2015-06-05,2143,mgr.yamamoto@corp.com,Nagpur,Intern,true
+EMP53452,Ananya Yamamoto,ananya.yamamoto@corp.com,Sales,Director,2015-08-05,1595000,mgr.yamamoto@corp.com,Mumbai,Contract,False
+EMP46418,Elena Ali,ELENA.ALI@CORP.COM,Analytics,MANAGER,2024-01-27,861000,mgr.ali@corp.com,Indore,Full-Time,true
+EMP30204,Fatima Lee,fatima.lee@corp.com,Operations,Specialist,2017-01-10,467000,mgr.lee@corp.com,Hyderabad,Part-Time,TRUE
+EMP29025,Arjun Iyer,arjun.iyer@corp.com,Sales,Specialist,2020-05-04,1590000,MGR.IYER@CORP.COM,Bhopal,Intern,FALSE
+EMP98065,Yuki Mehta,yuki.mehta@corp.com,Product,Manager,07/02/2016,3292000,mgr.mehta@corp.com,Lucknow,Part-Time,true
+EMP87874,AARAV SMITH,AARAV.SMITH@CORP.COM,Sales,Manager,2020-01-01,1080000,mgr.smith@corp.com,Lucknow,full-time,true
+EMP97500,Fatima Garcia,fatima.garcia@corp.com,Analytics,Analyst,2020-03-27,1060000,mgr.garcia@corp.com,NAGPUR,Full-Time,false
+EMP90473,Kenji Jain,kenji.jain@corp.com,Finance,Associate,2017-04-01,N/A,mgr.jain@corp.com,DELHI,Full-Time,false
+EMP77552,Sara Hassan,  sara.hassan@corp.com  ,Engineering,Associate,2015-06-04,1891000,mgr.hassan@corp.com,Kolkata,Full-Time,true
+EMP80074,Chen Ali,chen.ali@corp.com,Legal,Analyst,2018-09-27,2840000,MGR.ALI@CORP.COM,Ahmedabad,Contract,true
+EMP28342,Amir Kapoor,amir.kapoor@corp.com,product,Engineer,2016-03-13,N/A,mgr.kapoor@corp.com,Surat,intern,false
+EMP98877,Aisha Chakraborty,aisha.chakraborty@corp.com,Legal,engineer,01/02/2023,1684000,MGR.CHAKRABORTY@CORP.COM,Surat,full-time,true
+EMP90114,Sakura Dey,SAKURA.DEY@CORP.COM,Engineering,MANAGER,18/06/2016,3391000,MGR.DEY@CORP.COM,Indore,Intern,0
+EMP25826,Nadia Singh,nadia.singh@corp.com,Product,Specialist,2021-06-17,2217000,mgr.singh@corp.com,Pune,Intern,True
+EMP26632,Aisha Wang,  AISHA.WANG@CORP.COM  ,Marketing,,2016-01-01,1815000,mgr.wang@corp.com,Ahmedabad,Part-Time,true
+EMP91123,Yuki Desai,yuki.desai@corp.com,Legal,engineer,2018-11-25,3484000,mgr.desai@corp.com,Ahmedabad,Part-Time,1
+EMP69394,Sara Jain,SARA.JAIN@CORP.COM,legal,Engineer,2015-08-10,2367000,mgr.jain@corp.com,Bangalore,Full-Time,0
+EMP36208,UMA BANERJEE,uma.banerjee@corp.com,Legal,Manager,2022-08-04,2142000,MGR.BANERJEE@CORP.COM,Surat,Intern,FALSE
+EMP64817,Rohan Kapoor,rohan.kapoor@corp.com,Marketing,Analyst,08/04/2017,665000,mgr.kapoor@corp.com,Chennai,Part-Time,False
+EMP87564,Uma Verma,uma.verma@corp.com,HR,MANAGER,2023-03-10,955000,mgr.verma@corp.com,Kolkata,Full-Time,true
+EMP94887,Sakura Fernandez,sakura.fernandez@corp.com,Product,Engineer,2021-04-06,3739000,mgr.fernandez@corp.com,Chennai,Intern,true
+EMP60446,FREYA GUPTA,freya.gupta@corp.com,Legal,Analyst,2023-11-10,3767000,mgr.gupta@corp.com,Chennai,Contract,true
+EMP58029,  Yuki Patel  ,  yuki.patel@corp.com  ,Sales,engineer,2022-07-26,605000,mgr.patel@corp.com,Jaipur,Part-Time,false
+EMP65434,Aditi Verma,aditi.verma@corp.com,Sales,Senior Engineer,2024-10-08,929000,mgr.verma@corp.com,Ahmedabad,Full-Time,false
+EMP24683,ANANYA DAS,ananya.das@corp.com,Operations,Associate,24/12/2015,766000,mgr.das@corp.com,Hyderabad,Full-Time,true
+EMP52769,Riya Bose,riya.bose@corp.com,Product,,2024-10-10,3028000,mgr.bose@corp.com,Indore,Intern,true
+EMP31075,Elena Lee,elena.lee@corp.com,Finance,Director,2018-03-26,796000,mgr.lee@corp.com,Bangalore,Part-Time,FALSE
+EMP79945,Deepa Tanaka,deepa.tanaka@corp.com,Analytics,Engineer,2021-04-22,2048000,mgr.tanaka@corp.com,Ahmedabad,Intern,FALSE
+EMP15253,Sakura Mishra,sakura.mishra@corp.com,Finance,engineer,2021-06-07,2337000,MGR.MISHRA@CORP.COM,Mumbai,Part-Time,true
+EMP21452,Aditi Kapoor,aditi.kapoor@corp.com,Analytics,Specialist,09/08/2023,842000,mgr.kapoor@corp.com,Pune,Full-Time,false
+EMP64474,Nguyen Sharma,nguyen.sharma@corp.com,Product,Director,10/12/2018,2725000,mgr.sharma@corp.com,Kanpur,Intern,no
+EMP64331,Ifeoma Mohammed,ifeoma.mohammed@corp.com,Marketing,Associate,05/10/2018,N/A,mgr.mohammed@corp.com,Nagpur,Part-Time,false
+EMP93958,Amara Mohammed,amara.mohammed@corp.com,Legal,Associate,2021-04-09,2119000,MGR.MOHAMMED@CORP.COM,Lucknow,Intern,TRUE
+EMP85400,Ayesha Chowdhury,ayesha.chowdhury@corp.com,legal,Director,2021-05-05,2256000,mgr.chowdhury@corp.com,Mumbai,Intern,true
+EMP22387,Layla Reddy,layla.reddy@corp.com,Engineering,Lead,29/12/2018,1994000,mgr.reddy@corp.com,Indore,Contract,FALSE
+EMP83224,Aarav Gupta,aarav.gupta@corp.com,Marketing,engineer,2020-06-09,933000,mgr.gupta@corp.com,Kanpur,Full-Time,1
+EMP25544,Sakura Rao,sakura.rao@corp.com,Engineering,Lead,2024-02-29,3247000,mgr.rao@corp.com,Chennai,Part-Time,false
+EMP49537,  Ayesha Bose  ,ayesha.bose@corp.com,Sales,Senior Engineer,24/06/2015,567000,mgr.bose@corp.com,Bhopal,Part-Time,1
+EMP38442,  Uma Rao  ,uma.rao@corp.com,Finance,Director,2023-10-04,1195000.00,mgr.rao@corp.com,Nagpur,Full-Time,false
+EMP51193,Fatima Tanaka,fatima.tanaka@corp.com,Analytics,Senior Engineer,2024-05-12,2304000,mgr.tanaka@corp.com,Ahmedabad,Contract,False
+EMP34744,Olivia Mishra,olivia.mishra@corp.com,Sales,Associate,2022-09-15,1409000,mgr.mishra@corp.com,Pune,Intern,false
+EMP62990,Chen Hassan,chen.hassan@corp.com,Sales,Specialist,2016-02-21,845000,mgr.hassan@corp.com,Chennai,Contract,false
+EMP23055,Patel Wang,patel.wang@corp.com,Analytics,Senior Engineer,06/02/2020,1776000,mgr.wang@corp.com,Mumbai,Intern,no
+EMP80848,Amir Wilson,amir.wilson@corp.com,Sales,Engineer,07/04/2017,1519000,mgr.wilson@corp.com,Bhopal,Intern,false
+EMP24336,Amara Jain,amara.jain@corp.com,Engineering,Associate,2018-05-26,1472000,mgr.jain@corp.com,Lucknow,Intern,true
+EMP58026,Kenji Wang,kenji.wang@corp.com,Product,MANAGER,2022-08-02,2065,MGR.WANG@CORP.COM,Bhopal,intern,false
+EMP80571,Neha Chen,neha.chen@corp.com,Product,Associate,08/04/2022,1247000,mgr.chen@corp.com,Kolkata,Intern,false
+EMP31840,Olivia Ali,olivia.ali@corp.com,Operations,Analyst,2024-01-24,821000,mgr.ali@corp.com,Hyderabad,Full-Time,true
+EMP79607,Meera Ali,meera.ali@corp.com,Engineering,Manager,2023-05-01,3168000,mgr.ali@corp.com,Delhi,Contract,false
+EMP34450,Mohammed Kapoor,mohammed.kapoor@corp.com,Support,Manager,2020-10-11,1131000,mgr.kapoor@corp.com,Indore,Intern,false
+EMP93090,Sofia Kapoor,sofia.kapoor@corp.com,Engineering,Specialist,2016-09-08,2029000,mgr.kapoor@corp.com,Chennai,Contract,true
+EMP45744,Divya Kapoor,DIVYA.KAPOOR@CORP.COM,Sales,Director,2018-06-25,1646000,mgr.kapoor@corp.com,Chennai,Part-Time,true
+EMP62021,Aisha Chen,aisha.chen@corp.com,Legal,Lead,30/09/2021,1460000,mgr.chen@corp.com,Surat,Full-Time,false
+EMP38063,Kavya Chowdhury,KAVYA.CHOWDHURY@CORP.COM,Sales,Associate,2018-09-10,1298000,mgr.chowdhury@corp.com,Indore,Intern,true
+EMP89405,SAKURA KUMAR,sakura.kumar@corp.com,product,,2016-08-16,3831000,mgr.kumar@corp.com,Mumbai,Part-Time,false
+EMP48983,Ananya Garcia,ananya.garcia@corp.com,Operations,Lead,2019-12-18,1204000,mgr.garcia@corp.com,Lucknow,Intern,false
+EMP56118,Sakura Smith,sakura.smith@corp.com,Legal,engineer,2019-09-27,4559000,mgr.smith@corp.com,Ahmedabad,Full-Time,true
+EMP27051,Aarav Singh,aarav.singh@corp.com,Marketing,,16/06/2021,923000,mgr.singh@corp.com,Pune,Part-Time,false
+EMP92133,Bhavna Smith,bhavna.smith@corp.com,HR,Senior Engineer,2019-03-26,909000,mgr.smith@corp.com,Hyderabad,part-time,false
+EMP36626,Bhavna Reddy,BHAVNA.REDDY@CORP.COM,Marketing,Director,2015-02-27,1491000,mgr.reddy@corp.com,Ahmedabad,Intern,true
+EMP99688,Chioma Kapoor,chioma.kapoor@corp.com,Finance,Senior Engineer,20/08/2016,1236000,MGR.KAPOOR@CORP.COM,Bangalore,Intern,false
+EMP88411,Kenji Das,  KENJI.DAS@CORP.COM  ,Analytics,Engineer,2018-09-25,2678000,MGR.DAS@CORP.COM,Jaipur,Contract,yes
+EMP25314,Fatima Lee,FATIMA.LEE@CORP.COM,Analytics,Lead,2018-10-21,1290000,mgr.lee@corp.com,Indore,Contract,false
+EMP67670,Yuki Lee,yuki.lee@corp.com,finance,Lead,06/11/2016,1706000,MGR.LEE@CORP.COM,BANGALORE,Contract,false
+EMP33678,AMARA TANAKA,amara.tanaka@corp.com,Legal,engineer,2020-06-10,1660000,mgr.tanaka@corp.com,Surat,Part-Time,true
+EMP58963,Fatima Smith,fatima.smith@corp.com,Analytics,Senior Engineer,2020-08-02,2096000,mgr.smith@corp.com,BANGALORE,Intern,false
+EMP52358,VIKRAM AHMED,  vikram.ahmed@corp.com  ,Finance,Senior Engineer,2021-12-24,1365000,mgr.ahmed@corp.com,Surat,Intern,true
+EMP50645,Bhavna Bose,bhavna.bose@corp.com,Product,MANAGER,2023-09-28,3550000,MGR.BOSE@CORP.COM,Lucknow,Contract,false
+EMP54793,  Sakura Mehta  ,sakura.mehta@corp.com,Product,,2023-06-26,2408000,mgr.mehta@corp.com,Lucknow,Intern,true
+EMP15910,BHAVNA VERMA,bhavna.verma@corp.com,Product,engineer,2022-09-03,1918000,mgr.verma@corp.com,Delhi,Contract,true
+EMP68975,Chen Thomas,CHEN.THOMAS@CORP.COM,Engineering,Director,29/05/2019,2504000,mgr.thomas@corp.com,Bhopal,Part-Time,true
+EMP88890,Kenji Fernandez,  kenji.fernandez@corp.com  ,Analytics,Director,06/06/2019,1453000,mgr.fernandez@corp.com,Surat,Intern,yes
+EMP35023,Chen Bose,chen.bose@corp.com,hr,Associate,20/04/2015,747000,MGR.BOSE@CORP.COM,KOLKATA,Part-Time,false
+EMP66595,Aisha Tanaka,aisha.tanaka@corp.com,Legal,Associate,2021-05-21,2804000,mgr.tanaka@corp.com,Surat,contract,false
+EMP94974,  Chioma Dey  ,chioma.dey@corp.com,Analytics,Associate,2024-09-23,998000,MGR.DEY@CORP.COM,Surat,Contract,TRUE
+EMP64638,Sakura Rao,sakura.rao@corp.com,HR,,2021-08-04,1144000,mgr.rao@corp.com,Pune,Part-Time,false
+EMP12376,  Amir Verma  ,AMIR.VERMA@CORP.COM,Sales,Director,2021-10-17,1351000,mgr.verma@corp.com,Bangalore,Full-Time,false
+EMP89205,James Garcia,james.garcia@corp.com,Analytics,Engineer,2018-10-25,941000,mgr.garcia@corp.com,Ahmedabad,Full-Time,true
+EMP23014,Shreya Fernandez,SHREYA.FERNANDEZ@CORP.COM,Engineering,Analyst,2017-04-21,1443000,mgr.fernandez@corp.com,Bangalore,Part-Time,false
+EMP79422,Kavya Verma,kavya.verma@corp.com,Engineering,Manager,16/12/2015,2499000,MGR.VERMA@CORP.COM,Kolkata,Intern,false
+EMP14861,  Divya Ahmed  ,divya.ahmed@corp.com,Legal,,13/10/2015,2489000,mgr.ahmed@corp.com,SURAT,Contract,false
+EMP91027,Neha Ahmed,neha.ahmed@corp.com,Operations,Analyst,2021-11-05,1227000,mgr.ahmed@corp.com,Nagpur,Part-Time,FALSE
+EMP13655,Chioma Gupta,chioma.gupta@corp.com,Product,engineer,25/05/2017,3160000,mgr.gupta@corp.com,Hyderabad,Contract,true
+EMP40945,KENJI WILLIAMS,  kenji.williams@corp.com  ,Operations,MANAGER,2022-04-20,1319000,mgr.williams@corp.com,Bhopal,Part-Time,false
+EMP65796,Ananya Gupta,ananya.gupta@corp.com,Analytics,Senior Engineer,11/10/2017,2865000,MGR.GUPTA@CORP.COM,Kolkata,Intern,true
+EMP64646,Patel Banerjee,patel.banerjee@corp.com,Support,Lead,11/10/2024,860000,mgr.banerjee@corp.com,Ahmedabad,Part-Time,true
+EMP78521,Sakura Chakraborty,sakura.chakraborty@corp.com,Legal,Analyst,2019-02-21,N/A,mgr.chakraborty@corp.com,Pune,intern,True
+EMP50593,MEERA MISHRA,meera.mishra@corp.com,Engineering,Analyst,25/06/2020,3042,mgr.mishra@corp.com,Ahmedabad,Part-Time,false
+EMP68077,DIVYA NGUYEN,DIVYA.NGUYEN@CORP.COM,Legal,,2021-12-29,2153000,MGR.NGUYEN@CORP.COM,Bangalore,Contract,true
+EMP12486,Hiroshi Dey,hiroshi.dey@corp.com,Sales,Manager,2021-05-24,1474000,mgr.dey@corp.com,Kanpur,intern,false
+EMP32040,Sara Bose,sara.bose@corp.com,Engineering,Lead,2015-04-09,2099000,mgr.bose@corp.com,Delhi,Intern,true
+EMP16799,Fatima Bose,fatima.bose@corp.com,Operations,MANAGER,09/02/2016,1245000,mgr.bose@corp.com,Ahmedabad,Intern,False
+EMP82706,Priya Das,priya.das@corp.com,Support,Lead,2017-08-15,369000,mgr.das@corp.com,Kolkata,Part-Time,true
+EMP31939,Kavya Yamamoto,kavya.yamamoto@corp.com,marketing,Associate,2021-03-23,602000,mgr.yamamoto@corp.com,Chennai,Intern,true
+EMP66618,Liam Chakraborty,LIAM.CHAKRABORTY@CORP.COM,Support,engineer,14/10/2015,754000,mgr.chakraborty@corp.com,Pune,Contract,false
+EMP32745,  NADIA KHAN  ,nadia.khan@corp.com,Operations,Associate,2015-03-07,673000,mgr.khan@corp.com,Jaipur,Full-Time,false
+EMP39035,Olivia Chowdhury,olivia.chowdhury@corp.com,Operations,Director,2023-08-12,417000,mgr.chowdhury@corp.com,Kanpur,Full-Time,false
+EMP46352,James Wang,  james.wang@corp.com  ,HR,Associate,2020-07-11,878000,mgr.wang@corp.com,Hyderabad,part-time,true
+EMP43150,Kenji Ali,kenji.ali@corp.com,Marketing,Associate,2023-03-05,992000,MGR.ALI@CORP.COM,Kolkata,Full-Time,false
+EMP51450,Layla Garcia,layla.garcia@corp.com,product,Manager,2019-01-20,₹1078000,mgr.garcia@corp.com,Bhopal,Full-Time,true
+EMP92090,Ayesha Kumar,ayesha.kumar@corp.com,Product,Director,2015-09-15,1296000,mgr.kumar@corp.com,Ahmedabad,Contract,false
+EMP18523,Ayesha Chowdhury,ayesha.chowdhury@corp.com,HR,Engineer,2022-01-05,705000,mgr.chowdhury@corp.com,AHMEDABAD,intern,true
+EMP91292,Olivia Singh,OLIVIA.SINGH@CORP.COM,Finance,Analyst,2017-08-12,2312000,mgr.singh@corp.com,Lucknow,Intern,yes
+EMP34369,Bilal Das,bilal.das@corp.com,Analytics,Engineer,05/06/2021,2834000,MGR.DAS@CORP.COM,Chennai,Contract,TRUE
+EMP17157,Nadia Mishra,  nadia.mishra@corp.com  ,Analytics,Manager,2021-07-30,1342000,mgr.mishra@corp.com,Lucknow,Full-Time,false
+EMP15530,Vikram Patel,vikram.patel@corp.com,Legal,Engineer,2018-10-06,2914000,mgr.patel@corp.com,Kanpur,Part-Time,false
+EMP92750,Ifeoma Singh,ifeoma.singh@corp.com,Product,Analyst,26/01/2019,2365000,MGR.SINGH@CORP.COM,Mumbai,Contract,false
+EMP24544,Takeshi Kumar,  TAKESHI.KUMAR@CORP.COM  ,Operations,Manager,14/06/2024,607000,mgr.kumar@corp.com,Hyderabad,Contract,false
+EMP16054,Chen Hassan,chen.hassan@corp.com,Sales,MANAGER,15/02/2017,1274000,mgr.hassan@corp.com,Jaipur,Part-Time,true
+EMP60871,Deepa Williams,deepa.williams@corp.com,Finance,,2017-05-07,2306000,mgr.williams@corp.com,Pune,Intern,false
+EMP40721,Bilal Wang,bilal.wang@corp.com,Legal,Director,2022-02-26,3591000,mgr.wang@corp.com,Kolkata,Contract,no
+EMP75213,Riya Wilson,riya.wilson@corp.com,Finance,Specialist,2020-03-20,1388000,MGR.WILSON@CORP.COM,Ahmedabad,Full-Time,true
+EMP53154,Shreya Yamamoto,shreya.yamamoto@corp.com,Support,,21/07/2017,423,mgr.yamamoto@corp.com,Hyderabad,Part-Time,TRUE
+EMP37508,Neha Singh,neha.singh@corp.com,Finance,engineer,2023-07-01,1666000,mgr.singh@corp.com,Jaipur,Intern,true
+EMP96356,Rahul Smith,rahul.smith@corp.com,HR,Analyst,06/04/2021,734000,mgr.smith@corp.com,Kolkata,Intern,false
+EMP80056,Tanvi Chakraborty,tanvi.chakraborty@corp.com,Engineering,Associate,2018-09-14,3269000,MGR.CHAKRABORTY@CORP.COM,Surat,contract,true
+EMP69593,Amara Chowdhury,amara.chowdhury@corp.com,marketing,engineer,2015-10-12,1390000,MGR.CHOWDHURY@CORP.COM,Pune,Intern,True
+EMP89129,Dalia Das,dalia.das@corp.com,Legal,Director,25/04/2017,2042000,mgr.das@corp.com,Jaipur,Intern,true
+EMP47737,Ayesha Singh,ayesha.singh@corp.com,Legal,Associate,2018-09-09,4801000,mgr.singh@corp.com,Indore,Contract,true
+EMP30700,YUKI SRIVASTAVA,yuki.srivastava@corp.com,Marketing,,2017-01-21,795000,mgr.srivastava@corp.com,Lucknow,Part-Time,false
+EMP13501,  Chen Reddy  ,CHEN.REDDY@CORP.COM,support,,2023-08-06,769000,mgr.reddy@corp.com,Kolkata,Intern,TRUE
+EMP46587,Bilal Gupta,bilal.gupta@corp.com,Sales,Lead,2020-06-08,669000,mgr.gupta@corp.com,Surat,Contract,yes
+EMP78534,DIVYA TANAKA,divya.tanaka@corp.com,Finance,,2015-05-22,1790000,mgr.tanaka@corp.com,Kolkata,intern,True
+EMP22661,  Kavya Reddy  ,kavya.reddy@corp.com,HR,,2015-03-07,479000,mgr.reddy@corp.com,BANGALORE,Full-Time,false
+EMP51450,Yuki Khan,yuki.khan@corp.com,hr,Manager,19/10/2019,887000,mgr.khan@corp.com,Delhi,Contract,0
+EMP92689,MEERA CHOWDHURY,meera.chowdhury@corp.com,Product,,2022-12-28,3231000,mgr.chowdhury@corp.com,Nagpur,Contract,false
+EMP12780,  Ayesha Patel  ,AYESHA.PATEL@CORP.COM,Legal,Senior Engineer,2020-01-13,3823000,mgr.patel@corp.com,Kanpur,Part-Time,False
+EMP94358,Hiroshi Hassan,hiroshi.hassan@corp.com,Finance,Engineer,2017-09-02,1924000,mgr.hassan@corp.com,Kolkata,Contract,true
+EMP18469,Nadia Kumar,  nadia.kumar@corp.com  ,Operations,Senior Engineer,2022-06-16,855000,mgr.kumar@corp.com,Mumbai,Part-Time,0
+EMP68755,Shreya Desai,shreya.desai@corp.com,HR,Manager,2016-11-03,951000,mgr.desai@corp.com,Nagpur,Contract,true
+EMP49351,Shreya Dey,shreya.dey@corp.com,Product,Lead,2024-03-11,2874000,mgr.dey@corp.com,Bangalore,Intern,false
+EMP74415,Sakura Das,sakura.das@corp.com,Analytics,Specialist,12/03/2017,1526000.00,mgr.das@corp.com,Kanpur,Intern,true
+EMP17563,Chen Sharma,chen.sharma@corp.com,Engineering,Specialist,2023-07-23,1845000,mgr.sharma@corp.com,Hyderabad,Contract,true
+EMP60377,Kenji Chowdhury,kenji.chowdhury@corp.com,Marketing,MANAGER,07/11/2017,₹1784000,mgr.chowdhury@corp.com,Delhi,Part-Time,true
+EMP24322,Ayaan Mohammed,ayaan.mohammed@corp.com,Finance,Analyst,2024-12-10,1330000,mgr.mohammed@corp.com,Chennai,Intern,true
+EMP35954,Aarav Fernandez,AARAV.FERNANDEZ@CORP.COM,Legal,engineer,2020-11-20,2381000,mgr.fernandez@corp.com,Ahmedabad,Part-Time,true
+EMP54846,Kenji Smith,kenji.smith@corp.com,hr,Manager,2016-03-23,790000,mgr.smith@corp.com,Lucknow,full-time,true
+EMP58599,Carlos Khan,  carlos.khan@corp.com  ,Engineering,Analyst,2021-10-05,1888000,mgr.khan@corp.com,Indore,Contract,false
+EMP42576,Nadia Fernandez,NADIA.FERNANDEZ@CORP.COM,Operations,MANAGER,2019-07-04,684000,mgr.fernandez@corp.com,Indore,Intern,true
+EMP20665,Aisha Reddy,aisha.reddy@corp.com,Operations,Associate,02/04/2023,1309000,mgr.reddy@corp.com,Indore,Full-Time,false
+EMP71184,Sofia Ali,sofia.ali@corp.com,Marketing,Associate,11/05/2015,778000,mgr.ali@corp.com,Ahmedabad,Part-Time,true
+EMP97897,Carlos Srivastava,  carlos.srivastava@corp.com  ,Sales,Lead,2018-08-30,1074000,mgr.srivastava@corp.com,Lucknow,Full-Time,false
+EMP21492,Freya Chowdhury,FREYA.CHOWDHURY@CORP.COM,Analytics,Analyst,2023-01-17,2313000,mgr.chowdhury@corp.com,Bhopal,Full-Time,true
+EMP26555,Tanvi Ahmed,tanvi.ahmed@corp.com,Product,MANAGER,2017-02-16,2635000,mgr.ahmed@corp.com,Delhi,Intern,false
+EMP26182,Ananya Thomas,ANANYA.THOMAS@CORP.COM,Legal,MANAGER,2023-05-18,4482000,mgr.thomas@corp.com,Indore,Contract,FALSE
+EMP96409,Bilal Khan,bilal.khan@corp.com,Marketing,Lead,2017-07-10,707000,mgr.khan@corp.com,Jaipur,Intern,false
+EMP17094,Ayesha Wilson,ayesha.wilson@corp.com,Product,Director,2017-03-10,N/A,mgr.wilson@corp.com,Bangalore,Intern,false
+EMP32049,Ifeoma Kapoor,  ifeoma.kapoor@corp.com  ,HR,Senior Engineer,2023-02-21,658000,mgr.kapoor@corp.com,Ahmedabad,full-time,false
+EMP97914,Zara Singh,zara.singh@corp.com,Marketing,Associate,2019-06-13,1820000,mgr.singh@corp.com,Lucknow,Intern,no
+EMP94488,Aditi Williams,aditi.williams@corp.com,Legal,Director,2021-06-03,4041000,mgr.williams@corp.com,Delhi,Part-Time,true
+EMP25378,Sofia Wang,SOFIA.WANG@CORP.COM,Support,MANAGER,2021-01-16,1159000,mgr.wang@corp.com,Mumbai,Contract,true
+EMP96266,Bhavna Zhang,bhavna.zhang@corp.com,marketing,Director,2015-12-13,1636000,MGR.ZHANG@CORP.COM,Jaipur,Contract,False
+EMP38208,Sofia Rao,sofia.rao@corp.com,Operations,MANAGER,18/09/2022,₹491000,mgr.rao@corp.com,Surat,Part-Time,TRUE
+EMP92984,OLIVIA IYER,olivia.iyer@corp.com,Finance,Manager,2017-11-07,2122000,mgr.iyer@corp.com,Surat,Part-Time,true
+EMP53714,Olivia Bose,olivia.bose@corp.com,Product,Lead,11/01/2018,N/A,mgr.bose@corp.com,Hyderabad,Full-Time,true
+EMP82291,Chen Jain,chen.jain@corp.com,Sales,Senior Engineer,2021-08-08,1502000,mgr.jain@corp.com,Bangalore,Intern,false
+EMP42651,Kenji Ahmed,kenji.ahmed@corp.com,Marketing,Specialist,17/05/2022,1375,mgr.ahmed@corp.com,Bangalore,Contract,false
+EMP22272,SOFIA KIM,sofia.kim@corp.com,Product,Engineer,2018-06-05,2180000,MGR.KIM@CORP.COM,Chennai,Intern,true
+EMP10955,Ananya Williams,ananya.williams@corp.com,Product,engineer,2020-08-01,3672000,mgr.williams@corp.com,Hyderabad,Full-Time,true
+EMP54296,James Jain,JAMES.JAIN@CORP.COM,Support,Manager,2020-10-05,402000,mgr.jain@corp.com,Indore,Full-Time,false
+EMP10772,  Aarav Ali  ,aarav.ali@corp.com,HR,Analyst,2022-03-18,522000,mgr.ali@corp.com,DELHI,Part-Time,False
+EMP59061,Bhavna Wilson,bhavna.wilson@corp.com,HR,Specialist,2016-05-22,464000,mgr.wilson@corp.com,Jaipur,Full-Time,FALSE
+EMP31012,Aarav Rao,aarav.rao@corp.com,Product,Associate,29/03/2016,1064000,mgr.rao@corp.com,Chennai,Intern,true
+EMP98907,Shreya Sharma,SHREYA.SHARMA@CORP.COM,Product,Specialist,21/11/2023,1537000,mgr.sharma@corp.com,KANPUR,Intern,True
+EMP23508,Yuki Hassan,yuki.hassan@corp.com,HR,engineer,2018-02-25,989000,mgr.hassan@corp.com,Hyderabad,Part-Time,true
+EMP39068,Hiroshi Hassan,hiroshi.hassan@corp.com,Finance,Associate,2016-01-08,1478000,MGR.HASSAN@CORP.COM,Kolkata,contract,false
+EMP23207,Bilal Smith,bilal.smith@corp.com,Operations,Director,14/01/2017,506000,mgr.smith@corp.com,Pune,full-time,true
+EMP21433,Nadia Reddy,nadia.reddy@corp.com,Marketing,Lead,2023-09-25,1838000,mgr.reddy@corp.com,Surat,Part-Time,false
+EMP83445,Sunita Dey,sunita.dey@corp.com,Sales,Analyst,15/07/2023,814000,mgr.dey@corp.com,Kanpur,intern,false
+EMP62100,Aisha Iyer,aisha.iyer@corp.com,Support,engineer,12/06/2016,929000,mgr.iyer@corp.com,Delhi,Intern,false
+EMP38879,Ifeoma Jain,IFEOMA.JAIN@CORP.COM,Finance,Director,2021-08-22,2500000,mgr.jain@corp.com,Bangalore,Part-Time,true
+EMP58380,Deepa Mehta,  deepa.mehta@corp.com  ,Finance,engineer,2017-10-16,1130000.00,mgr.mehta@corp.com,Bangalore,Contract,true
+EMP43730,Neha Kim,neha.kim@corp.com,Engineering,,2017-11-14,3001000,mgr.kim@corp.com,Hyderabad,Part-Time,true
+EMP33083,Divya Tanaka,divya.tanaka@corp.com,Product,Associate,18/02/2019,2862000,mgr.tanaka@corp.com,Bangalore,Full-Time,true
+EMP11545,Hiroshi Das,HIROSHI.DAS@CORP.COM,Analytics,Specialist,2020-02-07,2398000,mgr.das@corp.com,Delhi,Full-Time,true
+EMP31383,Aarav Ahmed,aarav.ahmed@corp.com,Analytics,Associate,2023-04-04,1098000,mgr.ahmed@corp.com,Mumbai,Contract,yes
+EMP47597,Sunita Mishra,SUNITA.MISHRA@CORP.COM,Sales,,29/08/2019,959000,mgr.mishra@corp.com,Bhopal,Full-Time,true
+EMP99054,Neha Das,neha.das@corp.com,Finance,,2015-12-14,1938000,mgr.das@corp.com,Surat,Contract,false
+EMP72709,Kenji Das,kenji.das@corp.com,Operations,Senior Engineer,2016-08-31,700000,mgr.das@corp.com,Kanpur,Full-Time,True
+EMP64874,Mohammed Wang,mohammed.wang@corp.com,Operations,engineer,2019-08-23,1082000,mgr.wang@corp.com,Jaipur,Part-Time,false
+EMP28264,AYAAN DESAI,  ayaan.desai@corp.com  ,HR,Lead,16/07/2024,1420000,mgr.desai@corp.com,Jaipur,Intern,1
+EMP29252,Ayaan Hassan,  ayaan.hassan@corp.com  ,Sales,Senior Engineer,2019-10-06,717000,mgr.hassan@corp.com,Mumbai,Intern,true
+EMP14209,Dalia Wilson,dalia.wilson@corp.com,Marketing,Lead,2019-08-13,1509000,mgr.wilson@corp.com,Mumbai,Intern,false
+EMP91139,Tanvi Williams,tanvi.williams@corp.com,finance,Specialist,04/10/2016,888000,mgr.williams@corp.com,Kanpur,Full-Time,false

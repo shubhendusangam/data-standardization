@@ -14,6 +14,10 @@ public class ProcessingRequest {
 
     private List<UUID> ruleIds;
 
+    private boolean skipQualityCheck;
+
+    private UUID qualityRuleSetId;
+
     public ProcessingRequest() {}
 
     public UUID getDatasetId() {
@@ -38,6 +42,22 @@ public class ProcessingRequest {
 
     public void setRuleIds(List<UUID> ruleIds) {
         this.ruleIds = ruleIds;
+    }
+
+    public boolean isSkipQualityCheck() {
+        return skipQualityCheck;
+    }
+
+    public void setSkipQualityCheck(boolean skipQualityCheck) {
+        this.skipQualityCheck = skipQualityCheck;
+    }
+
+    public UUID getQualityRuleSetId() {
+        return qualityRuleSetId;
+    }
+
+    public void setQualityRuleSetId(UUID qualityRuleSetId) {
+        this.qualityRuleSetId = qualityRuleSetId;
     }
 }
 

@@ -15,7 +15,8 @@ public class RegexApplier implements RuleApplier {
         if (value == null || config == null) return value;
 
         String pattern = (String) config.get("pattern");
-        String replacement = (String) config.getOrDefault("replacement", "");
+        String replacement = (String) config.get("replacement");
+        if (replacement == null) replacement = "";
 
         if (pattern == null || pattern.isEmpty()) return value;
 

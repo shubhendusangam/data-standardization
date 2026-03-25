@@ -17,6 +17,9 @@ public class ProcessingStatusResponse {
     private LocalDateTime startedAt;
     private LocalDateTime completedAt;
     private LocalDateTime createdAt;
+    private Integer qualityScore;
+    private String qualityStatus;
+    private UUID qualityReportId;
 
     public ProcessingStatusResponse() {}
 
@@ -31,6 +34,9 @@ public class ProcessingStatusResponse {
         response.setStartedAt(job.getStartedAt());
         response.setCompletedAt(job.getCompletedAt());
         response.setCreatedAt(job.getCreatedAt());
+        response.setQualityScore(job.getQualityScore());
+        response.setQualityStatus(job.getQualityStatus());
+        response.setQualityReportId(job.getQualityReportId());
 
         if (job.getTotalRecords() > 0) {
             response.setProgressPercentage(
@@ -122,6 +128,30 @@ public class ProcessingStatusResponse {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Integer getQualityScore() {
+        return qualityScore;
+    }
+
+    public void setQualityScore(Integer qualityScore) {
+        this.qualityScore = qualityScore;
+    }
+
+    public String getQualityStatus() {
+        return qualityStatus;
+    }
+
+    public void setQualityStatus(String qualityStatus) {
+        this.qualityStatus = qualityStatus;
+    }
+
+    public UUID getQualityReportId() {
+        return qualityReportId;
+    }
+
+    public void setQualityReportId(UUID qualityReportId) {
+        this.qualityReportId = qualityReportId;
     }
 }
 

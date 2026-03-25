@@ -4,6 +4,11 @@ server:
 spring:
   application:
     name: api-gateway
+  webflux:
+    static-path-pattern: /**
+  web:
+    resources:
+      static-locations: classpath:/static/
   cloud:
     gateway:
       discovery:
@@ -23,6 +28,10 @@ spring:
           uri: lb://standardization-service
           predicates:
             - Path=/api/standardization/**
+        - id: data-quality-service
+          uri: lb://data-quality-service
+          predicates:
+            - Path=/api/quality/**
 
 eureka:
   client:
@@ -30,6 +39,8 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
   instance:
     prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
 
 management:
   endpoints:

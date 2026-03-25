@@ -113,7 +113,7 @@ class IngestionControllerIntegrationTest {
     }
 
     @Test
-    void getDatasetById_notFound_shouldReturn500() throws Exception {
+    void getDatasetById_notFound_shouldReturn404() throws Exception {
         mockMvc.perform(get("/api/ingestion/datasets/" + UUID.randomUUID()))
                 .andExpect(status().isNotFound());
     }

@@ -6,6 +6,7 @@ import com.datastd.rules.dto.RuleRequest;
 import com.datastd.rules.dto.RuleSetRequest;
 import com.datastd.rules.entity.RuleSet;
 import com.datastd.rules.entity.StandardizationRule;
+import com.datastd.rules.exception.ResourceNotFoundException;
 import com.datastd.rules.mapper.RuleMapper;
 import com.datastd.rules.repository.RuleSetRepository;
 import com.datastd.rules.repository.StandardizationRuleRepository;
@@ -56,7 +57,7 @@ public class RuleServiceImpl implements RuleService {
         StandardizationRule rule = ruleRepository.findById(id)
                 .orElseThrow(() -> {
                     log.warn("Rule not found: id={}", id);
-                    return new RuntimeException("Rule not found with id: " + id);
+                    return new ResourceNotFoundException("Rule not found with id: " + id);
                 });
         return RuleMapper.toResponse(rule);
     }
@@ -87,7 +88,7 @@ public class RuleServiceImpl implements RuleService {
         StandardizationRule rule = ruleRepository.findById(id)
                 .orElseThrow(() -> {
                     log.warn("Update failed — rule not found: id={}", id);
-                    return new RuntimeException("Rule not found with id: " + id);
+                    return new ResourceNotFoundException("Rule not found with id: " + id);
                 });
 
         rule.setName(request.getName());
@@ -107,7 +108,7 @@ public class RuleServiceImpl implements RuleService {
     public void deleteRule(UUID id) {
         if (!ruleRepository.existsById(id)) {
             log.warn("Delete failed — rule not found: id={}", id);
-            throw new RuntimeException("Rule not found with id: " + id);
+            throw new ResourceNotFoundException("Rule not found with id: " + id);
         }
         ruleRepository.deleteById(id);
         log.info("Rule deleted: id={}", id);
@@ -116,7 +117,7 @@ public class RuleServiceImpl implements RuleService {
     @Override
     public RuleResponse toggleRule(UUID id) {
         StandardizationRule rule = ruleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Rule not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Rule not found with id: " + id));
         rule.setActive(!rule.isActive());
         StandardizationRule saved = ruleRepository.save(rule);
         log.info("Rule toggled: id={}, active={}", saved.getId(), saved.isActive());
@@ -168,7 +169,7 @@ public class RuleServiceImpl implements RuleService {
         RuleSet ruleSet = ruleSetRepository.findById(id)
                 .orElseThrow(() -> {
                     log.warn("Rule set not found: id={}", id);
-                    return new RuntimeException("RuleSet not found with id: " + id);
+                    return new ResourceNotFoundException("RuleSet not found with id: " + id);
                 });
 
         List<StandardizationRule> rules = ruleRepository.findByIdInOrderByPriorityAsc(ruleSet.getRuleIds());

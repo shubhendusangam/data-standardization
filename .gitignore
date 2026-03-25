@@ -78,6 +78,9 @@ loki-data/
 # ── Grafana Runtime (if running outside Docker) ───────────
 infra/grafana/data/
 
+# ── Generated UI Static Resources (copied by Maven) ───────
+api-gateway/src/main/resources/static/
+
 # ── Misc ───────────────────────────────────────────────────
 *.swp
 *.swo

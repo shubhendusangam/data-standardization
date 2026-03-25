@@ -1,5 +1,7 @@
 package com.datastd.standardization.dto;
 
+import com.datastd.common.dto.QualityReport;
+
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -12,6 +14,8 @@ public class StandardizedResultResponse {
     private int totalRecords;
     private List<Map<String, Object>> standardizedRecords;
     private String errorLog;
+    private Boolean qualityBlocked;
+    private QualityReport qualityReport;
 
     public StandardizedResultResponse() {}
 
@@ -61,6 +65,22 @@ public class StandardizedResultResponse {
 
     public void setErrorLog(String errorLog) {
         this.errorLog = errorLog;
+    }
+
+    public Boolean getQualityBlocked() {
+        return qualityBlocked;
+    }
+
+    public void setQualityBlocked(Boolean qualityBlocked) {
+        this.qualityBlocked = qualityBlocked;
+    }
+
+    public QualityReport getQualityReport() {
+        return qualityReport;
+    }
+
+    public void setQualityReport(QualityReport qualityReport) {
+        this.qualityReport = qualityReport;
     }
 }
 

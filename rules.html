@@ -181,6 +181,7 @@ textarea{min-height:80px;resize:vertical;font-family:var(--font-mono);font-size:
     <a href="dashboard.html">Dashboard</a>
     <a href="ingestion.html">Ingestion</a>
     <a href="rules.html" class="active">Rules</a>
+    <a href="data-quality.html">Data Quality</a>
     <a href="jobs.html">Jobs</a>
     <a href="logs.html">Logs</a>
   </nav>
@@ -370,7 +371,7 @@ textarea{min-height:80px;resize:vertical;font-family:var(--font-mono);font-size:
 (function () {
   'use strict';
 
-  var GW = location.protocol + '//' + location.hostname + ':8080';
+  var GW = location.origin;
 
   /* ── Helpers ────────────────────────────────────────────────── */
   function $(s) { return document.querySelector(s); }

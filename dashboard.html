@@ -379,6 +379,7 @@ body {
       <a href="dashboard.html" style="font-size:.78rem;color:var(--color-accent);text-decoration:none;padding:6px 14px;border-radius:6px;border:1px solid var(--color-accent);background:var(--color-accent-glow)">Dashboard</a>
       <a href="ingestion.html" style="font-size:.78rem;color:var(--color-text-dim);text-decoration:none;padding:6px 14px;border-radius:6px;border:1px solid var(--color-border)">Ingestion</a>
       <a href="rules.html" style="font-size:.78rem;color:var(--color-text-dim);text-decoration:none;padding:6px 14px;border-radius:6px;border:1px solid var(--color-border)">Rules</a>
+      <a href="data-quality.html" style="font-size:.78rem;color:var(--color-text-dim);text-decoration:none;padding:6px 14px;border-radius:6px;border:1px solid var(--color-border)">Data Quality</a>
       <a href="jobs.html" style="font-size:.78rem;color:var(--color-text-dim);text-decoration:none;padding:6px 14px;border-radius:6px;border:1px solid var(--color-border)">Jobs</a>
       <a href="logs.html" style="font-size:.78rem;color:var(--color-text-dim);text-decoration:none;padding:6px 14px;border-radius:6px;border:1px solid var(--color-border)">Logs</a>
     </nav>
@@ -456,7 +457,7 @@ body {
   'use strict';
 
   /* ── Configuration ──────────────────────────────────────────── */
-  var GW = location.protocol + '//' + location.hostname + ':8080';
+  var GW = location.origin;
 
   var SERVICES = [
     { id: 'eureka-server',           name: 'Eureka Server',       port: 8761 },

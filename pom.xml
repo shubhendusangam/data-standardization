@@ -25,6 +25,7 @@
         <module>data-ingestion-service</module>
         <module>rule-engine-service</module>
         <module>standardization-service</module>
+        <module>data-quality-service</module>
     </modules>
 
     <properties>

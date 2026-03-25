@@ -14,7 +14,8 @@ public class ReplaceApplier implements RuleApplier {
         if (value == null || config == null) return value;
 
         String find = (String) config.get("find");
-        String replace = (String) config.getOrDefault("replace", "");
+        String replace = (String) config.get("replace");
+        if (replace == null) replace = "";
 
         if (find == null || find.isEmpty()) return value;
         return value.replace(find, replace);

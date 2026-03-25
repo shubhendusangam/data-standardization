@@ -27,6 +27,8 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
   instance:
     prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 10      # heartbeat every 10 s (default 30)
+    lease-expiration-duration-in-seconds: 30    # evict after 30 s silence (default 90)
 
 management:
   endpoints:

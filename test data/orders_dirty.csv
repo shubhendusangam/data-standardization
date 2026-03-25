@@ -1,0 +1,251 @@
+order_id,customer_id,product_name,category,quantity,unit_price,total_amount,order_date,delivery_date,status,payment_method,shipping_city,discount_pct
+ORD-489523,0278a100-67ab-4adc-bb86-b6d9554fa09b,Standing Desk,Peripherals,3,₹4846.4,14539.2,10-30-2024,2024-11-05,Shipped,UPI,Mumbai,10
+ORD-692232,64b1587f-9c69-4be3-b9ff-0d7c294c8fdd,LAPTOP PRO X1,Electronics,2,78144.72,156289.44,07-26-2023,2023-08-02,SHIPPED,Cash on Delivery,Nagpur,10
+ORD-946719,b28d7a38-ba98-4150-96f8-56bed4380b27,Wireless Mouse,Peripherals,,8529.73,76767.57,20/12/2024,2024-12-24,Shipped,wallet,Kanpur,5
+ORD-625986,73b6712e-0258-4d10-b058-18fe74bb677c,USB-C Hub,Furniture,3,79476.62,238429.86,2024-10-31,,in transit,Wallet,Hyderabad,20%
+ORD-115667,b67b2e42-cbb3-49ca-826a-b86f240973ee,Docking Station,Accessories,8,8243.78,65950.24,2023-06-06,,returned,Debit Card,Delhi,15
+ORD-247269,3c919c56-61f2-41ce-85f1-bc932fde9021,"27"" Monitor",Accessories,8,52198.22,417585.76,2024-04-29,2024-05-10,Delivered,Net Banking,Indore,10
+ORD-815711,6247f884-0904-4e1d-a5bb-df0b8670636a,STANDING DESK,Peripherals,5,70253.99,351269.95,29/11/2024,2024-12-02,Delivered,Cash on Delivery,Delhi,15
+ORD-587433,871df89f-eac3-432a-bb10-c3818426cbb3,Ergonomic Chair,Furniture,9,72060.06,648540.54,12-24-2023,,pending,Cash on Delivery,Kanpur,0
+ORD-323839,a4e3d358-f091-44f7-94cd-ce98413a4754,Noise Cancelling Headphones,Audio,,12068.35,96546.8,2023-02-09,,Processing,UPI,Lucknow,10
+ORD-846802,05fa91f9-3323-4866-94e9-7abe5823832c,USB-C Hub,furniture,7,6995.87,48971.09,27/03/2023,2023-04-04,IN TRANSIT,Debit Card,Pune,15
+ORD-826559,84676335-76b3-4868-b6de-456e98b2ba54,USB-C Hub,Furniture,7,28698.04 INR,200886.28,2024-12-06,2024-12-19,in transit,Wallet,Bangalore,5
+ORD-857371,7219d955-1a33-4b28-8ba4-aa3147f59565,WIRELESS MOUSE,Peripherals,7,21392.81,149749.67,21/11/2023,2023-12-04,SHIPPED,Wallet,Bangalore,5
+ORD-116977,266fadbf-7739-4338-8cd0-a2af1ca5518f,Docking Station,Accessories,6,65195.46,391172.76,2023-07-15,2023-07-22,CANCELLED,Net Banking,Nagpur,5
+ORD-500098,477582a1-7ec3-4c9d-9882-601ab1523786,USB-C Hub,Furniture,3,43649.65,130948.95,2024-01-18,2024-02-01,Shipped,wallet,Bhopal,15
+ORD-945016,f5c1188b-b70e-4635-9dd3-7c38554e1248,NOISE CANCELLING HEADPHONES,audio,8,40517.24,324137.92,09-30-2024,2024-10-09,pending,Net Banking,Indore,25
+ORD-377347,f0f8e632-b627-4213-8ab8-d51786e5a0bc,Mechanical Keyboard,Audio,5,70428.77,₹352143.85,01-19-2024,2024-01-21,pending,Cash on Delivery,Surat,5
+ORD-775738,193d98b7-6cea-480d-9b67-ca9f68afbae8,Mechanical Keyboard,Audio,7,15816.5,110715.5,2024-03-16,2024-03-23,SHIPPED,credit card,Nagpur,0
+ORD-313660,028c6d5c-b65a-4c36-b8dd-e9e3e2fc78d4,"27"" Monitor",Accessories,,75921.67,227765.01,2024-02-06,2024-02-16,Shipped,Cash on Delivery,Kanpur,15
+ORD-661425,aac05c42-b176-4b70-b816-4dec7b1e226e,USB-C Hub,Furniture,4,24105.34,96421.36,01-02-2024,2024-01-06,In Transit,Cash on Delivery,Delhi,20%
+ORD-618253,2ebcd7a8-bb97-4a32-a1fb-b15f25b31ff4,"27"" Monitor",Accessories,3,7875.78,23627.34,2023-05-26,2023-06-04,Shipped,Credit Card,Kolkata,25
+ORD-761875,32f21460-7820-4a6b-aab8-59843c73553a,USB-C Hub,Furniture,,52943.48,158830.44,14/06/2023,2023-06-27,Shipped,Credit Card,JAIPUR,20
+ORD-245295,afcf3882-64c1-4982-92b3-b689e34a9226,Webcam HD,electronics,4,2845.06,11380.24,2023-08-10,2023-08-20,delivered,Wallet,Kolkata,15
+ORD-207892,cea66479-e492-4bb8-9ada-077a201666cd,USB-C Hub,Furniture,5,76968.77,384843.85,2023-09-14,2023-09-23,in transit,Debit Card,Surat,15
+ORD-135399,3115db4d-72af-4711-8882-17f8562a6b00,Webcam HD,Electronics,2,36227.57,72455.14,2024-08-03,2024-08-06,pending,Net Banking,Pune,5
+ORD-821726,3c982082-b8db-4a20-a56f-388b86d25c2d,USB-C HUB,Furniture,2,1265.82,2531.64,2024-01-16,2024-01-24,Cancelled,Cash on Delivery,Jaipur,20
+ORD-556346,6c2c9694-d6d6-4817-ba33-7f89b81bf044,Wireless Mouse,Peripherals,7,54729.49 INR,383106.43,2024-11-18,2024-11-26,delivered,Credit Card,Surat,20%
+ORD-982526,c6a9efae-9033-4bc2-bbc7-117f0adc31cf,Docking Station,Accessories,,23107.08,₹184856.64,01-19-2023,2023-02-02,Returned,Debit Card,Pune,20
+ORD-576663,9529d05d-dc6c-4aa8-ba6b-e3d3f60f8522,Docking Station,accessories,5,55868.33,279341.65,20/05/2024,2024-05-22,Delivered,UPI,Indore,15
+ORD-663670,2c477325-22f5-4fbe-a9c7-c55c01ae9141,Mechanical Keyboard,Audio,6,65383.74,392302.44,01/04/2023,,pending,Wallet,Nagpur,25
+ORD-255190,1381d9f1-9384-460d-b49e-0085f78037ff,Docking Station,Accessories,3,25886.95,77660.85,2023-05-22,2023-06-03,Returned,Debit Card,Ahmedabad,10
+ORD-870984,76e01ad3-966e-4ac1-afa2-f1876ab7d1f4,Wireless Mouse,Peripherals,4,52928.72,₹211714.88,2024-12-29,2025-01-07,Cancelled,Net Banking,Hyderabad,20
+ORD-210793,6ba3b1ad-b570-4069-a7a6-a31580d75d68,"27"" Monitor",Accessories,3,67900.65,203701.95,2023-11-17,,SHIPPED,Credit Card,Indore,0%
+ORD-129974,25bd7d42-06d5-4b02-8830-ea41dda36fd3,Wireless Mouse,Peripherals,8,15368.87,122950.96,2023-04-20,2023-04-25,CANCELLED,Net Banking,Mumbai,10%
+ORD-298652,85ab20aa-326b-460d-9a08-2258c88857f6,Standing Desk,Peripherals,7,15917.56,111422.92,2024-10-26,2024-10-29,Pending,UPI,HYDERABAD,0
+ORD-964098,07c7714d-e8e7-4be3-8aa5-ac2c543d136a,Standing Desk,Peripherals,2,17981.12,35962.24,2024-09-27,2024-10-03,Shipped,Credit Card,Kanpur,25
+ORD-448290,a2904358-3e47-4910-adcf-3e605e2d957b,Mechanical Keyboard,Audio,2,13748.31,27496.62,05/12/2024,2024-12-11,Delivered,Wallet,Mumbai,15
+ORD-694822,3b27cf61-2aa5-43c2-8e5f-bab23424298d,Mechanical Keyboard,Audio,1,65604.65,65604.65,2024-05-15,2024-05-18,in transit,Debit Card,Kanpur,20
+ORD-415761,2d6ccce1-8184-4233-a7f4-082a76ada693,"27"" Monitor",Accessories,1,66306.08,66306.08,13/05/2024,2024-05-21,In Transit,Credit Card,Mumbai,25
+ORD-496129,520ff995-2392-4f0c-8b32-0d3e3aab5899,Webcam HD,Electronics,2,15910.45,31820.9,17/03/2024,2024-03-29,pending,Net Banking,Chennai,0
+ORD-577131,ef302d58-310f-4f7b-b29c-732a6f215d97,Webcam HD,Electronics,2,34960.04,69920.08,2024-12-19,2024-12-23,Delivered,Cash on Delivery,Surat,5
+ORD-327882,8b0585c5-4275-4990-8178-2c3eae2134de,Wireless Mouse,Peripherals,1,36581.73,₹36581.73,2023-10-23,,Delivered,Debit Card,Nagpur,25
+ORD-868661,8aeb8d16-b647-450a-b956-52dec459776f,USB-C Hub,Furniture,5,11840.22,₹59201.1,07-28-2024,2024-08-09,SHIPPED,Net Banking,Delhi,10
+ORD-245936,c779dc55-3314-4bbe-9d9d-9af01f5dee07,Docking Station,Accessories,6,64448.23,386689.38,06-27-2023,2023-07-08,delivered,Cash on Delivery,Nagpur,15%
+ORD-847213,9c632f67-80c7-4acf-a0cc-c440911b8e30,Ergonomic Chair,Furniture,9,74822.95,673406.55,2024-06-23,2024-06-25,SHIPPED,UPI,Surat,5
+ORD-156136,fba27501-fc0c-49d1-9fa4-04fd48fb38ab,USB-C Hub,Furniture,10,70285.52,702855.2,2024-01-18,,Processing,Wallet,Surat,10
+ORD-807173,ea502e04-03b8-42e2-9bbc-9b212e22a8f3,Webcam HD,Electronics,2,59367.6,118735.2,12-08-2024,2024-12-20,Delivered,Debit Card,Kanpur,0
+ORD-226913,2b7ec8de-ae08-478e-918d-1d16d27e6091,Mechanical Keyboard,audio,1,12665.26,12665.26,2024-09-30,2024-10-03,delivered,Credit Card,Indore,10
+ORD-253350,54ea5738-0930-4ae4-ab4d-17266628d965,Ergonomic Chair,Furniture,10,10294.12,102941.2,2024-11-28,2024-12-04,Shipped,Cash on Delivery,Lucknow,15
+ORD-397189,67f31d44-8638-46b4-aa5c-70eae7d69e8c,Ergonomic Chair,Furniture,7,12279.24,₹85954.68,04-20-2023,2023-04-27,delivered,Wallet,Mumbai,10
+ORD-165814,1dbdb47e-789b-4b8c-8d86-45ab0cfe7469,Mechanical Keyboard,Audio,9,31554.63,283991.67,30/05/2024,2024-06-13,processing,net banking,Indore,15
+ORD-650957,58ccc773-ec55-4c45-8aef-c79ffb7a0a5b,USB-C Hub,Furniture,9,62144.14,559297.26,12/09/2024,2024-09-25,Shipped,Wallet,Bhopal,10
+ORD-502740,266f12b3-db61-4495-af3b-1d27403b32d5,Wireless Mouse,Peripherals,3,₹58388.97,175166.91,2023-08-31,2023-09-03,pending,Cash on Delivery,Mumbai,10%
+ORD-305225,d21ddaff-5e63-4e95-844d-55327ace203c,Standing Desk,Peripherals,10,44739.22,447392.2,2024-04-05,2024-04-19,Shipped,cash on delivery,Lucknow,0
+ORD-175460,3d739029-fa8e-4d34-996e-6ab4fa5cbc5f,Webcam HD,Electronics,10,43953.18,439531.8,2023-01-06,2023-01-13,CANCELLED,Credit Card,Ahmedabad,15
+ORD-223655,a4f94052-84c3-4a62-95a2-f4fb2f4b9d92,Wireless Mouse,Peripherals,9,,217881.45,2024-08-05,2024-08-11,pending,UPI,Bangalore,0
+ORD-748696,b57333aa-58b8-4c3e-b113-23e9a228be4a,NOISE CANCELLING HEADPHONES,Audio,9,25323.03,227907.27,2023-09-05,2023-09-07,Returned,Credit Card,NAGPUR,5
+ORD-691246,3fb7a6dc-1320-4928-b137-65528412c27b,Laptop Pro X1,Electronics,2,64550.13,₹129100.26,2023-12-04,2023-12-15,processing,Cash on Delivery,Bangalore,0%
+ORD-418157,e4c8ec5d-ad6c-400c-9064-cf65021d19e1,Noise Cancelling Headphones,Audio,6,34805.49 INR,₹208832.94,2024-05-23,2024-05-31,in transit,UPI,Mumbai,15
+ORD-745559,25408e37-09c1-49b6-88a9-42fd4aa15e3e,Standing Desk,Peripherals,2,35317.25,70634.5,16/03/2024,,SHIPPED,Wallet,Nagpur,20%
+ORD-559859,c929d2f4-d79a-4a6a-b392-781af1d6792e,Mechanical Keyboard,Audio,2,5004.04,10008.08,01-16-2023,2023-01-24,Shipped,wallet,Chennai,5
+ORD-918107,4071ae4c-e0e1-4fe6-bbf5-f27a62f9812d,Mechanical Keyboard,Audio,5,75343.45,376717.25,01/01/2024,2024-01-09,returned,Net Banking,Hyderabad,20
+ORD-346525,68154ecd-44f1-40ec-b69e-448fa683d09e,Mechanical Keyboard,Audio,3,3351.48,₹10054.44,20/07/2024,2024-07-31,Processing,upi,Indore,15%
+ORD-293385,f31e0623-b223-42ff-9052-fd99b1949557,Standing Desk,Peripherals,4,,67422.16,2024-01-27,2024-02-10,processing,Debit Card,Surat,0
+ORD-680170,d3cf331e-8dbe-4bea-aa88-090956a5cc82,Standing Desk,Peripherals,1,64688.04,64688.04,2024-09-28,2024-10-11,CANCELLED,Debit Card,Kolkata,5%
+ORD-362073,1fd25a21-f751-428a-b1ba-a509212be6f6,"27"" Monitor",Accessories,5,7300.18,36500.9,2023-01-16,2023-01-30,IN TRANSIT,cash on delivery,Chennai,10
+ORD-138801,27b72dda-4bae-4da6-8f04-ae9d31648541,Ergonomic Chair,Furniture,8,1205.22,9641.76,03/07/2023,2023-07-14,Shipped,Net Banking,Nagpur,10
+ORD-787842,d36bebce-5e6c-4f90-a2fd-c76fac20138d,MECHANICAL KEYBOARD,Audio,3,69763.52,209290.56,2023-05-11,2023-05-13,Cancelled,UPI,Chennai,0
+ORD-214466,5b01a0bf-df7f-47ae-abc0-fc30ee8cc386,NOISE CANCELLING HEADPHONES,Audio,10,19158.4,191584.0,2023-12-28,2024-01-09,In Transit,Net Banking,BANGALORE,20
+ORD-408347,7eedd3a9-8cd4-4a3d-ad3c-f5b06420792e,Standing Desk,Peripherals,6,37919.46,227516.76,10/12/2023,2023-12-15,CANCELLED,Wallet,Jaipur,25
+ORD-257364,18b974b7-fc07-4d2c-b667-54ef191745a5,Standing Desk,Peripherals,1,52736.22,52736.22,2023-08-09,2023-08-20,in transit,Net Banking,Delhi,20
+ORD-382258,e212339a-d541-4417-92cb-881978eb5269,Ergonomic Chair,Furniture,9,35560.88,320047.92,09-13-2024,2024-09-20,Shipped,Wallet,Kanpur,15
+ORD-734617,5daa3e88-c196-449d-a9b6-536df3369379,Noise Cancelling Headphones,Audio,6,52439.73,314638.38,2023-12-27,2024-01-01,SHIPPED,Wallet,Bangalore,10
+ORD-703992,a19c2417-63ad-46df-85cb-85e3f61dcbbc,Wireless Mouse,Peripherals,9,78668.2,708013.8,01/05/2023,2023-05-09,CANCELLED,Wallet,Kanpur,0
+ORD-655021,bbaa001c-763c-4079-bcde-376f2e309b6b,USB-C Hub,Furniture,3,,124302.96,2023-01-25,2023-01-28,Processing,Debit Card,Surat,25%
+ORD-556854,4d4137cf-0e2b-475d-82b5-b0b1a375b0a8,Ergonomic Chair,Furniture,8,59385.45,475083.6,30/12/2023,2024-01-01,pending,Wallet,Kolkata,5
+ORD-617255,08b774af-3669-4ca2-9248-3333298294bd,"27"" Monitor",Accessories,2,18964.95,37929.9,2024-08-25,2024-08-27,in transit,Wallet,Jaipur,20
+ORD-560237,e5daa210-a5f7-4c2e-b3b2-a79f8b3e1e29,"27"" Monitor",Accessories,5,22270.96,111354.8,2023-12-22,2023-12-26,CANCELLED,Cash on Delivery,Mumbai,0
+ORD-962347,7d2d816a-e878-47b6-bba3-b13ca7c12f53,NOISE CANCELLING HEADPHONES,Audio,1,39325.09,39325.09,07-06-2024,2024-07-09,processing,UPI,Kolkata,0
+ORD-333247,2c540a25-8d61-42b4-a371-3a6fb04aa760,Wireless Mouse,Peripherals,2,59670.06,119340.12,2023-10-13,2023-10-20,Pending,Net Banking,Kanpur,10
+ORD-714825,3fd6ce11-c400-4c64-b76e-a47733928d03,Laptop Pro X1,Electronics,1,20050.14,20050.14,2024-07-25,2024-07-31,In Transit,UPI,Indore,5%
+ORD-140698,d9e1943f-6f7e-4989-b95c-f2bd43ec7c31,Ergonomic Chair,Furniture,4,56944.25,227777.0,2023-03-10,2023-03-22,processing,Debit Card,Bhopal,15
+ORD-201222,5ffe566d-4ea9-40af-acd6-f5fb3c2be7a0,Standing Desk,Peripherals,9,38736.24,348626.16,2024-10-07,2024-10-10,pending,Wallet,Kanpur,5
+ORD-380938,2897252f-fd7f-4aa7-8de2-16ffad0be2ac,Ergonomic Chair,Furniture,4,2802.52,11210.08,2024-05-10,2024-05-18,delivered,Net Banking,BHOPAL,15
+ORD-274624,f57d20d1-f0b7-478a-8340-af8f67aa6459,Laptop Pro X1,Electronics,7,18094.15,126659.05,12-14-2023,,in transit,UPI,Delhi,10
+ORD-661483,b6be13b0-556d-4c10-b69a-6e58a0819654,Wireless Mouse,Peripherals,9,17231.84,155086.56,2024-07-20,2024-07-27,CANCELLED,Wallet,MUMBAI,0
+ORD-396841,a1e64a6f-c479-4cd5-bc0c-20d8e7f42bae,Wireless Mouse,Peripherals,8,3861.67 INR,30893.36,2024-06-23,2024-06-27,processing,Debit Card,DELHI,25
+ORD-259223,4c480707-6307-4f61-81d6-a3d83b1eb766,Laptop Pro X1,electronics,9,48587.31,437285.79,2024-03-01,2024-03-09,Pending,Debit Card,Hyderabad,25
+ORD-688247,13bf2d5e-38a3-4458-b77c-ced2ea9d3a2f,"27"" Monitor",Accessories,4,77367.46,309469.84,2024-01-21,2024-02-04,Shipped,Net Banking,Mumbai,5
+ORD-949011,6295a26d-7014-443e-99f7-d30c56f51136,Docking Station,accessories,5,26928.62,134643.1,03/05/2024,2024-05-11,delivered,Cash on Delivery,Surat,0
+ORD-138283,a9a94dce-0cd9-4668-8fca-0267f4be0cac,Standing Desk,Peripherals,6,66828.71,400972.26,2023-09-16,2023-09-30,delivered,Debit Card,Hyderabad,25
+ORD-493935,2344f2cb-0a06-4e65-b762-48e01426a010,Wireless Mouse,Peripherals,,56090.82,392635.74,22/07/2024,2024-07-30,In Transit,Cash on Delivery,Kanpur,15
+ORD-809553,83b75022-fb75-401b-9335-4c5eaa32707f,Wireless Mouse,Peripherals,5,57735.47,288677.35,2023-10-31,2023-11-05,in transit,Debit Card,Chennai,5
+ORD-536525,5fb2b61c-ec99-429b-b62d-39d256a5847c,USB-C Hub,Furniture,8,1280.78,10246.24,2023-05-19,2023-05-26,returned,Net Banking,Delhi,20
+ORD-546867,e3c58ead-c49a-4913-8c81-91f86c225fdc,Laptop Pro X1,Electronics,5,23092.91,115464.55,20/12/2023,2023-12-24,Cancelled,Debit Card,Surat,20
+ORD-946514,072946ff-cd1e-4075-8c89-2fad223fabb8,Webcam HD,Electronics,10,48579.63,₹485796.3,2024-01-28,2024-01-31,returned,Credit Card,Ahmedabad,10%
+ORD-594601,50595397-a434-41e5-a253-86060847cebe,USB-C Hub,Furniture,8,34319.76,274558.08,2023-02-23,2023-03-02,CANCELLED,Debit Card,Bhopal,5
+ORD-613900,5e7f7c18-14d1-4503-949d-6492a9229c61,"27"" Monitor",Accessories,7,45058.63,315410.41,10-10-2024,2024-10-17,IN TRANSIT,Wallet,Kolkata,20
+ORD-478526,e7e47206-6c49-4414-b4f8-0b84d0aeea92,Standing Desk,Peripherals,,16068.97,16068.97,2023-07-15,2023-07-17,Pending,Wallet,Ahmedabad,25
+ORD-593679,d7af7e07-d023-4f81-9ba1-373bc30aee1e,Laptop Pro X1,Electronics,1,69123.23,69123.23,08/10/2023,2023-10-10,in transit,Credit Card,Bangalore,5%
+ORD-999563,e5001ccb-e140-4d0c-a6bf-22f1b29b9590,Laptop Pro X1,Electronics,1,25481.81,25481.81,2023-05-03,2023-05-10,Delivered,Cash on Delivery,Pune,25
+ORD-379588,f9ff9006-41f3-44c9-9230-99eaf2748cfa,LAPTOP PRO X1,electronics,9,12227.36,110046.24,11-14-2024,2024-11-27,Pending,Debit Card,Pune,15
+ORD-194960,184cf2b9-4233-4919-9910-39d8f4d7e6c6,Wireless Mouse,Peripherals,8,7508.88,60071.04,2024-12-14,2024-12-19,delivered,UPI,Hyderabad,25
+ORD-286650,98f7668f-c623-4c82-a34f-da7324bc46a2,USB-C Hub,Furniture,7,56620.16,396341.12,15/07/2023,2023-07-21,delivered,debit card,Pune,10
+ORD-975271,cd10b9fe-87ec-49fa-9989-39d284b3dd7c,Ergonomic Chair,Furniture,3,3420.12,10260.36,06-19-2024,2024-07-02,CANCELLED,Wallet,Delhi,5
+ORD-761770,9f678f82-f327-4de7-98bd-0c4735a9875b,"27"" Monitor",accessories,2,41603.87,83207.74,2024-04-23,2024-04-26,Processing,UPI,Ahmedabad,25
+ORD-888576,ae23c77a-0380-434e-b35a-1bd04e267349,WEBCAM HD,Electronics,8,43968.86,351750.88,2023-07-11,2023-07-16,pending,Cash on Delivery,Lucknow,0
+ORD-705540,f94e91b3-7471-4003-b267-7d687247aca7,Noise Cancelling Headphones,audio,,62038.76,434271.32,2023-08-28,2023-09-08,Delivered,Wallet,Mumbai,10
+ORD-790601,f45f1613-349e-4cd2-ac13-eb2e9ba8350d,Webcam HD,Electronics,3,37116.72,111350.16,2023-05-25,2023-06-07,In Transit,Cash on Delivery,PUNE,5
+ORD-800906,0ffd34a4-21bf-472e-8935-d41af4490957,Noise Cancelling Headphones,Audio,4,73070.23,₹292280.92,2024-04-27,2024-05-01,pending,Debit Card,Kanpur,20
+ORD-738081,f91a1b7c-dce0-44a7-8eb6-e5222061c141,Webcam HD,Electronics,10,2638.25,26382.5,2023-03-15,2023-03-27,delivered,credit card,Chennai,10
+ORD-961169,4edb9fc1-e699-4e0f-91da-08a9afb96639,Standing Desk,Peripherals,5,31251.83,156259.15,2023-07-04,2023-07-07,in transit,UPI,Kolkata,0
+ORD-785577,f8feb323-6de0-492b-ad07-80bc47d758a4,Docking Station,Accessories,8,1421.3,11370.4,2023-05-12,2023-05-26,CANCELLED,Debit Card,Kanpur,20
+ORD-807494,2c689b46-ce02-4406-8072-47f11d7c20d2,USB-C HUB,Furniture,,60889.06,548001.54,2023-04-25,2023-05-04,Shipped,Net Banking,Mumbai,25
+ORD-287410,719fe9e5-d236-4df9-98bb-ba8b1dc2d165,Webcam HD,Electronics,1,43648.51,43648.51,2024-03-11,2024-03-13,SHIPPED,Credit Card,Jaipur,25%
+ORD-822460,b7d58a16-9503-4085-b3a4-e2a2a6b74757,Standing Desk,Peripherals,6,77762.3,466573.8,20/05/2024,2024-06-02,processing,UPI,KANPUR,25
+ORD-878761,bc19bd2e-661e-41af-97cf-00e055a724c6,Standing Desk,peripherals,5,57866.72,289333.6,2024-03-08,2024-03-19,Processing,Credit Card,Mumbai,15
+ORD-804055,e613e9e7-f8fa-415b-afb3-4c5da7c61930,"27"" MONITOR",Accessories,3,22509.88,67529.64,03-23-2024,2024-04-06,Delivered,Debit Card,Surat,25
+ORD-741084,af5eb413-e4e5-4f76-83bd-7516da1befb1,Mechanical Keyboard,audio,6,18074.09,108444.54,2023-08-15,2023-08-24,Pending,Debit Card,Pune,5
+ORD-368113,0afd6a10-b300-4b74-9c38-9cadb1d66d8c,Mechanical Keyboard,Audio,3,54002.38,162007.14,05-25-2024,2024-06-07,pending,Debit Card,Pune,15%
+ORD-535571,29593c74-0829-4cc0-bcbd-4a623323e898,Docking Station,Accessories,,45408.95,272453.7,2024-10-01,2024-10-11,returned,upi,Hyderabad,0
+ORD-469124,f9a32ff5-7722-4700-ac92-97c0754ab84d,USB-C Hub,Furniture,7,44230.59,309614.13,2023-07-02,2023-07-14,IN TRANSIT,Wallet,Jaipur,5
+ORD-286255,5f4f3ee1-699c-4bd7-a6b3-82e10038c50d,Ergonomic Chair,Furniture,,12978.94,103831.52,2024-05-21,2024-06-02,SHIPPED,Net Banking,Mumbai,5
+ORD-440808,31544d56-462a-4e2d-83ad-71ee2bd6b658,Wireless Mouse,Peripherals,7,75666.38,529664.66,2024-05-30,2024-06-13,CANCELLED,Cash on Delivery,Indore,15
+ORD-407213,22f9a337-042e-4fa5-90db-fc8f7564e48b,USB-C HUB,Furniture,,26156.57,104626.28,2023-09-03,2023-09-17,delivered,Cash on Delivery,Nagpur,10
+ORD-133892,077baf37-066c-49c6-83a0-877b2bfea67d,Mechanical Keyboard,Audio,2,1047.22,₹2094.44,2023-06-13,2023-06-26,in transit,Cash on Delivery,Jaipur,15
+ORD-851435,e2ccae5b-c2f3-4bf5-9fa2-722faccec8bc,"27"" Monitor",Accessories,1,29388.17,29388.17,2023-03-03,2023-03-17,IN TRANSIT,UPI,Pune,10%
+ORD-827414,ad5ceb19-f9aa-4caf-a478-4bec63633df2,ERGONOMIC CHAIR,Furniture,2,26737.04,53474.08,09-06-2023,2023-09-15,delivered,Wallet,Chennai,5%
+ORD-848476,29777231-dca4-4ada-a677-f23cddeeb170,Laptop Pro X1,Electronics,6,45301.38,271808.28,2023-10-23,2023-10-27,in transit,Credit Card,Chennai,10
+ORD-372022,3ae7689a-d9b4-4488-b63e-223477cf078d,Mechanical Keyboard,Audio,3,46946.66,140839.98,2023-01-29,2023-02-09,pending,Cash on Delivery,Indore,25
+ORD-167898,600c88a9-5b4e-4a34-8c26-b0555ea6dd0b,Ergonomic Chair,Furniture,7,1631.49,11420.43,2024-06-21,2024-06-28,returned,Wallet,Indore,20
+ORD-445521,8b1558e4-c239-484f-b7ed-23b2bc1df9ec,Webcam HD,Electronics,7,50298.96,₹352092.72,27/07/2023,2023-08-10,in transit,Wallet,Hyderabad,15
+ORD-868959,c7cd2fe2-85ea-484c-b2d3-4b723288b23a,"27"" Monitor",Accessories,2,59577.28,₹119154.56,15/09/2024,2024-09-29,delivered,UPI,NAGPUR,25%
+ORD-668714,5bb4a881-890f-470c-9a6d-b4902f9c14a1,Wireless Mouse,Peripherals,8,16193.0,129544.0,2024-05-04,2024-05-13,Cancelled,Cash on Delivery,Surat,0
+ORD-606755,2b43850d-d5c5-4093-b7ff-b79805710495,Docking Station,Accessories,3,26626.83,79880.49,02-21-2024,2024-03-02,In Transit,Net Banking,Nagpur,15%
+ORD-553000,cba4854e-79ee-4562-9dbe-b891410fba18,Ergonomic Chair,Furniture,3,5711.98,17135.94,05/06/2024,2024-06-08,Cancelled,Debit Card,Pune,15%
+ORD-301225,4d33d7ca-6eb1-4ca3-a5f4-f0800affbdab,Docking Station,Accessories,3,26239.35,78718.05,2023-11-04,2023-11-18,in transit,Debit Card,Chennai,10
+ORD-545957,7e3a086b-b7d7-44e9-a923-57398d9334a2,Webcam HD,Electronics,6,36251.78,217510.68,2023-11-10,2023-11-24,delivered,debit card,Kanpur,25
+ORD-441505,122ea700-12bd-4e07-aceb-fa760311f970,Webcam HD,electronics,7,63378.14,443646.98,10-29-2023,2023-11-03,in transit,Net Banking,Surat,0
+ORD-162198,304a6da2-4bef-4f00-afe2-5918b70bc6f9,Ergonomic Chair,Furniture,10,47096.09,470960.9,02-04-2024,2024-02-08,Shipped,Debit Card,Kanpur,5
+ORD-357138,0ba87480-c659-4785-b94b-c7eab2147ba9,"27"" Monitor",Accessories,9,7496.41,67467.69,26/08/2024,,IN TRANSIT,Wallet,Pune,10
+ORD-479798,a3df8027-7cce-4f9c-a045-5872a686086c,Mechanical Keyboard,Audio,8,18600.74,148805.92,01/04/2024,2024-04-13,SHIPPED,Net Banking,Indore,20
+ORD-442957,25d9ed72-9463-4969-87e2-918ee45e2d86,Standing Desk,Peripherals,9,69909.93,629189.37,2024-08-02,2024-08-16,Delivered,Cash on Delivery,Delhi,15
+ORD-588337,22aa25ae-5876-41b4-b5f6-5134da6099d9,Wireless Mouse,Peripherals,7,65511.58,₹458581.06,2023-07-15,2023-07-29,Processing,Net Banking,Kolkata,0
+ORD-371426,385c38d4-ac4e-4dcd-b790-aeecd2d4561d,Laptop Pro X1,electronics,6,34458.4,206750.4,2024-02-04,2024-02-15,processing,Wallet,Bangalore,5
+ORD-141369,1fd04f48-c432-4bd5-9bb4-7120b3df2b35,Wireless Mouse,peripherals,10,75587.33,755873.3,2023-07-05,2023-07-10,SHIPPED,Debit Card,Bhopal,10%
+ORD-880080,d5e99a8d-bd9a-44d2-bb2e-8afc46e2ea2b,Wireless Mouse,Peripherals,7,2521.2,17648.4,2024-03-26,2024-04-06,Shipped,Credit Card,Surat,0
+ORD-432272,bea26114-9479-401d-9542-a68c43ebf67d,Wireless Mouse,Peripherals,10,28992.03,289920.3,2023-08-03,,SHIPPED,Net Banking,Indore,10
+ORD-835276,73b17a67-ac99-46e3-8164-89ebfa7f513f,STANDING DESK,Peripherals,5,18734.03,₹93670.15,2023-03-08,,Processing,Credit Card,Mumbai,5%
+ORD-793058,ba1d6ace-65aa-48e8-96ec-5bf35204bb86,Laptop Pro X1,electronics,4,69374.43,277497.72,2024-04-26,2024-05-10,pending,UPI,Mumbai,10
+ORD-447688,16c07520-f9e9-4cce-aeb8-b558f9e09b04,"27"" MONITOR",Accessories,1,62769.88,₹62769.88,2024-01-18,2024-01-31,Delivered,upi,Bhopal,15
+ORD-662799,ec0f0a1a-5a26-4308-883e-0a64de751ece,Ergonomic Chair,Furniture,7,68563.16,479942.12,04-26-2023,2023-05-08,returned,Wallet,Ahmedabad,20
+ORD-186181,88ceb34a-94c8-4a76-a2b0-c2e29b991e32,Noise Cancelling Headphones,Audio,3,18431.37,55294.11,13/08/2023,2023-08-26,pending,Wallet,Lucknow,20
+ORD-707511,2b735ce3-1c4d-439e-885a-ec0288f7c7bd,USB-C Hub,Furniture,6,53065.55,318393.3,01/10/2023,,IN TRANSIT,Credit Card,PUNE,15
+ORD-325272,caaf1421-a8eb-4e0c-8cca-309315929f6d,Mechanical Keyboard,Audio,10,32749.72,327497.2,2023-12-19,2023-12-23,IN TRANSIT,Net Banking,Ahmedabad,25
+ORD-126648,3a9b1967-2774-4509-aa41-472649bffc8b,"27"" Monitor",accessories,6,34407.9,206447.4,2024-06-15,2024-06-21,pending,Debit Card,Jaipur,0
+ORD-980817,773bd9fa-1a93-4d52-b6ff-25b083cefccc,USB-C Hub,Furniture,9,15992.8,143935.2,2024-05-31,2024-06-10,IN TRANSIT,Cash on Delivery,Hyderabad,20
+ORD-887589,7258fdb0-1b70-472c-a639-9445fb0a0e07,Wireless Mouse,Peripherals,10,18487.47,184874.7,06-12-2023,2023-06-22,processing,Net Banking,Bangalore,10%
+ORD-742900,53a8cdcb-038b-48ee-ac6c-6d30ea659af2,Noise Cancelling Headphones,Audio,4,73882.65,295530.6,2023-09-15,2023-09-29,Cancelled,Net Banking,Lucknow,20
+ORD-520940,90a5ff74-4459-41f7-8463-3b6fdc47f9e9,Wireless Mouse,Peripherals,5,11665.01,58325.05,2023-12-25,2023-12-27,CANCELLED,Debit Card,Nagpur,15
+ORD-576438,029f0cf6-ea56-41c8-a98f-b5984c90dc4b,"27"" Monitor",Accessories,9,59561.48,536053.32,2024-03-24,2024-03-30,delivered,Net Banking,Bhopal,15
+ORD-480160,c8516024-44b5-4272-9819-6f5143de2c68,Noise Cancelling Headphones,audio,10,76798.89,767988.9,08-19-2023,2023-08-22,Returned,Wallet,Bhopal,20
+ORD-847734,265e2a5d-32c5-4244-8e25-f663999b0e3e,"27"" Monitor",Accessories,2,1527.63,3055.26,11-13-2024,2024-11-27,delivered,Cash on Delivery,Surat,20
+ORD-932149,0c58a4ec-8010-4c12-9fde-db5f3a1c9d6e,Standing Desk,peripherals,2,₹47432.27,94864.54,2024-11-14,2024-11-27,SHIPPED,Net Banking,Mumbai,15
+ORD-758629,632c6133-35c4-437f-b4eb-0479f25bbe32,Noise Cancelling Headphones,audio,7,65146.27,456023.89,08-10-2024,2024-08-18,in transit,Net Banking,Chennai,25
+ORD-833064,58134392-69e0-4652-b596-11de65ce6480,"27"" Monitor",Accessories,1,26298.74,26298.74,2023-09-12,2023-09-26,Processing,Credit Card,Indore,10
+ORD-194825,29175ae2-d4ca-4964-b002-49e9249d5fc4,Webcam HD,Electronics,2,73176.62,146353.24,22/08/2023,2023-09-04,pending,Net Banking,Nagpur,5
+ORD-687711,1c9d81ff-2444-46c0-844a-e33aabc112d9,Mechanical Keyboard,Audio,9,56168.15,505513.35,25/04/2023,2023-05-08,processing,Wallet,Chennai,10
+ORD-872048,68a4f86c-6cef-4c8b-959c-0b6318eb290f,USB-C Hub,Furniture,2,67678.25,135356.5,2024-02-11,2024-02-20,Cancelled,Cash on Delivery,CHENNAI,5
+ORD-326458,bfbc629b-f2f9-4508-90ea-da505b6a54cd,Mechanical Keyboard,Audio,8,52007.66,416061.28,2023-08-13,2023-08-23,Cancelled,Net Banking,Jaipur,25
+ORD-376359,024007af-0246-4414-8777-1f49ef77b71f,"27"" Monitor",Accessories,6,64372.37,386234.22,2024-02-01,2024-02-14,CANCELLED,Cash on Delivery,Bhopal,20
+ORD-465263,7d32b47b-20bc-4b73-92ea-222327fd6378,Webcam HD,electronics,10,18612.04,186120.4,2024-07-02,2024-07-11,SHIPPED,UPI,BANGALORE,15
+ORD-471628,4cfbc9ba-1214-4d3e-929b-12bdd07ed4b0,WEBCAM HD,Electronics,3,5570.26,16710.78,2023-02-28,2023-03-14,SHIPPED,Credit Card,Chennai,25
+ORD-251239,b19dc1ab-d96c-4006-8827-bb800669b1fc,Docking Station,Accessories,9,75728.29,681554.61,2023-08-27,2023-09-03,IN TRANSIT,UPI,Jaipur,5
+ORD-130919,2528e67f-3084-4933-80e1-464ec60067fe,Docking Station,Accessories,3,66941.28,₹200823.84,2023-09-12,2023-09-24,SHIPPED,Net Banking,Bangalore,5%
+ORD-293531,44ec4495-e0da-4dd3-869d-e971e1a58f0c,USB-C Hub,Furniture,5,40224.7,201123.5,2023-12-30,2024-01-02,Pending,cash on delivery,JAIPUR,10%
+ORD-128996,22f76db8-8257-4d1c-a076-c384558c16b9,Noise Cancelling Headphones,audio,6,31087.9,186527.4,2023-01-02,2023-01-11,Cancelled,debit card,Lucknow,20
+ORD-953919,8191569f-f5a8-4f94-ad1c-15d4450a82d7,Ergonomic Chair,Furniture,,40832.63,122497.89,2023-07-01,2023-07-07,Shipped,Debit Card,Surat,0
+ORD-790474,90e8a568-9420-496c-a1ef-d8808b2af464,USB-C Hub,Furniture,6,75056.55,450339.3,2024-09-09,2024-09-16,Processing,Net Banking,KOLKATA,0
+ORD-786611,9687076a-418f-437f-abe3-073366d55fe7,Docking Station,accessories,9,7730.8,69577.2,2024-05-06,2024-05-15,Returned,Wallet,Kolkata,15%
+ORD-621786,042b3f25-83d3-41db-bd42-01810bbd28bd,Webcam HD,Electronics,10,31410.29,₹314102.9,2023-04-17,2023-04-28,returned,Cash on Delivery,Pune,20%
+ORD-965488,ec1d292a-5df8-4523-99c2-20dc50bb9b35,Standing Desk,Peripherals,9,4668.6,42017.4,2023-11-07,2023-11-10,Delivered,Credit Card,Delhi,15
+ORD-822877,ef8ab7db-0b74-47cd-bf6c-0ee0ae8328f6,Docking Station,accessories,7,16879.37,118155.59,2024-10-17,2024-10-25,pending,net banking,Bangalore,20
+ORD-785072,c530aaf0-ce70-433e-a25c-7c98c5155935,Docking Station,Accessories,5,16787.66,83938.3,2024-03-08,2024-03-13,delivered,Debit Card,Lucknow,0
+ORD-219936,bef403e1-3357-4772-8bfc-dcfcd2cc6187,USB-C Hub,Furniture,4,6106.69,24426.76,2024-04-04,2024-04-10,in transit,Wallet,Jaipur,20
+ORD-681697,6e9eb736-0700-4f88-a34b-0909cd2c043f,Standing Desk,Peripherals,4,76041.62,304166.48,03/05/2023,2023-05-11,IN TRANSIT,Wallet,Hyderabad,10
+ORD-628083,aa3244cd-c19c-4501-ae5d-fc83c9cb7a03,Ergonomic Chair,Furniture,1,53198.7,₹53198.7,2023-05-27,2023-06-03,Returned,Credit Card,Hyderabad,0
+ORD-303779,91eb7c5d-1c7d-4e52-bcf5-b9dec84d9c06,"27"" Monitor",Accessories,4,15125.07,₹60500.28,2023-06-06,2023-06-12,Delivered,Cash on Delivery,Mumbai,0
+ORD-437281,a8885534-9e94-4aed-aa0f-c75fe5d6292d,Laptop Pro X1,Electronics,3,58064.31,₹174192.93,2024-07-01,2024-07-09,Shipped,Credit Card,Mumbai,0%
+ORD-505554,682450c5-3998-495d-b510-5af7989f0725,Docking Station,Accessories,5,55005.99,275029.95,2024-05-02,2024-05-06,processing,Debit Card,Chennai,5
+ORD-552708,caa5adb5-1574-4677-8547-4540b9cb81df,"27"" Monitor",Accessories,6,59330.44,355982.64,2024-02-02,2024-02-06,pending,Credit Card,Kolkata,15
+ORD-518259,3af21b38-11cc-4ca5-93ab-8c4901f95afe,Standing Desk,Peripherals,6,26417.87,158507.22,2024-03-30,2024-04-12,returned,Debit Card,Jaipur,15
+ORD-783920,506a2e98-c2a8-4233-ad11-ef2f650ce838,Mechanical Keyboard,Audio,8,9137.69,73101.52,2023-11-11,2023-11-21,delivered,UPI,Kolkata,5
+ORD-939738,b3723dbc-2264-47a0-9bca-8bc45468a2db,Docking Station,Accessories,7,46218.0,323526.0,2024-11-27,2024-12-11,in transit,Wallet,Lucknow,0%
+ORD-474023,a94d8421-4750-4fc9-8a6a-eb6ee77fccb3,Laptop Pro X1,Electronics,2,25406.86,₹50813.72,2023-01-09,2023-01-18,in transit,Credit Card,Delhi,5
+ORD-529580,4e6765f4-bb10-4fe5-b1fa-552eaf9bc220,USB-C Hub,Furniture,9,72863.4,655770.6,2023-06-05,2023-06-17,processing,net banking,Mumbai,15
+ORD-957684,7d50f228-b771-4b72-bf77-bf382ee7813d,USB-C Hub,Furniture,10,55205.66,₹552056.6,2024-05-03,2024-05-14,pending,UPI,Delhi,20
+ORD-436276,a46331e0-c2c6-47ae-afbd-524c8d3c16a0,USB-C Hub,furniture,4,76945.22,307780.88,02-08-2024,2024-02-19,Delivered,Debit Card,Hyderabad,20
+ORD-350404,5b235007-eb05-4880-954b-49f8d595083f,Ergonomic Chair,Furniture,3,4634.88,13904.64,2023-01-25,2023-02-01,Delivered,cash on delivery,SURAT,15
+ORD-451938,3272bc02-731e-451c-9627-269ff460830f,Standing Desk,Peripherals,5,55900.06,279500.3,2024-04-26,2024-05-06,Returned,debit card,Ahmedabad,0
+ORD-945389,c10a87f0-da2a-4ed4-b756-3ae760c34e15,Noise Cancelling Headphones,Audio,1,64955.03,64955.03,2023-11-23,,Pending,Wallet,Indore,0
+ORD-210973,4baf6b3e-b0a0-47f5-ad3e-d9ac857a0b0c,Ergonomic Chair,Furniture,6,62997.46,377984.76,03/10/2024,2024-10-16,Pending,Net Banking,Hyderabad,25%
+ORD-619360,5475672d-a186-450b-8771-bf5b49b59c25,Noise Cancelling Headphones,Audio,4,56804.89,227219.56,2023-11-25,,Delivered,Credit Card,Bhopal,5
+ORD-338777,d0740ef0-0c55-47df-aeed-f18cd588db22,Wireless Mouse,Peripherals,6,60624.76,363748.56,12-20-2024,2024-12-26,in transit,Credit Card,Lucknow,25
+ORD-868516,34573b9b-13e6-4ef4-b867-709c784d6b5b,WIRELESS MOUSE,peripherals,8,27865.75,222926.0,06-15-2023,2023-06-28,pending,Cash on Delivery,Bhopal,25
+ORD-878245,49e513e6-73f8-4cfa-9643-088b529b5617,Docking Station,Accessories,6,36337.56,218025.36,09/03/2023,,pending,Net Banking,Ahmedabad,15
+ORD-125668,10403395-bdf8-4bca-8f4d-3dc48a756591,Ergonomic Chair,Furniture,7,33857.97,237005.79,2024-04-20,2024-04-28,In Transit,Credit Card,Bangalore,0
+ORD-266006,800171eb-51c5-43ae-8386-ba4415664761,"27"" Monitor",Accessories,1,40037.13,40037.13,2023-06-03,2023-06-07,In Transit,UPI,DELHI,10
+ORD-942658,b837334e-0b09-453c-a672-b330a3ffa08f,"27"" Monitor",Accessories,9,75495.37,679458.33,2024-09-14,2024-09-22,returned,Credit Card,Pune,25
+ORD-487982,ca0dbe33-9a82-4b39-a04f-fbcd5604b86c,Docking Station,Accessories,2,1907.93,3815.86,2024-01-14,2024-01-23,CANCELLED,Debit Card,Pune,5
+ORD-738988,10b58644-f5c4-4f02-8b78-a592d923997e,Docking Station,Accessories,4,56794.34,227177.36,2024-10-09,2024-10-12,Delivered,Cash on Delivery,Jaipur,20
+ORD-389627,10dfc8c6-fa01-4d19-9fa1-337893bb94fd,Wireless Mouse,Peripherals,4,63406.89,253627.56,2023-09-30,2023-10-11,Delivered,Debit Card,Ahmedabad,20
+ORD-409979,864cd91f-de45-473f-b26b-6ef11bbd1c6a,Mechanical Keyboard,Audio,10,48603.97,486039.7,2023-07-24,2023-08-01,Processing,UPI,Hyderabad,0%
+ORD-254785,1f0e5c39-9a76-412b-b77f-52d0fa90b5bf,Standing Desk,peripherals,8,62175.85,497406.8,2024-10-21,2024-10-30,in transit,Cash on Delivery,Bangalore,10
+ORD-248638,c8f3caab-362b-4f78-97e7-c84aa3c956b0,Laptop Pro X1,Electronics,9,38429.57,345866.13,05-07-2023,2023-05-18,Pending,Wallet,Surat,0
+ORD-207220,3a7ba13a-42eb-4756-919b-73f0bf808652,USB-C Hub,Furniture,2,11622.96 INR,23245.92,2023-02-27,2023-03-07,Shipped,Net Banking,Mumbai,25
+ORD-570284,98ab77a8-ec3b-44ef-ae04-eb7a779947c4,USB-C Hub,Furniture,2,65241.95,₹130483.9,12/12/2024,2024-12-25,Pending,UPI,Hyderabad,5
+ORD-902723,87a5d4b0-c98c-4205-ab2e-e08269920b08,Standing Desk,Peripherals,,2030.83,₹14215.81,27/11/2023,2023-12-08,pending,wallet,Bhopal,5
+ORD-683283,9d1872ac-6dbf-45f7-aa22-7c83628d707a,Noise Cancelling Headphones,audio,10,22872.66,228726.6,2023-06-05,2023-06-11,In Transit,Debit Card,Ahmedabad,25
+ORD-211914,1b3da365-217a-43c2-a9c0-e53a4e4a9c6f,Mechanical Keyboard,Audio,1,31302.44,31302.44,2024-02-20,2024-03-03,returned,Debit Card,Mumbai,5
+ORD-969885,d2670cbf-b21c-4535-91a2-2706fbd19a5b,Mechanical Keyboard,Audio,5,1482.65,7413.25,2023-09-16,2023-09-24,Delivered,Net Banking,Surat,25
+ORD-749358,bc5a3a29-6100-4aa1-bdc7-777ca49208c0,WIRELESS MOUSE,Peripherals,,68288.17,68288.17,2023-09-12,2023-09-16,pending,Credit Card,Kolkata,10%
+ORD-416722,7a3a1e38-95ff-45cc-a419-94fa45c4fc9b,Laptop Pro X1,Electronics,1,71932.48 INR,71932.48,2024-03-03,2024-03-12,Shipped,UPI,Ahmedabad,20
+ORD-866964,cd2d8a6c-24a1-48bb-9776-8efa525918dc,"27"" Monitor",accessories,10,38638.14,₹386381.4,2023-10-07,2023-10-16,Pending,Cash on Delivery,LUCKNOW,10
+ORD-297205,99b41693-409c-4b88-96d1-06560147ba07,Mechanical Keyboard,Audio,1,53863.78,₹53863.78,2024-05-05,2024-05-18,Cancelled,Wallet,Mumbai,0
+ORD-489307,2a89b265-93af-439f-94b5-b2c9956bed9c,Ergonomic Chair,Furniture,6,52858.81,317152.86,2024-04-12,2024-04-19,pending,Debit Card,Lucknow,15
+ORD-244327,3c08d255-9128-4467-b135-1fda3087a69e,Webcam HD,Electronics,2,48371.08,96742.16,2024-02-22,2024-02-29,Processing,Wallet,Pune,25
+ORD-515603,4e25bcb1-6db4-4c3b-b263-3d385326dc66,USB-C HUB,Furniture,4,66062.5,264250.0,2024-08-10,2024-08-16,In Transit,Credit Card,Lucknow,10
+ORD-959162,971c0d4f-10b6-4a1c-bffd-838f14590c36,Webcam HD,Electronics,7,42088.12,294616.84,2023-11-30,2023-12-09,in transit,Credit Card,Bhopal,20
+ORD-525847,04ebf245-5c21-4cd0-937b-8d116e460d8b,USB-C Hub,Furniture,5,19725.75,98628.75,22/05/2024,2024-05-25,Processing,wallet,Chennai,0
+ORD-506582,17b7b3bd-a365-477c-8f2b-fec94178d9d3,Standing Desk,peripherals,10,24367.13,243671.3,2024-01-02,2024-01-11,Pending,Debit Card,Indore,20
+ORD-818115,49633a4a-9dd2-4e64-a4ad-ebd190d15f2d,Docking Station,Accessories,,75955.22,455731.32,2024-03-08,2024-03-18,Cancelled,Wallet,Lucknow,15
+ORD-424863,3e3f2015-7798-4837-ab73-c240594f5c59,Mechanical Keyboard,Audio,8,3230.2,25841.6,2023-12-12,2023-12-23,IN TRANSIT,UPI,AHMEDABAD,5
+ORD-151081,f8850e64-070b-45e7-9aae-1408d05fdd86,Docking Station,Accessories,9,52469.33,472223.97,14/12/2024,2024-12-25,Shipped,Wallet,INDORE,15
+ORD-146005,1992f121-1aff-44f8-a9ff-7d7898d3f478,Standing Desk,Peripherals,3,61910.78,185732.34,06/01/2023,2023-01-10,returned,cash on delivery,Ahmedabad,25
+ORD-211493,d16e79fb-816b-4725-8b82-a2086c77c72a,Noise Cancelling Headphones,Audio,,50969.14,305814.84,26/12/2024,2025-01-07,SHIPPED,Cash on Delivery,Bhopal,5%
+ORD-672437,1f94437f-fa13-4e71-92b8-18d15abe5c51,Wireless Mouse,Peripherals,4,35965.12,143860.48,06-15-2023,2023-06-17,Delivered,Debit Card,Kanpur,10%
+ORD-109287,9cc259ae-b69c-4880-8bc7-ed4ba73180bb,Wireless Mouse,Peripherals,5,47053.04,235265.2,13/01/2023,2023-01-22,Cancelled,UPI,Jaipur,20
+ORD-897460,77f9f661-0ac2-4290-b197-3c4da92ce460,USB-C HUB,Furniture,9,12059.51,108535.59,2023-03-14,2023-03-21,Processing,Debit Card,Nagpur,10
+ORD-735894,6410f781-ce71-49c0-a5c8-062319fc29eb,Mechanical Keyboard,Audio,6,31566.71,189400.26,2023-01-29,2023-02-12,Cancelled,Cash on Delivery,Ahmedabad,15
+ORD-141889,c5684bef-a87b-47ab-a921-c612a25f143b,Wireless Mouse,Peripherals,3,61946.99,185840.97,2024-03-03,2024-03-13,processing,Debit Card,Ahmedabad,15
+ORD-923987,26e7a770-3ae2-4a71-afff-9cd78230c419,Docking Station,Accessories,10,48147.68,481476.8,05/12/2024,2024-12-11,Processing,Debit Card,Hyderabad,10
+ORD-451271,d656e485-d143-4758-8b08-7f7f67e30dd3,Mechanical Keyboard,Audio,5,15751.8,78759.0,2024-08-02,2024-08-16,IN TRANSIT,Wallet,Lucknow,25
+ORD-222904,c51a952a-3ac1-412d-990a-85a95abebf1f,Mechanical Keyboard,Audio,10,41848.96,418489.6,11-25-2023,2023-12-07,pending,Credit Card,Kanpur,20
+ORD-494853,3cfb78f0-dede-4ea4-92ba-3012b4a33f13,USB-C Hub,Furniture,2,₹20576.59,41153.18,2023-12-16,2023-12-25,CANCELLED,Cash on Delivery,Jaipur,5
+ORD-428353,bb6658a0-98a7-47c6-8277-92e34b2651c6,Ergonomic Chair,Furniture,8,35255.19,282041.52,2024-03-13,2024-03-19,CANCELLED,Debit Card,Delhi,25
+ORD-754688,3d0b9032-ccb1-441d-a3fd-4abd54b43628,Docking Station,accessories,2,27339.67,54679.34,2023-02-10,2023-02-17,Delivered,UPI,Pune,5
+ORD-195606,2b1f922c-2f6c-4b33-91e6-c24be60d8d8d,Mechanical Keyboard,Audio,1,76380.63,76380.63,2024-01-28,2024-02-02,returned,Credit Card,Bhopal,0%
+ORD-567838,7ea46b7a-695e-44f3-8572-f621e6d1cf5a,"27"" Monitor",Accessories,10,68042.37,680423.7,2024-11-18,2024-11-26,IN TRANSIT,net banking,Nagpur,25
+ORD-506743,ea00e249-eff7-45b1-89a0-e645cf4f11e9,Webcam HD,Electronics,8,,₹326807.76,06-20-2024,2024-06-28,pending,Debit Card,Hyderabad,5
+ORD-831466,6f2e311e-b775-41b9-8de7-bfd74fd82b73,LAPTOP PRO X1,Electronics,10,19903.8,199038.0,04-25-2024,2024-05-03,processing,net banking,Chennai,10

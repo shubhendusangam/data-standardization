@@ -1,0 +1,262 @@
+{
+  "rulesets": [
+    {
+      "name": "Customer Data Cleanup",
+      "description": "Standardise customer records: names, emails, gender, DOB, phone, segment",
+      "rules": [
+        {
+          "name": "Trim full_name",
+          "fieldName": "full_name",
+          "ruleType": "TRIM",
+          "ruleConfig": "{}",
+          "priority": 1,
+          "description": "Remove leading and trailing whitespace from customer names"
+        },
+        {
+          "name": "Lowercase email",
+          "fieldName": "email",
+          "ruleType": "LOWERCASE",
+          "ruleConfig": "{}",
+          "priority": 2,
+          "description": "Normalise all email addresses to lowercase"
+        },
+        {
+          "name": "Trim email",
+          "fieldName": "email",
+          "ruleType": "TRIM",
+          "ruleConfig": "{}",
+          "priority": 3,
+          "description": "Remove spaces around email addresses"
+        },
+        {
+          "name": "Standardise gender",
+          "fieldName": "gender",
+          "ruleType": "MAP_VALUES",
+          "ruleConfig": "{\"mappings\": {\"M\": \"Male\", \"m\": \"Male\", \"MALE\": \"Male\", \"male\": \"Male\", \"F\": \"Female\", \"f\": \"Female\", \"FEMALE\": \"Female\", \"female\": \"Female\", \"O\": \"Other\", \"other\": \"Other\", \"OTHER\": \"Other\", \"U\": \"Unknown\", \"unknown\": \"Unknown\", \"\": \"Unknown\"}}",
+          "priority": 4,
+          "description": "Map all gender variants to Male / Female / Other / Unknown"
+        },
+        {
+          "name": "Normalise date_of_birth to ISO 8601",
+          "fieldName": "date_of_birth",
+          "ruleType": "DATE_FORMAT",
+          "ruleConfig": "{\"sourceFormat\": \"MM/dd/yyyy\", \"targetFormat\": \"yyyy-MM-dd\"}",
+          "priority": 5,
+          "description": "Convert US-format dates (MM/dd/yyyy) to ISO 8601 (yyyy-MM-dd)"
+        },
+        {
+          "name": "Default missing segment",
+          "fieldName": "segment",
+          "ruleType": "DEFAULT_VALUE",
+          "ruleConfig": "{\"defaultValue\": \"Standard\"}",
+          "priority": 6,
+          "description": "Fill blank or null segment with Standard"
+        },
+        {
+          "name": "Trim segment",
+          "fieldName": "segment",
+          "ruleType": "TRIM",
+          "ruleConfig": "{}",
+          "priority": 7,
+          "description": "Remove whitespace around segment values"
+        },
+        {
+          "name": "Uppercase segment",
+          "fieldName": "segment",
+          "ruleType": "UPPERCASE",
+          "ruleConfig": "{}",
+          "priority": 8,
+          "description": "Normalise segment to uppercase: PREMIUM / STANDARD / BASIC"
+        },
+        {
+          "name": "Remove phone currency noise",
+          "fieldName": "phone",
+          "ruleType": "REGEX",
+          "ruleConfig": "{\"pattern\": \"[^0-9+\\\\-\\\\s]\", \"replacement\": \"\"}",
+          "priority": 9,
+          "description": "Strip non-phone characters (letters, symbols) from phone field"
+        },
+        {
+          "name": "Trim phone",
+          "fieldName": "phone",
+          "ruleType": "TRIM",
+          "ruleConfig": "{}",
+          "priority": 10,
+          "description": "Trim surrounding whitespace from phone number"
+        }
+      ]
+    },
+    {
+      "name": "Employee Record Normalisation",
+      "description": "Normalise employee data: emails, join dates, department, salary, boolean fields",
+      "rules": [
+        {
+          "name": "Trim full_name",
+          "fieldName": "full_name",
+          "ruleType": "TRIM",
+          "ruleConfig": "{}",
+          "priority": 1,
+          "description": "Remove whitespace from employee names"
+        },
+        {
+          "name": "Lowercase email",
+          "fieldName": "email",
+          "ruleType": "LOWERCASE",
+          "ruleConfig": "{}",
+          "priority": 2,
+          "description": "Normalise corporate email to lowercase"
+        },
+        {
+          "name": "Trim email",
+          "fieldName": "email",
+          "ruleType": "TRIM",
+          "ruleConfig": "{}",
+          "priority": 3,
+          "description": "Trim email whitespace"
+        },
+        {
+          "name": "Normalise join_date to ISO 8601",
+          "fieldName": "join_date",
+          "ruleType": "DATE_FORMAT",
+          "ruleConfig": "{\"sourceFormat\": \"dd/MM/yyyy\", \"targetFormat\": \"yyyy-MM-dd\"}",
+          "priority": 4,
+          "description": "Convert DD/MM/YYYY join dates to ISO 8601"
+        },
+        {
+          "name": "Normalise department",
+          "fieldName": "department",
+          "ruleType": "MAP_VALUES",
+          "ruleConfig": "{\"mappings\": {\"engineering\": \"Engineering\", \"ENGINEERING\": \"Engineering\", \"sales\": \"Sales\", \"SALES\": \"Sales\", \"marketing\": \"Marketing\", \"MARKETING\": \"Marketing\", \"hr\": \"HR\", \"human resources\": \"HR\", \"HUMAN RESOURCES\": \"HR\", \"finance\": \"Finance\", \"FINANCE\": \"Finance\", \"operations\": \"Operations\", \"OPERATIONS\": \"Operations\", \"product\": \"Product\", \"PRODUCT\": \"Product\", \"legal\": \"Legal\", \"LEGAL\": \"Legal\", \"support\": \"Support\", \"SUPPORT\": \"Support\", \"analytics\": \"Analytics\", \"ANALYTICS\": \"Analytics\"}}",
+          "priority": 5,
+          "description": "Normalise department casing to Title Case"
+        },
+        {
+          "name": "Strip salary currency symbols",
+          "fieldName": "salary",
+          "ruleType": "REGEX",
+          "ruleConfig": "{\"pattern\": \"[\\u20b9,\\\\s]\", \"replacement\": \"\"}",
+          "priority": 6,
+          "description": "Remove \u20b9 symbol, commas and spaces from salary field"
+        },
+        {
+          "name": "Default missing salary",
+          "fieldName": "salary",
+          "ruleType": "DEFAULT_VALUE",
+          "ruleConfig": "{\"defaultValue\": \"0\"}",
+          "priority": 7,
+          "description": "Replace N/A or blank salary with 0"
+        },
+        {
+          "name": "Normalise is_active to boolean string",
+          "fieldName": "is_active",
+          "ruleType": "MAP_VALUES",
+          "ruleConfig": "{\"mappings\": {\"yes\": \"true\", \"YES\": \"true\", \"1\": \"true\", \"TRUE\": \"true\", \"True\": \"true\", \"no\": \"false\", \"NO\": \"false\", \"0\": \"false\", \"FALSE\": \"false\", \"False\": \"false\"}}",
+          "priority": 8,
+          "description": "Standardise all boolean-like values to true / false"
+        },
+        {
+          "name": "Normalise employment_type",
+          "fieldName": "employment_type",
+          "ruleType": "MAP_VALUES",
+          "ruleConfig": "{\"mappings\": {\"full-time\": \"Full-Time\", \"FULL-TIME\": \"Full-Time\", \"fulltime\": \"Full-Time\", \"part-time\": \"Part-Time\", \"PART-TIME\": \"Part-Time\", \"parttime\": \"Part-Time\", \"contract\": \"Contract\", \"CONTRACT\": \"Contract\", \"intern\": \"Intern\", \"INTERN\": \"Intern\", \"internship\": \"Intern\"}}",
+          "priority": 9,
+          "description": "Normalise employment type casing and variants"
+        },
+        {
+          "name": "Lowercase manager_email",
+          "fieldName": "manager_email",
+          "ruleType": "LOWERCASE",
+          "ruleConfig": "{}",
+          "priority": 10,
+          "description": "Normalise manager email to lowercase"
+        }
+      ]
+    },
+    {
+      "name": "Order Data Standardisation",
+      "description": "Clean order records: status, dates, currency symbols, payment method",
+      "rules": [
+        {
+          "name": "Normalise order status",
+          "fieldName": "status",
+          "ruleType": "MAP_VALUES",
+          "ruleConfig": "{\"mappings\": {\"pending\": \"Pending\", \"PENDING\": \"Pending\", \"Processing\": \"Pending\", \"processing\": \"Pending\", \"shipped\": \"Shipped\", \"SHIPPED\": \"Shipped\", \"in transit\": \"In Transit\", \"IN TRANSIT\": \"In Transit\", \"In transit\": \"In Transit\", \"delivered\": \"Delivered\", \"DELIVERED\": \"Delivered\", \"cancelled\": \"Cancelled\", \"CANCELLED\": \"Cancelled\", \"Canceled\": \"Cancelled\", \"canceled\": \"Cancelled\", \"returned\": \"Returned\", \"RETURNED\": \"Returned\"}}",
+          "priority": 1,
+          "description": "Standardise order status to Title Case canonical values"
+        },
+        {
+          "name": "Normalise order_date to ISO 8601",
+          "fieldName": "order_date",
+          "ruleType": "DATE_FORMAT",
+          "ruleConfig": "{\"sourceFormat\": \"dd/MM/yyyy\", \"targetFormat\": \"yyyy-MM-dd\"}",
+          "priority": 2,
+          "description": "Convert DD/MM/YYYY order dates to ISO 8601"
+        },
+        {
+          "name": "Normalise delivery_date to ISO 8601",
+          "fieldName": "delivery_date",
+          "ruleType": "DATE_FORMAT",
+          "ruleConfig": "{\"sourceFormat\": \"dd/MM/yyyy\", \"targetFormat\": \"yyyy-MM-dd\"}",
+          "priority": 3,
+          "description": "Convert delivery date to ISO 8601"
+        },
+        {
+          "name": "Strip unit_price currency symbols",
+          "fieldName": "unit_price",
+          "ruleType": "REGEX",
+          "ruleConfig": "{\"pattern\": \"[\\u20b9,\\\\s]|\\\\s*INR$\", \"replacement\": \"\"}",
+          "priority": 4,
+          "description": "Remove \u20b9 prefix and INR suffix from unit_price"
+        },
+        {
+          "name": "Strip total_amount currency symbols",
+          "fieldName": "total_amount",
+          "ruleType": "REGEX",
+          "ruleConfig": "{\"pattern\": \"[\\u20b9,\\\\s]\", \"replacement\": \"\"}",
+          "priority": 5,
+          "description": "Remove \u20b9 and commas from total_amount"
+        },
+        {
+          "name": "Strip discount_pct percent sign",
+          "fieldName": "discount_pct",
+          "ruleType": "REGEX",
+          "ruleConfig": "{\"pattern\": \"%\", \"replacement\": \"\"}",
+          "priority": 6,
+          "description": "Remove percent sign from discount_pct \u2014 keep numeric value only"
+        },
+        {
+          "name": "Normalise payment_method",
+          "fieldName": "payment_method",
+          "ruleType": "MAP_VALUES",
+          "ruleConfig": "{\"mappings\": {\"upi\": \"UPI\", \"UPI\": \"UPI\", \"credit card\": \"Credit Card\", \"CREDIT CARD\": \"Credit Card\", \"debit card\": \"Debit Card\", \"DEBIT CARD\": \"Debit Card\", \"net banking\": \"Net Banking\", \"NET BANKING\": \"Net Banking\", \"cash on delivery\": \"Cash on Delivery\", \"CASH ON DELIVERY\": \"Cash on Delivery\", \"cod\": \"Cash on Delivery\", \"wallet\": \"Wallet\", \"WALLET\": \"Wallet\"}}",
+          "priority": 7,
+          "description": "Normalise payment method to canonical casing"
+        },
+        {
+          "name": "Default missing delivery_date",
+          "fieldName": "delivery_date",
+          "ruleType": "DEFAULT_VALUE",
+          "ruleConfig": "{\"defaultValue\": \"TBD\"}",
+          "priority": 8,
+          "description": "Fill blank delivery dates with TBD"
+        },
+        {
+          "name": "Default missing quantity",
+          "fieldName": "quantity",
+          "ruleType": "DEFAULT_VALUE",
+          "ruleConfig": "{\"defaultValue\": \"1\"}",
+          "priority": 9,
+          "description": "Fill blank quantity with 1"
+        },
+        {
+          "name": "Uppercase product_name",
+          "fieldName": "product_name",
+          "ruleType": "TRIM",
+          "ruleConfig": "{}",
+          "priority": 10,
+          "description": "Trim whitespace from product names"
+        }
+      ]
+    }
+  ]
+}

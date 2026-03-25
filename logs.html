@@ -127,6 +127,7 @@ body{font-family:var(--font-sans);background:var(--color-bg);color:var(--color-t
     <a href="dashboard.html">Dashboard</a>
     <a href="ingestion.html">Ingestion</a>
     <a href="rules.html">Rules</a>
+    <a href="data-quality.html">Data Quality</a>
     <a href="jobs.html">Jobs</a>
     <a href="logs.html" class="active">Logs</a>
   </nav>
@@ -189,7 +190,7 @@ body{font-family:var(--font-sans);background:var(--color-bg);color:var(--color-t
 (function () {
   'use strict';
 
-  var GW = location.protocol + '//' + location.hostname + ':8080';
+  var GW = location.origin;
   var LOKI_BASE = location.protocol + '//' + location.hostname + ':3100';
   var POLL_INTERVAL = 3000;
 

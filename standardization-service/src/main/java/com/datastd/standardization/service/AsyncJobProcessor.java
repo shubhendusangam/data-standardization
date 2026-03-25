@@ -1,9 +1,14 @@
 package com.datastd.standardization.service;
 
 import com.datastd.common.dto.IngestedDatasetResponse;
+import com.datastd.common.dto.OverallStatus;
+import com.datastd.common.dto.QualityReport;
 import com.datastd.common.dto.RuleResponse;
+import com.datastd.common.dto.ValidationRuleResult;
+import com.datastd.standardization.client.DataQualityClient;
 import com.datastd.standardization.client.IngestionServiceClient;
 import com.datastd.standardization.client.RuleEngineClient;
+import com.datastd.standardization.dto.QualityValidateRequest;
 import com.datastd.standardization.entity.ProcessingJob;
 import com.datastd.standardization.entity.ProcessingJob.JobStatus;
 import com.datastd.standardization.repository.ProcessingJobRepository;
@@ -17,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Separate Spring bean for async job execution.
@@ -35,17 +41,20 @@ public class AsyncJobProcessor {
     private final ProcessingJobRepository jobRepository;
     private final IngestionServiceClient ingestionClient;
     private final RuleEngineClient ruleEngineClient;
+    private final DataQualityClient dataQualityClient;
     private final RuleExecutionEngine ruleExecutionEngine;
     private final ObjectMapper objectMapper;
 
     public AsyncJobProcessor(ProcessingJobRepository jobRepository,
                              IngestionServiceClient ingestionClient,
                              RuleEngineClient ruleEngineClient,
+                             DataQualityClient dataQualityClient,
                              RuleExecutionEngine ruleExecutionEngine,
                              ObjectMapper objectMapper) {
         this.jobRepository = jobRepository;
         this.ingestionClient = ingestionClient;
         this.ruleEngineClient = ruleEngineClient;
+        this.dataQualityClient = dataQualityClient;
         this.ruleExecutionEngine = ruleExecutionEngine;
         this.objectMapper = objectMapper;
     }
@@ -73,6 +82,33 @@ public class AsyncJobProcessor {
 
             job.setTotalRecords(records.size());
             jobRepository.save(job);
+
+            // ── Quality gate ─────────────────────────────────────────
+            QualityReport qualityReport = runQualityCheck(job);
+
+            if (qualityReport != null) {
+                job.setQualityReportId(qualityReport.getReportId());
+                job.setQualityScore(qualityReport.getQualityScore());
+                job.setQualityStatus(qualityReport.getOverallStatus().name());
+
+                if (qualityReport.getOverallStatus() == OverallStatus.FAIL && !job.isSkipQualityCheck()) {
+                    List<String> failedRules = qualityReport.getRuleResults() != null
+                            ? qualityReport.getRuleResults().stream()
+                                .filter(r -> !r.isPassed())
+                                .map(ValidationRuleResult::getRuleName)
+                                .collect(Collectors.toList())
+                            : Collections.emptyList();
+
+                    log.warn("Job blocked by quality gate: jobId={}, datasetId={}, qualityScore={}, failedRules={}",
+                            jobId, job.getDatasetId(), qualityReport.getQualityScore(), failedRules);
+
+                    job.setStatus(JobStatus.QUALITY_BLOCKED);
+                    job.setCompletedAt(LocalDateTime.now());
+                    jobRepository.save(job);
+                    return;
+                }
+            }
+            // ── End quality gate ─────────────────────────────────────
 
             // Fetch rules from rule-engine-service via Feign
             List<UUID> ruleIds = objectMapper.readValue(
@@ -128,5 +164,40 @@ public class AsyncJobProcessor {
             }
         }
     }
-}
 
+    /**
+     * Runs a quality check for the given job via the data-quality-service.
+     * Returns the QualityReport, or null if the quality service is unavailable
+     * (graceful degradation — the job proceeds without a quality gate).
+     */
+    private QualityReport runQualityCheck(ProcessingJob job) {
+        try {
+            UUID ruleSetId = job.getQualityRuleSetId(); // may be null → basic profiling only
+            log.info("Quality check started: jobId={}, datasetId={}, ruleSetId={}",
+                    job.getId(), job.getDatasetId(), ruleSetId);
+
+            QualityValidateRequest request = new QualityValidateRequest(job.getDatasetId(), ruleSetId);
+            QualityReport report = dataQualityClient.validate(request);
+
+            if (report.getOverallStatus() == OverallStatus.PASS) {
+                log.info("Quality check passed: jobId={}, qualityScore={}, status=PASS",
+                        job.getId(), report.getQualityScore());
+            } else if (report.getOverallStatus() == OverallStatus.WARN) {
+                List<String> failedRules = report.getRuleResults() != null
+                        ? report.getRuleResults().stream()
+                            .filter(r -> !r.isPassed())
+                            .map(ValidationRuleResult::getRuleName)
+                            .collect(Collectors.toList())
+                        : Collections.emptyList();
+                log.warn("Quality check warnings: jobId={}, qualityScore={}, failedRules={}",
+                        job.getId(), report.getQualityScore(), failedRules);
+            }
+
+            return report;
+        } catch (Exception e) {
+            log.warn("Quality check unavailable for jobId={}, proceeding without gate: {}",
+                    job.getId(), e.getMessage());
+            return null;
+        }
+    }
+}

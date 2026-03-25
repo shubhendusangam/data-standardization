@@ -30,6 +30,11 @@ public class IngestionController {
     @PostMapping("/upload")
     public ResponseEntity<DatasetUploadResponse> uploadFile(@RequestParam("file") MultipartFile file) {
         IngestedDataset dataset = ingestionService.uploadFile(file);
+        if (dataset.getStatus() == IngestedDataset.DatasetStatus.FAILED) {
+            DatasetUploadResponse response = new DatasetUploadResponse(dataset,
+                    "File upload failed: could not parse file");
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(response);
+        }
         DatasetUploadResponse response = new DatasetUploadResponse(dataset,
                 "File uploaded and parsed successfully");
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -38,6 +43,11 @@ public class IngestionController {
     @PostMapping("/json")
     public ResponseEntity<DatasetUploadResponse> ingestJson(@Valid @RequestBody JsonDataRequest request) {
         IngestedDataset dataset = ingestionService.ingestJsonData(request);
+        if (dataset.getStatus() == IngestedDataset.DatasetStatus.FAILED) {
+            DatasetUploadResponse response = new DatasetUploadResponse(dataset,
+                    "JSON data ingestion failed");
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(response);
+        }
         DatasetUploadResponse response = new DatasetUploadResponse(dataset,
                 "JSON data ingested successfully");
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
