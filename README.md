@@ -1,44 +1,44 @@
 # Data Standardization Pipeline
 
-A microservices-based system for processing and standardizing data from multiple sources using user-defined JSON rules. Includes a full vanilla HTML/CSS/JS dashboard UI.
+A microservices-based system for processing, standardizing, and validating data from multiple sources using user-defined JSON rules. Includes a full vanilla HTML/CSS/JS dashboard UI with data quality monitoring, trend analysis, and webhook alerting.
 
 ## Architecture
 
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│                     Browser UI (vanilla HTML/CSS/JS)             │
-│  dashboard.html │ ingestion.html │ rules.html │ jobs.html │ logs │
-└────────┬─────────────────┬──────────────────┬────────────────────┘
-         │ fetch()          │ fetch()           │ fetch()
-         │ :8080            │ :8080             │ :3100 (Loki)
-┌────────▼─────────────────▼──────────────────▼───┐
-│            API Gateway  :8080                    │
-│            (Spring Cloud Gateway)                │
-│            X-Trace-Id response header            │
-└────────┬──────────────┬──────────────┬──────────┘
-         │  W3C / B3     │              │
-┌────────▼──────────────▼──────────────▼──────────┐
-│              Eureka Service Discovery  :8761     │
-└─────────────────────────────────────────────────┘
-         │                │                │
-┌────────▼──────┐  ┌──────▼──────┐  ┌─────▼──────────┐
-│  Ingestion    │  │ Rule Engine │  │Standardization │
-│  Service      │  │  Service    │  │   Service      │
-│  :8081        │  │  :8082      │  │   :8083        │
-│  (H2 DB)     │  │  (H2 DB)   │  │   (H2 DB)     │
-└────────┬──────┘  └──────┬──────┘  └──────┬─────────┘
-         │                │                │
-         └────────────────┼────────────────┘
-                          │  Loki4j log shipping
-                 ┌────────▼────────┐
-                 │  Grafana Loki   │ :3100
-                 │  (Log Storage)  │
-                 └────────┬────────┘
-                          │
-                 ┌────────▼────────┐
-                 │    Grafana      │ :3000
-                 │  (Dashboards)   │
-                 └─────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                      Browser UI (vanilla HTML/CSS/JS)                       │
+│  dashboard │ ingestion │ rules │ jobs │ data-quality │ logs                  │
+└──────┬────────────┬──────────────┬──────────────┬───────────────────────────┘
+       │ fetch()     │ fetch()       │ fetch()       │ fetch()
+       │ :8080       │ :8080         │ :8080         │ :3100 (Loki)
+┌──────▼────────────▼──────────────▼──────────────▼───┐
+│              API Gateway  :8080                      │
+│              (Spring Cloud Gateway)                  │
+│              X-Trace-Id response header              │
+└──────┬───────────┬───────────┬───────────┬──────────┘
+       │  W3C / B3  │           │           │
+┌──────▼──────────▼───────────▼───────────▼───────────┐
+│              Eureka Service Discovery  :8761         │
+└─────────────────────────────────────────────────────┘
+       │              │              │              │
+┌──────▼──────┐ ┌─────▼──────┐ ┌────▼──────────┐ ┌▼──────────────┐
+│  Ingestion  │ │Rule Engine │ │Standardization│ │ Data Quality  │
+│  Service    │ │  Service   │ │   Service     │ │   Service     │
+│  :8081      │ │  :8082     │ │   :8083       │ │   :8085       │
+│  (H2 DB)   │ │  (H2 DB)   │ │   (H2 DB)    │ │   (H2 DB)     │
+└──────┬──────┘ └─────┬──────┘ └────┬──────────┘ └┬──────────────┘
+       │              │              │              │
+       └──────────────┼──────────────┼──────────────┘
+                      │  Loki4j log shipping
+             ┌────────▼────────┐
+             │  Grafana Loki   │ :3100
+             │  (Log Storage)  │
+             └────────┬────────┘
+                      │
+             ┌────────▼────────┐
+             │    Grafana      │ :3000
+             │  (Dashboards)   │
+             └─────────────────┘
 ```
 
 ## Technology Stack
@@ -61,14 +61,15 @@ A microservices-based system for processing and standardizing data from multiple
 
 ## Modules
 
-| Module                      | Port | Description                              |
-|-----------------------------|------|------------------------------------------|
-| `common-dto`                | —    | Shared DTOs for inter-service Feign APIs |
-| `eureka-server`             | 8761 | Service Discovery                        |
-| `api-gateway`               | 8080 | API Gateway, routing, request logging    |
-| `data-ingestion-service`    | 8081 | Multi-source data ingestion (CSV/Excel/JSON) |
-| `rule-engine-service`       | 8082 | Standardization rule & rule-set management |
-| `standardization-service`   | 8083 | Async data processing & rule application |
+| Module                      | Port | Description                                                   |
+|-----------------------------|------|---------------------------------------------------------------|
+| `common-dto`                | —    | Shared DTOs for inter-service Feign APIs                      |
+| `eureka-server`             | 8761 | Service Discovery                                             |
+| `api-gateway`               | 8080 | API Gateway, routing, request logging                         |
+| `data-ingestion-service`    | 8081 | Multi-source data ingestion (CSV/Excel/JSON)                  |
+| `rule-engine-service`       | 8082 | Standardization rule & rule-set management                    |
+| `standardization-service`   | 8083 | Async data processing & rule application                      |
+| `data-quality-service`      | 8085 | Data validation, quality scoring, trends & webhook alerts     |
 
 ## Project Structure
 
@@ -82,11 +83,12 @@ data-standardization/
 ├── ingestion.html                   # Multi-source data upload (file/JSON/manual)
 ├── rules.html                       # Rule builder & manager + test drawer
 ├── jobs.html                        # Job submission, tracking & export
+├── data-quality.html                # Quality dashboard — scores, trends, alerts
 ├── logs.html                        # Filtered live log viewer (Loki + fallback)
 ├── preview-panel.js                 # Reusable before/after diff component
 │
 ├── ── Backend services ─────────────────────────────────────────────
-├── common-dto/                      # Shared DTOs (IngestedDatasetResponse, RuleResponse, …)
+├── common-dto/                      # Shared DTOs (IngestedDatasetResponse, QualityReport, …)
 ├── eureka-server/                   # Netflix Eureka service registry
 ├── api-gateway/                     # Spring Cloud Gateway
 │   └── config/
@@ -120,6 +122,25 @@ data-standardization/
 │   ├── config/FeignLoggingConfig     # Feign BASIC logging with traceId
 │   ├── config/RequestLoggingInterceptor
 │   └── config/TraceIdResponseHeaderFilter
+├── data-quality-service/            # Data quality & validation
+│   ├── controller/QualityController  # REST API for rules, validation, reports, alerts
+│   ├── service/QualityService        # Orchestrates validation, reports, trends, alerts
+│   ├── service/QualityAlertService   # Async webhook delivery with HMAC signing & retry
+│   ├── engine/
+│   │   ├── ValidationEngine          # Core rule evaluator — scoring, duplicate detection
+│   │   ├── ColumnProfiler            # Column-level stats — null rate, unique rate, type inference
+│   │   ├── RuleSuggestionEngine      # Heuristic rule suggestions from column profiles
+│   │   └── TrendEngine               # Linear regression trend (IMPROVING / STABLE / DEGRADING)
+│   ├── entity/
+│   │   ├── ValidationRule            # Validation rule entity (type, severity, params)
+│   │   ├── ValidationRuleSet         # Named group of rule IDs
+│   │   ├── QualityReportEntity       # Persisted report (score, status, JSON blob)
+│   │   ├── QualityAlertConfig        # Webhook alert configuration
+│   │   ├── ValidationType            # Enum: NOT_NULL, REGEX_MATCH, UNIQUE, …
+│   │   └── Severity                  # Enum: ERROR, WARNING
+│   ├── client/IngestionServiceClient # Feign → ingestion-service
+│   ├── mapper/QualityMapper          # Entity → DTO conversion
+│   └── exception/GlobalExceptionHandler
 └── infra/
     ├── loki/loki-config.yml          # Loki server configuration
     └── grafana/provisioning/
@@ -159,6 +180,9 @@ cd rule-engine-service && mvn spring-boot:run &
 
 # 6. Start Standardization Service
 cd standardization-service && mvn spring-boot:run &
+
+# 7. Start Data Quality Service
+cd data-quality-service && mvn spring-boot:run &
 ```
 
 > **Note:** Running locally uses the `default` Spring profile — logs output to the console
@@ -171,7 +195,7 @@ docker-compose up --build
 ```
 
 This starts the full stack:
-- **5 application services** (Eureka, Gateway, Ingestion, Rules, Standardization)
+- **6 application services** (Eureka, Gateway, Ingestion, Rules, Standardization, Data Quality)
 - **Grafana Loki** — centralized log storage
 - **Grafana** — pre-provisioned dashboard at `http://localhost:3000`
 
@@ -221,7 +245,60 @@ Every response includes an **`X-Trace-Id`** header for log correlation.
 | `GET`  | `/api/standardization/jobs/{jobId}/result` | Get standardized results |
 | `POST` | `/api/standardization/preview`             | Preview standardization (sync) |
 
-## Supported Rule Types
+### Data Quality Service (`/api/quality`)
+
+#### Validation Rules
+
+| Method   | Endpoint                        | Description                                         |
+|----------|---------------------------------|-----------------------------------------------------|
+| `POST`   | `/api/quality/rules`            | Create a validation rule                            |
+| `GET`    | `/api/quality/rules`            | List rules (filter: `columnName`, `validationType`, `active`) |
+| `PUT`    | `/api/quality/rules/{id}`       | Update a validation rule                            |
+| `DELETE` | `/api/quality/rules/{id}`       | Delete a validation rule                            |
+| `PATCH`  | `/api/quality/rules/{id}/toggle`| Toggle rule active status                           |
+| `GET`    | `/api/quality/rules/templates`  | List built-in template rules                        |
+| `POST`   | `/api/quality/rules/suggest`    | Auto-suggest rules for a dataset (AI heuristics)    |
+
+#### Validation Rule Sets
+
+| Method | Endpoint                        | Description                |
+|--------|---------------------------------|----------------------------|
+| `POST` | `/api/quality/rulesets`         | Create a validation rule set |
+| `GET`  | `/api/quality/rulesets`         | List all rule sets         |
+| `GET`  | `/api/quality/rulesets/{id}`    | Get rule set by ID         |
+
+#### Validation Execution
+
+| Method | Endpoint                  | Description                         |
+|--------|---------------------------|-------------------------------------|
+| `POST` | `/api/quality/validate`   | Run validation and get quality report |
+
+#### Reports
+
+| Method | Endpoint                               | Description                                |
+|--------|----------------------------------------|--------------------------------------------|
+| `GET`  | `/api/quality/reports/{datasetId}`     | Get latest report for a dataset            |
+| `GET`  | `/api/quality/reports/{reportId}/full` | Get full report by report ID               |
+| `GET`  | `/api/quality/reports`                 | List reports (filter: `datasetId`, `overallStatus`) |
+| `GET`  | `/api/quality/reports/history`         | Paginated report history (`datasetId`, `page`, `size`) |
+
+#### Trend & Summary
+
+| Method | Endpoint                                     | Description                              |
+|--------|----------------------------------------------|------------------------------------------|
+| `GET`  | `/api/quality/datasets/{datasetId}/trend`    | Quality trend over time (`days` param, default 30) |
+| `GET`  | `/api/quality/summary`                       | All dataset quality summaries (filter: `status`) |
+
+#### Webhook Alerts
+
+| Method   | Endpoint                    | Description                |
+|----------|-----------------------------|----------------------------|
+| `POST`   | `/api/quality/alerts`       | Create alert configuration |
+| `GET`    | `/api/quality/alerts`       | List all alert configs     |
+| `PUT`    | `/api/quality/alerts/{id}`  | Update alert configuration |
+| `DELETE` | `/api/quality/alerts/{id}`  | Delete alert configuration |
+
+## Supported Standardization Rule Types
 
 | Rule Type       | Config Example                                                  | Description                        |
 |-----------------|----------------------------------------------------------------|------------------------------------|
@@ -233,6 +310,38 @@ Every response includes an **`X-Trace-Id`** header for log correlation.
 | `REGEX`         | `{"pattern": "[^0-9]", "replacement": ""}`                    | Regex-based replacement            |
 | `DEFAULT_VALUE` | `{"defaultValue": "N/A"}`                                     | Set default for null/empty fields  |
 | `DATE_FORMAT`   | `{"sourceFormat": "MM/dd/yyyy", "targetFormat": "yyyy-MM-dd"}`| Format dates                       |
+
+## Supported Validation Types (Data Quality)
+
+| Validation Type  | Severity   | Params Example                                                 | Description                           |
+|------------------|------------|----------------------------------------------------------------|---------------------------------------|
+| `NOT_NULL`       | ERROR/WARN | `{"maxNullRatePct": 10.0}`                                     | Null rate must be below threshold     |
+| `NOT_EMPTY`      | ERROR/WARN | `{"maxNullRatePct": 0.0}`                                      | Blank/null rate below threshold       |
+| `REGEX_MATCH`    | ERROR/WARN | `{"pattern": "^[\\w.+]+@[\\w.]+\\.[a-z]{2,}$", "maxFailRatePct": 0.0}` | All values must match pattern |
+| `ALLOWED_VALUES` | ERROR/WARN | `{"values": ["Male","Female","Other"], "maxFailRatePct": 0.0}` | Values must be in allowed set         |
+| `NUMERIC_RANGE`  | ERROR/WARN | `{"min": 0, "max": 150, "maxFailRatePct": 0.0}`               | Numeric values within [min, max]      |
+| `MIN_LENGTH`     | ERROR/WARN | `{"length": 2}`                                                | String length ≥ minimum               |
+| `MAX_LENGTH`     | ERROR/WARN | `{"length": 5}`                                                | String length ≤ maximum               |
+| `UNIQUE`         | ERROR/WARN | `{"maxDuplicateRatePct": 0.0}`                                 | No duplicate values in column         |
+
+### Quality Scoring
+
+- **Base score**: 100
+- **Each failed ERROR rule**: −20 points
+- **Each failed WARNING rule**: −5 points
+- **Floor**: 0 (score never goes negative)
+- **Overall status**: `FAIL` if any ERROR rule fails · `WARN` if only WARNING rules fail · `PASS` otherwise
+- **Duplicate detection**: SHA-256 row hashing for row-level duplicate counting
+- **Column profiling**: null rate, unique rate, min/max, type inference (STRING, INTEGER, DECIMAL, BOOLEAN, DATE, MIXED, NULL)
+
+### Webhook Alerts
+
+After every `POST /api/quality/validate`, the system evaluates all active alert configurations:
+
+- **Trigger on status**: fire when `overallStatus` matches (e.g., `FAIL`, `WARN`)
+- **Trigger on score**: fire when `qualityScore < threshold`
+- **Delivery**: async HTTP POST to configured webhook URL with HMAC-SHA256 signature
+- **Retry**: up to 3 attempts with 5 s delay between retries
 
 ## Usage Examples
 
@@ -340,6 +449,42 @@ curl -X POST "http://localhost:8080/api/standardization/preview?maxRecords=5" \
   -d '{"datasetId": "<DATASET_UUID>", "ruleIds": ["<RULE_UUID_1>", "<RULE_UUID_2>"]}'
 ```
 
+### 8. Validate Data Quality
+
+```bash
+# Run validation against a dataset
+curl -X POST http://localhost:8080/api/quality/validate \
+  -H "Content-Type: application/json" \
+  -d '{"datasetId": "<DATASET_UUID>", "ruleIds": ["<VALIDATION_RULE_UUID_1>"]}'
+
+# Auto-suggest validation rules for a dataset
+curl -X POST http://localhost:8080/api/quality/rules/suggest \
+  -H "Content-Type: application/json" \
+  -d '{"datasetId": "<DATASET_UUID>"}'
+
+# Get quality trend for a dataset (last 30 days)
+curl http://localhost:8080/api/quality/datasets/<DATASET_UUID>/trend?days=30
+
+# Get quality summary for all datasets
+curl http://localhost:8080/api/quality/summary
+```
+
+### 9. Configure Webhook Alerts
+
+```bash
+# Create an alert that fires on FAIL or score below 50
+curl -X POST http://localhost:8080/api/quality/alerts \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Slack Quality Alert",
+    "webhookUrl": "https://hooks.slack.com/services/xxx/yyy/zzz",
+    "triggerOnStatus": ["FAIL"],
+    "triggerOnScoreBelow": 50,
+    "active": true,
+    "secret": "my-hmac-secret"
+  }'
+```
+
 ## UI Dashboard
 
 A complete browser-based management interface built with **vanilla HTML, CSS, and JS** — zero
@@ -354,13 +499,14 @@ properties in `:root` enable full theming. Open any `.html` file directly in a b
 | `ingestion.html`   | Multi-source data upload — file drag-and-drop, JSON input, manual table editor |
 | `rules.html`       | Rule builder & manager — two-column layout, drag-reorder, test drawer  |
 | `jobs.html`        | Job submission, tracking & export — table, detail drawer, new-job modal |
+| `data-quality.html`| Quality dashboard — scores, validation reports, trends, rule suggestions, alerts |
 | `logs.html`        | Filtered live log viewer — Loki primary, job-status fallback           |
 | `preview-panel.js` | Reusable before/after diff component (used by `rules.html` and `jobs.html`) |
 
 ### Dashboard (`dashboard.html`)
 
 - **KPI strip** — 5 tiles: total datasets, active rules, running jobs, records processed, avg job time
-- **Pipeline topology** — 5 service nodes with live health-status dots (polls `GET /actuator/health` per service every 5 s)
+- **Pipeline topology** — 6 service nodes with live health-status dots (polls `GET /actuator/health` per service every 5 s)
 - **Active jobs** — polls `GET /api/standardization/jobs?status=PROCESSING` every 3 s with progress bars
 - **Throughput chart** — CSS-only bar chart of records/hour bucketed from job history
 - **Event log** — last 20 events from job status changes, color-coded by level
@@ -400,6 +546,15 @@ properties in `:root` enable full theming. Open any `.html` file directly in a b
   1. Select dataset (cards from ingestion service)
   2. Pick individual rules OR a rule set
   - **Preview button**: inline diff panel (via `preview-panel.js`) before submitting
+
+### Data Quality (`data-quality.html`)
+
+- **Quality score cards** — per-dataset quality scores with trend indicators (↑ ↓ →)
+- **Validation report** — column-level stats, rule results with pass/fail badges
+- **Trend chart** — Chart.js time-series of quality scores over configurable date range
+- **Rule suggestions** — auto-generated validation rules from column profiling heuristics
+- **Alert configuration** — CRUD for webhook alert configs (status triggers, score thresholds)
+- **Report history** — paginated list of past validation runs with drill-down
 
 ### Logs (`logs.html`)
 
@@ -467,6 +622,8 @@ Every service logs structured events at key points:
 - **Business operations** — `Ingesting JSON data: name=Customer Data, recordCount=2`
 - **Entity lifecycle** — `Dataset persisted: id=abc-123, name=Customer Data, status=PARSED`
 - **Job progress** — `Job queued: jobId=xyz, datasetId=abc, ruleCount=4`
+- **Quality validation** — `Starting validation: datasetId=abc, records=100, rules=5`
+- **Alert delivery** — `Webhook alert sent: config=Slack Alert, reportId=xyz, status=200`
 - **Feign calls** — Request/response logging with traceId propagation
 - **Errors** — Full stack traces with traceId for cross-service correlation
 - **Warnings** — `Dataset not found: id=abc-123`, `Validation failed: {name=required}`
@@ -477,7 +634,7 @@ Every HTTP response from any service includes an `X-Trace-Id` header:
 
 ```bash
 curl -v http://localhost:8080/api/ingestion/datasets
-# < X-Trace-Id: 64a]f38b0e1d2c3a4b5c6d7e8f901234
+# < X-Trace-Id: 64af38b0e1d2c3a4b5c6d7e8f901234
 ```
 
 Use this value to search logs in Grafana.
@@ -514,6 +671,20 @@ Or filter by service:
 {service="standardization-service"} | json | traceId = "YOUR_TRACE_ID_HERE"
 ```
 
+## Eureka Lease Configuration
+
+All client services send heartbeats every **10 seconds** (default: 30 s) with a lease expiration of
+**30 seconds** (default: 90 s). The Eureka server runs eviction every **15 seconds** with
+self-preservation disabled. This prevents "lease doesn't exist" warnings during development.
+
+| Setting                                    | Value | Location        |
+|--------------------------------------------|-------|-----------------|
+| `lease-renewal-interval-in-seconds`        | 10    | All clients     |
+| `lease-expiration-duration-in-seconds`     | 30    | All clients     |
+| `eviction-interval-timer-in-ms`            | 15000 | Eureka server   |
+| `expected-client-renewal-interval-seconds` | 10    | Eureka server   |
+| `enable-self-preservation`                 | false | Eureka server   |
+
 ## H2 Console Access
 
 Each service exposes an H2 console for development:
@@ -523,6 +694,7 @@ Each service exposes an H2 console for development:
 | Data Ingestion Service   | http://localhost:8081/h2-console | `jdbc:h2:mem:ingestiondb`      |
 | Rule Engine Service      | http://localhost:8082/h2-console | `jdbc:h2:mem:rulesdb`          |
 | Standardization Service  | http://localhost:8083/h2-console | `jdbc:h2:mem:standardizationdb`|
+| Data Quality Service     | http://localhost:8085/h2-console | `jdbc:h2:mem:qualitydb`        |
 
 Username: `sa` / Password: _(empty)_
 
@@ -549,11 +721,31 @@ Each rule type is a `RuleApplier` implementation. `RuleApplierFactory` maps `rul
 to applier instances. `RuleExecutionEngine` iterates the sorted rules and applies them to each
 record field. Adding a new rule type requires only a new `RuleApplier` impl + a factory entry.
 
+### Validation Engine Design
+
+The `ValidationEngine` evaluates records against validation rules and produces a `QualityReport`:
+
+1. **Column profiling** — `ColumnProfiler` computes null rate, unique rate, min/max, sample values, and inferred type for every column
+2. **Duplicate detection** — SHA-256 row hashing identifies exact-duplicate rows
+3. **Rule evaluation** — each active rule is evaluated per-column (wildcard `*` expands to all columns)
+4. **Scoring** — penalty-based (−20 per ERROR, −5 per WARNING, floor 0)
+5. **Alert dispatch** — async webhook delivery via `QualityAlertService` with HMAC signing and retry
+
+### Rule Suggestion Engine
+
+The `RuleSuggestionEngine` uses column name heuristics and column profiling statistics to generate
+validation rule suggestions. For example:
+- Column named `email` → suggest `REGEX_MATCH` with email pattern
+- Column with high null rate → suggest `NOT_NULL` with appropriate threshold
+- Column with low cardinality → suggest `ALLOWED_VALUES` with discovered values
+- Numeric column named `age` → suggest `NUMERIC_RANGE` with observed min/max
+
 ### Shared DTOs (`common-dto`)
 
-The `common-dto` module contains plain POJOs (`IngestedDatasetResponse`, `RuleResponse`, `RuleSetResponse`)
-shared between services via Feign clients. Entity → DTO conversion lives in service-local mapper classes
-(`DatasetMapper`, `RuleMapper`) to avoid coupling `common-dto` to JPA entities.
+The `common-dto` module contains plain POJOs (`IngestedDatasetResponse`, `RuleResponse`, `RuleSetResponse`,
+`QualityReport`, `ColumnReport`, `ValidationRuleResult`) shared between services via Feign clients.
+Entity → DTO conversion lives in service-local mapper classes (`DatasetMapper`, `RuleMapper`, `QualityMapper`)
+to avoid coupling `common-dto` to JPA entities.
 
 ### Security (v2 Placeholder)
 
@@ -572,3 +764,6 @@ No authentication is enabled in v1. When needed:
 - **Prometheus + Grafana** — Metrics monitoring (Spring Boot Actuator metrics endpoint)
 - **WebSocket live updates** — Push job progress and log entries instead of polling
 - **Dark/light theme toggle** — UI already uses CSS custom properties; add a switcher
+- **Quality gates** — Block standardization jobs when data quality score is below threshold
+- **Scheduled validation** — Cron-based automatic quality checks with alert notifications
+- **Custom SQL validation** — `CUSTOM_SQL` validation type for advanced data checks
