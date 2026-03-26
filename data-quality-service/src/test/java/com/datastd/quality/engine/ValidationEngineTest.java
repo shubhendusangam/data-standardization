@@ -3,6 +3,7 @@ package com.datastd.quality.engine;
 import com.datastd.common.dto.OverallStatus;
 import com.datastd.common.dto.QualityReport;
 import com.datastd.common.dto.ValidationRuleResult;
+import com.datastd.quality.engine.validation.*;
 import com.datastd.quality.entity.Severity;
 import com.datastd.quality.entity.ValidationRule;
 import com.datastd.quality.entity.ValidationType;
@@ -27,7 +28,14 @@ class ValidationEngineTest {
 
     @BeforeEach
     void setUp() {
-        engine = new ValidationEngine(objectMapper, new ColumnProfiler());
+        ValidationStrategyFactory strategyFactory = new ValidationStrategyFactory(
+                new NotNullValidation(), new NotEmptyValidation(),
+                new RegexMatchValidation(), new AllowedValuesValidation(),
+                new NumericRangeValidation(), new MinLengthValidation(),
+                new MaxLengthValidation(), new UniqueValidation(),
+                new CustomSqlValidation()
+        );
+        engine = new ValidationEngine(objectMapper, new ColumnProfiler(), strategyFactory);
     }
 
     // ── Helpers ─────────────────────────────────────────────────────

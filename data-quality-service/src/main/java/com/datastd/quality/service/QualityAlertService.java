@@ -31,7 +31,8 @@ public class QualityAlertService {
 
     private static final Logger log = LoggerFactory.getLogger(QualityAlertService.class);
     private static final int MAX_RETRIES = 3;
-    private static final long RETRY_DELAY_MS = 5000;
+    private static final long INITIAL_RETRY_DELAY_MS = 1000;
+    private static final double BACKOFF_MULTIPLIER = 2.0;
 
     private final QualityAlertConfigRepository alertConfigRepository;
     private final ObjectMapper objectMapper;
@@ -108,7 +109,14 @@ public class QualityAlertService {
                             config.getId(), config.getWebhookUrl(), attempt, MAX_RETRIES, e.getMessage());
                 }
                 if (attempt < MAX_RETRIES) {
-                    Thread.sleep(RETRY_DELAY_MS);
+                    long delay = (long) (INITIAL_RETRY_DELAY_MS * Math.pow(BACKOFF_MULTIPLIER, attempt - 1));
+                    try {
+                        Thread.sleep(delay);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        log.warn("Alert retry interrupted: alertId={}", config.getId());
+                        return;
+                    }
                 }
             }
             log.warn("Alert delivery failed: alertId={}, url={}, exhausted all {} retries",
@@ -166,7 +174,7 @@ public class QualityAlertService {
             }
             return hex.toString();
         } catch (Exception e) {
-            throw new RuntimeException("Failed to compute HMAC-SHA256", e);
+            throw new IllegalStateException("Failed to compute HMAC-SHA256", e);
         }
     }
 }

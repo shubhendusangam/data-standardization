@@ -1,6 +1,8 @@
 package com.datastd.ingestion.service.impl;
 
+import com.datastd.ingestion.dto.FileParseResult;
 import com.datastd.ingestion.dto.JsonDataRequest;
+import com.datastd.ingestion.dto.UploadResult;
 import com.datastd.ingestion.entity.IngestedDataset;
 import com.datastd.ingestion.entity.IngestedDataset.DatasetStatus;
 import com.datastd.ingestion.entity.IngestedDataset.SourceType;
@@ -38,7 +40,7 @@ public class IngestionServiceImpl implements IngestionService {
     }
 
     @Override
-    public IngestedDataset uploadFile(MultipartFile file) {
+    public UploadResult uploadFile(MultipartFile file) {
         String originalFilename = file.getOriginalFilename();
         log.info("Uploading file: name={}, size={} bytes", originalFilename, file.getSize());
 
@@ -51,21 +53,27 @@ public class IngestionServiceImpl implements IngestionService {
         IngestedDataset dataset = new IngestedDataset();
         dataset.setName(originalFilename);
         dataset.setSourceType(sourceType);
+        FileParseResult parseResult = null;
 
         try {
-            List<Map<String, String>> records;
-
             if (sourceType == SourceType.EXCEL) {
-                records = fileParserService.parseExcel(file.getInputStream());
+                parseResult = fileParserService.parseExcel(file.getInputStream());
             } else if (sourceType == SourceType.CSV) {
-                records = fileParserService.parseCsv(file.getInputStream());
+                parseResult = fileParserService.parseCsv(file.getInputStream());
             } else {
                 throw new IllegalArgumentException("Unsupported file type: " + originalFilename);
             }
 
+            List<Map<String, String>> records = parseResult.getRecords();
             dataset.setRawData(objectMapper.writeValueAsString(records));
             dataset.setRecordCount(records.size());
             dataset.setStatus(DatasetStatus.PARSED);
+
+            if (parseResult.getSkippedRowCount() > 0) {
+                log.warn("File parse completed with warnings: datasetId=pending, parsedRows={}, skippedRows={}",
+                        parseResult.getParsedRowCount(), parseResult.getSkippedRowCount());
+            }
+
             log.info("File parsed successfully: name={}, type={}, records={}", originalFilename, sourceType, records.size());
 
         } catch (IOException e) {
@@ -77,7 +85,7 @@ public class IngestionServiceImpl implements IngestionService {
 
         IngestedDataset saved = repository.save(dataset);
         log.info("Dataset persisted: id={}, name={}, status={}", saved.getId(), saved.getName(), saved.getStatus());
-        return saved;
+        return new UploadResult(saved, parseResult);
     }
 
     @Override

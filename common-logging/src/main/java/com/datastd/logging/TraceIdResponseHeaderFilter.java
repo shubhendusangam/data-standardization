@@ -1,21 +1,20 @@
-package com.datastd.rules.config;
+package com.datastd.logging;
 
 import io.micrometer.tracing.Tracer;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.MDC;
 import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
 /**
- * Adds the current traceId to every HTTP response header so clients can
- * correlate requests with Loki log queries.
+ * Adds the current traceId to every HTTP response header and to the MDC
+ * so that {@code GlobalExceptionHandler} can include it in error response bodies.
  */
-@Component
 public class TraceIdResponseHeaderFilter extends OncePerRequestFilter {
 
     private final Tracer tracer;
@@ -32,8 +31,13 @@ public class TraceIdResponseHeaderFilter extends OncePerRequestFilter {
         if (span != null && span.context() != null) {
             String traceId = span.context().traceId();
             response.setHeader("X-Trace-Id", traceId);
+            MDC.put("traceId", traceId);
         }
-        filterChain.doFilter(request, response);
+        try {
+            filterChain.doFilter(request, response);
+        } finally {
+            MDC.remove("traceId");
+        }
     }
 }
 

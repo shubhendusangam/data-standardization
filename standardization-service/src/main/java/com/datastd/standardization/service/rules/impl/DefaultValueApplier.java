@@ -1,6 +1,7 @@
 package com.datastd.standardization.service.rules.impl;
 
 import com.datastd.standardization.service.rules.RuleApplier;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
@@ -8,7 +9,14 @@ import java.util.Map;
  * Sets a default value when the field is null or empty.
  * Config: {"defaultValue": "N/A"}
  */
+@Component
 public class DefaultValueApplier implements RuleApplier {
+
+    @Override
+    public String getType() {
+        return "DEFAULT_VALUE";
+    }
+
     @Override
     public String apply(String value, Map<String, Object> config) {
         if (config == null) return value;

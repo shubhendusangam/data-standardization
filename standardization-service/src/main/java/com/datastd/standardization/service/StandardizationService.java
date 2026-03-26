@@ -1,5 +1,6 @@
 package com.datastd.standardization.service;
 
+import com.datastd.common.dto.PagedResult;
 import com.datastd.standardization.dto.ProcessingRequest;
 import com.datastd.standardization.dto.ProcessingStatusResponse;
 import com.datastd.standardization.dto.StandardizedResultResponse;
@@ -13,6 +14,7 @@ public interface StandardizationService {
     List<ProcessingStatusResponse> getAllJobs(ProcessingJob.JobStatus status, UUID datasetId);
     ProcessingStatusResponse getJobStatus(UUID jobId);
     StandardizedResultResponse getJobResult(UUID jobId);
+    PagedResult getJobResult(UUID jobId, int page, int size);
     StandardizedResultResponse preview(ProcessingRequest request, int maxRecords);
 }
 

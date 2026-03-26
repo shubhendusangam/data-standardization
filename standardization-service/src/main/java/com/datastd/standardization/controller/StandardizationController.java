@@ -1,11 +1,13 @@
 package com.datastd.standardization.controller;
 
+import com.datastd.common.dto.PagedResult;
 import com.datastd.standardization.dto.ProcessingRequest;
 import com.datastd.standardization.dto.ProcessingStatusResponse;
 import com.datastd.standardization.dto.StandardizedResultResponse;
 import com.datastd.standardization.entity.ProcessingJob;
 import com.datastd.standardization.service.StandardizationService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,9 +46,33 @@ public class StandardizationController {
     }
 
     @GetMapping("/jobs/{jobId}/result")
-    public ResponseEntity<StandardizedResultResponse> getJobResult(@PathVariable UUID jobId) {
-        StandardizedResultResponse response = standardizationService.getJobResult(jobId);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<PagedResult> getJobResult(
+            @PathVariable UUID jobId,
+            @RequestParam(defaultValue = "0")   int page,
+            @RequestParam(defaultValue = "100") int size) {
+        if (size > 1000) {
+            throw new IllegalArgumentException("size must not exceed 1000");
+        }
+        if (size < 1) {
+            throw new IllegalArgumentException("size must be at least 1");
+        }
+        if (page < 0) {
+            throw new IllegalArgumentException("page must not be negative");
+        }
+        PagedResult result = standardizationService.getJobResult(jobId, page, size);
+
+        // Content-Range: records 0-99/4820
+        long total = result.getTotalRecords();
+        int from = page * size;
+        int to = from + result.getRecords().size() - 1;
+        String contentRange = (total == 0)
+                ? "records */0"
+                : "records " + from + "-" + to + "/" + total;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Content-Range", contentRange);
+
+        return ResponseEntity.ok().headers(headers).body(result);
     }
 
     @PostMapping("/preview")

@@ -112,9 +112,14 @@ class RuleControllerIntegrationTest {
     }
 
     @Test
-    void getRuleById_notFound_shouldReturn404() throws Exception {
+    void getRuleById_notFound_shouldReturn404WithErrorResponse() throws Exception {
         mockMvc.perform(get("/api/rules/" + UUID.randomUUID()))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.errorCode").value("RULE_NOT_FOUND"))
+                .andExpect(jsonPath("$.httpStatus").value(404))
+                .andExpect(jsonPath("$.message").isNotEmpty())
+                .andExpect(jsonPath("$.path").isNotEmpty())
+                .andExpect(jsonPath("$.timestamp").isNotEmpty());
     }
 
     // ─── PUT /api/rules/{id} ──────────────────────────────────────
@@ -227,6 +232,20 @@ class RuleControllerIntegrationTest {
         ));
     }
 
+    private String ruleJsonWithConfig(String name, String fieldName, String ruleType,
+                                      int priority, String ruleConfig) throws Exception {
+        Map<String, Object> map = new java.util.LinkedHashMap<>();
+        map.put("name", name);
+        map.put("fieldName", fieldName);
+        map.put("ruleType", ruleType);
+        map.put("priority", priority);
+        map.put("active", true);
+        if (ruleConfig != null) {
+            map.put("ruleConfig", ruleConfig);
+        }
+        return objectMapper.writeValueAsString(map);
+    }
+
     private UUID createSampleRule(String name, String fieldName, String ruleType, int priority) throws Exception {
         String body = ruleJson(name, fieldName, ruleType, priority);
         MvcResult result = mockMvc.perform(post("/api/rules")
@@ -237,6 +256,111 @@ class RuleControllerIntegrationTest {
 
         JsonNode node = objectMapper.readTree(result.getResponse().getContentAsString());
         return UUID.fromString(node.get("id").asText());
+    }
+
+    // ─── Rule Config Validation ───────────────────────────────────
+
+    @Test
+    void createRule_replaceWithBadConfig_shouldReturn400WithErrorCode() throws Exception {
+        // Typo: "fin" instead of "find"
+        String body = ruleJsonWithConfig("Bad Replace", "name", "REPLACE", 1,
+                "{\"fin\":\"old\",\"replace\":\"new\"}");
+
+        mockMvc.perform(post("/api/rules")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorCode").value("INVALID_RULE_CONFIG"))
+                .andExpect(jsonPath("$.message").value(containsString("find")))
+                .andExpect(jsonPath("$.httpStatus").value(400));
+    }
+
+    @Test
+    void createRule_replaceWithValidConfig_shouldReturn201() throws Exception {
+        String body = ruleJsonWithConfig("Good Replace", "name", "REPLACE", 1,
+                "{\"find\":\"old\",\"replace\":\"new\"}");
+
+        mockMvc.perform(post("/api/rules")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name").value("Good Replace"));
+    }
+
+    @Test
+    void updateRule_withBadConfig_shouldReturn400() throws Exception {
+        UUID id = createSampleRule("Original", "name", "TRIM", 1);
+
+        // Update to REPLACE with missing "find"
+        String body = ruleJsonWithConfig("Updated", "name", "REPLACE", 1,
+                "{\"replace\":\"new\"}");
+
+        mockMvc.perform(put("/api/rules/" + id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorCode").value("INVALID_RULE_CONFIG"));
+    }
+
+    @Test
+    void createRule_trimWithEmptyConfig_shouldReturn201() throws Exception {
+        String body = ruleJsonWithConfig("Trim Rule", "name", "TRIM", 1, "{}");
+
+        mockMvc.perform(post("/api/rules")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void createRule_mapValuesWithArrayMappings_shouldReturn400() throws Exception {
+        String body = ruleJsonWithConfig("Bad MapValues", "status", "MAP_VALUES", 1,
+                "{\"mappings\":[\"M\",\"Male\"]}");
+
+        mockMvc.perform(post("/api/rules")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorCode").value("INVALID_RULE_CONFIG"))
+                .andExpect(jsonPath("$.message").value(containsString("must be a JSON object")));
+    }
+
+    @Test
+    void createRule_defaultValueValid_shouldReturn201() throws Exception {
+        String body = ruleJsonWithConfig("Default Rule", "city", "DEFAULT_VALUE", 1,
+                "{\"defaultValue\":\"N/A\"}");
+
+        mockMvc.perform(post("/api/rules")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void createRule_dateFormatValid_shouldReturn201() throws Exception {
+        String body = ruleJsonWithConfig("Date Rule", "date", "DATE_FORMAT", 1,
+                "{\"sourceFormat\":\"MM/dd/yyyy\",\"targetFormat\":\"yyyy-MM-dd\"}");
+
+        mockMvc.perform(post("/api/rules")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void createRule_errorResponseContainsTraceIdField() throws Exception {
+        String body = ruleJsonWithConfig("Bad Replace", "name", "REPLACE", 1,
+                "{\"fin\":\"old\",\"replace\":\"new\"}");
+
+        mockMvc.perform(post("/api/rules")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.traceId").exists())
+                .andExpect(jsonPath("$.errorCode").value("INVALID_RULE_CONFIG"))
+                .andExpect(jsonPath("$.httpStatus").value(400))
+                .andExpect(jsonPath("$.path").value("/api/rules"))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty());
     }
 }
 

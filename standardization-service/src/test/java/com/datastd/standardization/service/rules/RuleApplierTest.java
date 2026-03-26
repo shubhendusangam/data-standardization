@@ -1,11 +1,10 @@
 package com.datastd.standardization.service.rules;
 
+import com.datastd.standardization.exception.RuleApplicationException;
 import com.datastd.standardization.service.rules.impl.*;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.NullSource;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.*;
@@ -84,9 +83,11 @@ class RuleApplierTest {
     }
 
     @Test
-    void regex_invalidPattern_shouldReturnOriginal() {
+    void regex_invalidPattern_shouldThrowRuleApplicationException() {
         Map<String, Object> config = Map.of("pattern", "[invalid", "replacement", "");
-        assertThat(new RegexApplier().apply("test", config)).isEqualTo("test");
+        assertThatThrownBy(() -> new RegexApplier().apply("test", config))
+                .isInstanceOf(RuleApplicationException.class)
+                .hasMessageContaining("Invalid regex pattern");
     }
 
     // ─── DefaultValueApplier ──────────────────────────────────────
@@ -126,11 +127,70 @@ class RuleApplierTest {
         assertThat(new DateFormatApplier().apply(null, config)).isNull();
     }
 
+    @Test
+    void dateFormat_isoInputWithMmDdSourceFormat_shouldReturnOriginalUnchanged() {
+        // Value already in target format (yyyy-MM-dd) with sourceFormat=MM/dd/yyyy
+        // → fallback should recognise it and return unchanged
+        Map<String, Object> config = Map.of(
+                "sourceFormat", "MM/dd/yyyy",
+                "targetFormat", "yyyy-MM-dd"
+        );
+        assertThat(new DateFormatApplier().apply("1990-03-15", config)).isEqualTo("1990-03-15");
+    }
+
+    @Test
+    void dateFormat_validMmDdInput_shouldReturnCorrectIso() {
+        Map<String, Object> config = Map.of(
+                "sourceFormat", "MM/dd/yyyy",
+                "targetFormat", "yyyy-MM-dd"
+        );
+        assertThat(new DateFormatApplier().apply("12/25/2023", config)).isEqualTo("2023-12-25");
+    }
+
+    @Test
+    void dateFormat_completelyUnparseable_shouldThrowRuleApplicationException() {
+        Map<String, Object> config = Map.of(
+                "sourceFormat", "MM/dd/yyyy",
+                "targetFormat", "yyyy-MM-dd"
+        );
+        assertThatThrownBy(() -> new DateFormatApplier().apply("not-a-date", config))
+                .isInstanceOf(RuleApplicationException.class)
+                .hasMessageContaining("Unparseable date 'not-a-date'")
+                .hasMessageContaining("MM/dd/yyyy")
+                .hasMessageContaining("yyyy-MM-dd");
+    }
+
+    @Test
+    void dateFormat_noSourceFormat_unparseableValue_shouldThrowRuleApplicationException() {
+        Map<String, Object> config = Map.of("targetFormat", "yyyy-MM-dd");
+        assertThatThrownBy(() -> new DateFormatApplier().apply("not-a-date", config))
+                .isInstanceOf(RuleApplicationException.class)
+                .hasMessageContaining("none of the common formats matched");
+    }
+
+    @Test
+    void dateFormat_emptyValue_shouldReturnEmpty() {
+        Map<String, Object> config = Map.of(
+                "sourceFormat", "MM/dd/yyyy",
+                "targetFormat", "yyyy-MM-dd"
+        );
+        assertThat(new DateFormatApplier().apply("  ", config)).isEqualTo("  ");
+    }
+
     // ─── RuleApplierFactory ───────────────────────────────────────
+
+    private RuleApplierFactory createFactory() {
+        List<RuleApplier> appliers = List.of(
+                new TrimApplier(), new UppercaseApplier(), new LowercaseApplier(),
+                new ReplaceApplier(), new MapValuesApplier(), new RegexApplier(),
+                new DefaultValueApplier(), new DateFormatApplier()
+        );
+        return new RuleApplierFactory(appliers);
+    }
 
     @Test
     void factory_knownType_shouldReturnApplier() {
-        RuleApplierFactory factory = new RuleApplierFactory();
+        RuleApplierFactory factory = createFactory();
         assertThat(factory.getApplier("TRIM")).isInstanceOf(TrimApplier.class);
         assertThat(factory.getApplier("UPPERCASE")).isInstanceOf(UppercaseApplier.class);
         assertThat(factory.getApplier("LOWERCASE")).isInstanceOf(LowercaseApplier.class);
@@ -143,7 +203,7 @@ class RuleApplierTest {
 
     @Test
     void factory_unknownType_shouldThrow() {
-        RuleApplierFactory factory = new RuleApplierFactory();
+        RuleApplierFactory factory = createFactory();
         assertThatThrownBy(() -> factory.getApplier("UNKNOWN"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Unknown rule type");

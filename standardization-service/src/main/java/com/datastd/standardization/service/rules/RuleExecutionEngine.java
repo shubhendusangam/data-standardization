@@ -1,12 +1,15 @@
 package com.datastd.standardization.service.rules;
 
+import com.datastd.common.dto.RuleApplicationError;
 import com.datastd.common.dto.RuleResponse;
+import com.datastd.standardization.exception.RuleApplicationException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,12 +33,15 @@ public class RuleExecutionEngine {
     }
 
     /**
-     * Applies all active rules (in order) to a single record, returning the transformed record.
-     * Inactive rules are skipped. Individual rule failures are logged and skipped (non-fatal).
+     * Applies all active rules (in order) to a single record, returning the transformed record
+     * along with any per-field errors.
+     * Inactive rules are skipped. Individual rule failures are captured in the result (non-fatal):
+     * the record retains its original value for the failed field and processing continues.
      */
-    public Map<String, Object> applyRulesToRecord(Map<String, Object> record,
-                                                   List<RuleResponse> rules) {
+    public RuleApplicationResult applyRulesToRecord(Map<String, Object> record,
+                                                     List<RuleResponse> rules) {
         Map<String, Object> result = new LinkedHashMap<>(record);
+        List<RuleApplicationError> errors = new ArrayList<>();
 
         for (RuleResponse rule : rules) {
             if (!rule.isActive()) continue;
@@ -59,13 +65,31 @@ public class RuleExecutionEngine {
                 RuleApplier applier = ruleApplierFactory.getApplier(rule.getRuleType());
                 String transformed = applier.apply(stringValue, config);
                 result.put(fieldName, transformed);
+            } catch (RuleApplicationException e) {
+                // Keep original value — do not overwrite with null
+                log.debug("Rule application error: rule='{}', field='{}', value='{}': {}",
+                        rule.getName(), fieldName, stringValue, e.getMessage());
+                errors.add(RuleApplicationError.builder()
+                        .ruleId(rule.getId() != null ? rule.getId().toString() : null)
+                        .ruleName(rule.getName())
+                        .fieldName(fieldName)
+                        .originalValue(stringValue)
+                        .reason(e.getMessage())
+                        .build());
             } catch (Exception e) {
                 log.warn("Failed to apply rule '{}' on field '{}': {}",
                         rule.getName(), fieldName, e.getMessage());
+                errors.add(RuleApplicationError.builder()
+                        .ruleId(rule.getId() != null ? rule.getId().toString() : null)
+                        .ruleName(rule.getName())
+                        .fieldName(fieldName)
+                        .originalValue(stringValue)
+                        .reason(e.getMessage())
+                        .build());
             }
         }
 
-        return result;
+        return new RuleApplicationResult(result, errors);
     }
 }
 

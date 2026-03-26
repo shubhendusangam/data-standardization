@@ -2,6 +2,7 @@ package com.datastd.standardization.service.impl;
 
 import com.datastd.common.dto.IngestedDatasetResponse;
 import com.datastd.common.dto.OverallStatus;
+import com.datastd.common.dto.PagedResult;
 import com.datastd.common.dto.QualityReport;
 import com.datastd.common.dto.RuleResponse;
 import com.datastd.common.dto.RuleSetResponse;
@@ -15,9 +16,11 @@ import com.datastd.standardization.dto.QualityValidateRequest;
 import com.datastd.standardization.dto.StandardizedResultResponse;
 import com.datastd.standardization.entity.ProcessingJob;
 import com.datastd.standardization.entity.ProcessingJob.JobStatus;
+import com.datastd.standardization.exception.ResourceNotFoundException;
 import com.datastd.standardization.repository.ProcessingJobRepository;
 import com.datastd.standardization.service.AsyncJobProcessor;
 import com.datastd.standardization.service.StandardizationService;
+import com.datastd.standardization.service.rules.RuleApplicationResult;
 import com.datastd.standardization.service.rules.RuleExecutionEngine;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -80,7 +83,7 @@ public class StandardizationServiceImpl implements StandardizationService {
         try {
             job.setRuleIds(objectMapper.writeValueAsString(resolvedRuleIds));
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to serialize rule IDs", e);
+            throw new IllegalStateException("Failed to serialize rule IDs", e);
         }
 
         ProcessingJob saved = jobRepository.save(job);
@@ -118,7 +121,7 @@ public class StandardizationServiceImpl implements StandardizationService {
         ProcessingJob job = jobRepository.findById(jobId)
                 .orElseThrow(() -> {
                     log.warn("Job not found: jobId={}", jobId);
-                    return new RuntimeException("Job not found with id: " + jobId);
+                    return new ResourceNotFoundException("Job not found with id: " + jobId);
                 });
         return ProcessingStatusResponse.fromEntity(job);
     }
@@ -129,7 +132,7 @@ public class StandardizationServiceImpl implements StandardizationService {
         ProcessingJob job = jobRepository.findById(jobId)
                 .orElseThrow(() -> {
                     log.warn("Job not found: jobId={}", jobId);
-                    return new RuntimeException("Job not found with id: " + jobId);
+                    return new ResourceNotFoundException("Job not found with id: " + jobId);
                 });
 
         StandardizedResultResponse response = new StandardizedResultResponse();
@@ -150,6 +153,29 @@ public class StandardizationServiceImpl implements StandardizationService {
         }
 
         return response;
+    }
+
+    @Override
+    public PagedResult getJobResult(UUID jobId, int page, int size) {
+        log.debug("Fetching paginated job result: jobId={}, page={}, size={}", jobId, page, size);
+        ProcessingJob job = jobRepository.findById(jobId)
+                .orElseThrow(() -> {
+                    log.warn("Job not found: jobId={}", jobId);
+                    return new ResourceNotFoundException("Job not found with id: " + jobId);
+                });
+
+        if (job.getResultData() != null) {
+            try {
+                List<Map<String, Object>> allResults = objectMapper.readValue(
+                        job.getResultData(), new TypeReference<List<Map<String, Object>>>() {});
+                return PagedResult.of(allResults, page, size);
+            } catch (JsonProcessingException e) {
+                log.error("Failed to parse result data for job {}", jobId, e);
+                return PagedResult.of(Collections.emptyList(), page, size);
+            }
+        }
+
+        return PagedResult.of(Collections.emptyList(), page, size);
     }
 
     @Override
@@ -205,7 +231,8 @@ public class StandardizationServiceImpl implements StandardizationService {
             // Apply rules
             List<Map<String, Object>> standardized = new ArrayList<>();
             for (Map<String, Object> record : subset) {
-                standardized.add(ruleExecutionEngine.applyRulesToRecord(record, rules));
+                RuleApplicationResult ruleResult = ruleExecutionEngine.applyRulesToRecord(record, rules);
+                standardized.add(ruleResult.getRecord());
             }
 
             log.info("Preview complete: datasetId={}, recordsProcessed={}", request.getDatasetId(), standardized.size());
@@ -221,7 +248,7 @@ public class StandardizationServiceImpl implements StandardizationService {
 
         } catch (JsonProcessingException e) {
             log.error("Failed to parse dataset records: datasetId={}", request.getDatasetId(), e);
-            throw new RuntimeException("Failed to parse dataset records", e);
+            throw new IllegalStateException("Failed to parse dataset records", e);
         }
     }
 

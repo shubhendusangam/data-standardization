@@ -21,6 +21,8 @@ import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import org.springframework.mock.web.MockMultipartFile;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -113,9 +115,14 @@ class IngestionControllerIntegrationTest {
     }
 
     @Test
-    void getDatasetById_notFound_shouldReturn404() throws Exception {
+    void getDatasetById_notFound_shouldReturn404WithErrorResponse() throws Exception {
         mockMvc.perform(get("/api/ingestion/datasets/" + UUID.randomUUID()))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.errorCode").value("DATASET_NOT_FOUND"))
+                .andExpect(jsonPath("$.httpStatus").value(404))
+                .andExpect(jsonPath("$.message").isNotEmpty())
+                .andExpect(jsonPath("$.path").isNotEmpty())
+                .andExpect(jsonPath("$.timestamp").isNotEmpty());
     }
 
     // ─── DELETE /api/ingestion/datasets/{id} ──────────────────────
@@ -131,9 +138,72 @@ class IngestionControllerIntegrationTest {
     }
 
     @Test
-    void deleteDataset_notFound_shouldReturn404() throws Exception {
+    void deleteDataset_notFound_shouldReturn404WithErrorResponse() throws Exception {
         mockMvc.perform(delete("/api/ingestion/datasets/" + UUID.randomUUID()))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.errorCode").value("DATASET_NOT_FOUND"))
+                .andExpect(jsonPath("$.httpStatus").value(404))
+                .andExpect(jsonPath("$.message").isNotEmpty())
+                .andExpect(jsonPath("$.path").isNotEmpty())
+                .andExpect(jsonPath("$.timestamp").isNotEmpty());
+    }
+
+    // ─── POST /api/ingestion/upload (CSV with warnings) ────────────
+
+    @Test
+    void uploadCsv_withBadRows_shouldReturnParseWarnings() throws Exception {
+        // CSV with 3 columns in header, but row 3 has only 1 column
+        String csv = "name,age,city\nAlice,30,NYC\nBob\nCharlie,35,Chicago\n";
+        MockMultipartFile file = new MockMultipartFile(
+                "file", "test.csv", "text/csv", csv.getBytes());
+
+        mockMvc.perform(multipart("/api/ingestion/upload").file(file))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.status").value("PARSED"))
+                .andExpect(jsonPath("$.skippedRowCount").value(1))
+                .andExpect(jsonPath("$.parseWarnings", hasSize(1)))
+                .andExpect(jsonPath("$.parseWarnings[0].rowIndex").value(3))
+                .andExpect(jsonPath("$.parseWarnings[0].reason", containsString("columns, expected")))
+                .andExpect(jsonPath("$.warningsTruncated").value(false));
+    }
+
+    @Test
+    void uploadCsv_allValid_shouldReturnEmptyWarnings() throws Exception {
+        String csv = "name,age\nAlice,30\nBob,25\n";
+        MockMultipartFile file = new MockMultipartFile(
+                "file", "valid.csv", "text/csv", csv.getBytes());
+
+        mockMvc.perform(multipart("/api/ingestion/upload").file(file))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.status").value("PARSED"))
+                .andExpect(jsonPath("$.parsedRowCount").value(2))
+                .andExpect(jsonPath("$.skippedRowCount").value(0))
+                .andExpect(jsonPath("$.parseWarnings", hasSize(0)))
+                .andExpect(jsonPath("$.warningsTruncated").value(false));
+    }
+
+    // ─── POST /api/ingestion/upload (validation) ──────────────────
+
+    @Test
+    void uploadFile_emptyFile_shouldReturn400() throws Exception {
+        MockMultipartFile file = new MockMultipartFile(
+                "file", "empty.csv", "text/csv", new byte[0]);
+
+        mockMvc.perform(multipart("/api/ingestion/upload").file(file))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorCode").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.message").value("Uploaded file is empty"));
+    }
+
+    @Test
+    void uploadFile_unsupportedContentType_shouldReturn415() throws Exception {
+        MockMultipartFile file = new MockMultipartFile(
+                "file", "report.pdf", "application/pdf", "fake-pdf-content".getBytes());
+
+        mockMvc.perform(multipart("/api/ingestion/upload").file(file))
+                .andExpect(status().isUnsupportedMediaType())
+                .andExpect(jsonPath("$.errorCode").value("UNSUPPORTED_FILE_TYPE"))
+                .andExpect(jsonPath("$.message", containsString("application/pdf")));
     }
 
     // ─── Helper ───────────────────────────────────────────────────

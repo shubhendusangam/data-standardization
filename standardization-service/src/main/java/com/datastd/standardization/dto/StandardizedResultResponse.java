@@ -17,6 +17,7 @@ public class StandardizedResultResponse {
     private Boolean qualityBlocked;
     private QualityReport qualityReport;
 
+
     public StandardizedResultResponse() {}
 
     public UUID getJobId() {

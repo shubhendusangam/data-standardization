@@ -11,6 +11,7 @@ import com.datastd.rules.mapper.RuleMapper;
 import com.datastd.rules.repository.RuleSetRepository;
 import com.datastd.rules.repository.StandardizationRuleRepository;
 import com.datastd.rules.service.RuleService;
+import com.datastd.rules.validation.RuleConfigValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -26,17 +27,23 @@ public class RuleServiceImpl implements RuleService {
 
     private final StandardizationRuleRepository ruleRepository;
     private final RuleSetRepository ruleSetRepository;
+    private final RuleConfigValidator ruleConfigValidator;
 
     public RuleServiceImpl(StandardizationRuleRepository ruleRepository,
-                           RuleSetRepository ruleSetRepository) {
+                           RuleSetRepository ruleSetRepository,
+                           RuleConfigValidator ruleConfigValidator) {
         this.ruleRepository = ruleRepository;
         this.ruleSetRepository = ruleSetRepository;
+        this.ruleConfigValidator = ruleConfigValidator;
     }
 
     @Override
     public RuleResponse createRule(RuleRequest request) {
         log.info("Creating rule: name={}, field={}, type={}, priority={}",
                 request.getName(), request.getFieldName(), request.getRuleType(), request.getPriority());
+
+        ruleConfigValidator.validate(request.getRuleType(), request.getRuleConfig());
+
         StandardizationRule rule = new StandardizationRule();
         rule.setName(request.getName());
         rule.setDescription(request.getDescription());
@@ -91,6 +98,8 @@ public class RuleServiceImpl implements RuleService {
                     return new ResourceNotFoundException("Rule not found with id: " + id);
                 });
 
+        ruleConfigValidator.validate(request.getRuleType(), request.getRuleConfig());
+
         rule.setName(request.getName());
         rule.setDescription(request.getDescription());
         rule.setFieldName(request.getFieldName());
@@ -139,7 +148,7 @@ public class RuleServiceImpl implements RuleService {
         // Validate all rule IDs exist
         List<StandardizationRule> rules = ruleRepository.findByIdInOrderByPriorityAsc(request.getRuleIds());
         if (rules.size() != request.getRuleIds().size()) {
-            throw new RuntimeException("Some rule IDs are invalid");
+            throw new IllegalArgumentException("Some rule IDs are invalid");
         }
 
         RuleSet ruleSet = new RuleSet();

@@ -37,6 +37,10 @@ public class ProcessingJob {
     @Column(columnDefinition = "CLOB")
     private String errorLog;
 
+    @Lob
+    @Column(columnDefinition = "CLOB")
+    private String ruleApplicationErrorsJson;
+
     private UUID qualityReportId;
 
     private Integer qualityScore;
@@ -206,6 +210,14 @@ public class ProcessingJob {
 
     public void setQualityRuleSetId(UUID qualityRuleSetId) {
         this.qualityRuleSetId = qualityRuleSetId;
+    }
+
+    public String getRuleApplicationErrorsJson() {
+        return ruleApplicationErrorsJson;
+    }
+
+    public void setRuleApplicationErrorsJson(String ruleApplicationErrorsJson) {
+        this.ruleApplicationErrorsJson = ruleApplicationErrorsJson;
     }
 }
 

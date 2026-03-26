@@ -1,6 +1,8 @@
 package com.datastd.common.dto;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -18,6 +20,11 @@ public class IngestedDatasetResponse {
     private String rawData;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    private int parsedRowCount;
+    private int skippedRowCount;
+    private List<ParseWarning> parseWarnings = new ArrayList<>();
+    private boolean warningsTruncated;
 
     public IngestedDatasetResponse() {}
 
@@ -85,6 +92,38 @@ public class IngestedDatasetResponse {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public int getParsedRowCount() {
+        return parsedRowCount;
+    }
+
+    public void setParsedRowCount(int parsedRowCount) {
+        this.parsedRowCount = parsedRowCount;
+    }
+
+    public int getSkippedRowCount() {
+        return skippedRowCount;
+    }
+
+    public void setSkippedRowCount(int skippedRowCount) {
+        this.skippedRowCount = skippedRowCount;
+    }
+
+    public List<ParseWarning> getParseWarnings() {
+        return parseWarnings;
+    }
+
+    public void setParseWarnings(List<ParseWarning> parseWarnings) {
+        this.parseWarnings = parseWarnings;
+    }
+
+    public boolean isWarningsTruncated() {
+        return warningsTruncated;
+    }
+
+    public void setWarningsTruncated(boolean warningsTruncated) {
+        this.warningsTruncated = warningsTruncated;
     }
 }
 

@@ -1,25 +1,25 @@
 package com.datastd.standardization.service.rules;
 
-import com.datastd.standardization.service.rules.impl.*;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+/**
+ * Factory that resolves {@link RuleApplier} by rule type using Spring auto-discovery.
+ * All {@code @Component} beans implementing {@link RuleApplier} are automatically
+ * registered — adding a new rule type only requires creating a new class.
+ */
 @Component
 public class RuleApplierFactory {
 
     private final Map<String, RuleApplier> appliers = new HashMap<>();
 
-    public RuleApplierFactory() {
-        appliers.put("TRIM", new TrimApplier());
-        appliers.put("UPPERCASE", new UppercaseApplier());
-        appliers.put("LOWERCASE", new LowercaseApplier());
-        appliers.put("REPLACE", new ReplaceApplier());
-        appliers.put("MAP_VALUES", new MapValuesApplier());
-        appliers.put("REGEX", new RegexApplier());
-        appliers.put("DEFAULT_VALUE", new DefaultValueApplier());
-        appliers.put("DATE_FORMAT", new DateFormatApplier());
+    public RuleApplierFactory(List<RuleApplier> ruleAppliers) {
+        for (RuleApplier applier : ruleAppliers) {
+            appliers.put(applier.getType(), applier);
+        }
     }
 
     public RuleApplier getApplier(String ruleType) {

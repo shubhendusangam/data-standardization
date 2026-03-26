@@ -1,6 +1,8 @@
 package com.datastd.ingestion.service.impl;
 
+import com.datastd.ingestion.dto.FileParseResult;
 import com.datastd.ingestion.dto.JsonDataRequest;
+import com.datastd.ingestion.dto.UploadResult;
 import com.datastd.ingestion.entity.IngestedDataset;
 import com.datastd.ingestion.entity.IngestedDataset.DatasetStatus;
 import com.datastd.ingestion.entity.IngestedDataset.SourceType;
@@ -96,14 +98,16 @@ class IngestionServiceImplTest {
                 "file", "data.csv", "text/csv", "name,age\nAlice,30".getBytes());
 
         List<Map<String, String>> parsed = List.of(Map.of("name", "Alice", "age", "30"));
-        when(fileParserService.parseCsv(any(InputStream.class))).thenReturn(parsed);
+        FileParseResult parseResult = new FileParseResult(parsed, List.of());
+        when(fileParserService.parseCsv(any(InputStream.class))).thenReturn(parseResult);
         when(repository.save(any())).thenAnswer(inv -> {
             IngestedDataset d = inv.getArgument(0);
             d.setId(UUID.randomUUID());
             return d;
         });
 
-        IngestedDataset result = ingestionService.uploadFile(file);
+        UploadResult uploadResult = ingestionService.uploadFile(file);
+        IngestedDataset result = uploadResult.getDataset();
 
         assertThat(result.getSourceType()).isEqualTo(SourceType.CSV);
         assertThat(result.getStatus()).isEqualTo(DatasetStatus.PARSED);
@@ -118,10 +122,12 @@ class IngestionServiceImplTest {
                 "dummy".getBytes());
 
         List<Map<String, String>> parsed = List.of(Map.of("col", "val"));
-        when(fileParserService.parseExcel(any(InputStream.class))).thenReturn(parsed);
+        FileParseResult parseResult = new FileParseResult(parsed, List.of());
+        when(fileParserService.parseExcel(any(InputStream.class))).thenReturn(parseResult);
         when(repository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
-        IngestedDataset result = ingestionService.uploadFile(file);
+        UploadResult uploadResult = ingestionService.uploadFile(file);
+        IngestedDataset result = uploadResult.getDataset();
 
         assertThat(result.getSourceType()).isEqualTo(SourceType.EXCEL);
         assertThat(result.getStatus()).isEqualTo(DatasetStatus.PARSED);

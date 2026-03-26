@@ -1,11 +1,19 @@
 package com.datastd.standardization.dto;
 
+import com.datastd.common.dto.RuleApplicationError;
 import com.datastd.standardization.entity.ProcessingJob;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 public class ProcessingStatusResponse {
+
+    private static final int MAX_ERRORS_IN_RESPONSE = 50;
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private UUID jobId;
     private UUID datasetId;
@@ -20,6 +28,9 @@ public class ProcessingStatusResponse {
     private Integer qualityScore;
     private String qualityStatus;
     private UUID qualityReportId;
+    private String errorLog;
+    private List<RuleApplicationError> ruleApplicationErrors;
+    private boolean errorsTruncated;
 
     public ProcessingStatusResponse() {}
 
@@ -37,6 +48,29 @@ public class ProcessingStatusResponse {
         response.setQualityScore(job.getQualityScore());
         response.setQualityStatus(job.getQualityStatus());
         response.setQualityReportId(job.getQualityReportId());
+        response.setErrorLog(job.getErrorLog());
+
+        // Deserialize and cap rule application errors
+        if (job.getRuleApplicationErrorsJson() != null && !job.getRuleApplicationErrorsJson().isEmpty()) {
+            try {
+                List<RuleApplicationError> allErrors = MAPPER.readValue(
+                        job.getRuleApplicationErrorsJson(),
+                        new TypeReference<List<RuleApplicationError>>() {});
+                if (allErrors.size() > MAX_ERRORS_IN_RESPONSE) {
+                    response.setRuleApplicationErrors(allErrors.subList(0, MAX_ERRORS_IN_RESPONSE));
+                    response.setErrorsTruncated(true);
+                } else {
+                    response.setRuleApplicationErrors(allErrors);
+                    response.setErrorsTruncated(false);
+                }
+            } catch (Exception e) {
+                response.setRuleApplicationErrors(Collections.emptyList());
+                response.setErrorsTruncated(false);
+            }
+        } else {
+            response.setRuleApplicationErrors(Collections.emptyList());
+            response.setErrorsTruncated(false);
+        }
 
         if (job.getTotalRecords() > 0) {
             response.setProgressPercentage(
@@ -152,6 +186,30 @@ public class ProcessingStatusResponse {
 
     public void setQualityReportId(UUID qualityReportId) {
         this.qualityReportId = qualityReportId;
+    }
+
+    public String getErrorLog() {
+        return errorLog;
+    }
+
+    public void setErrorLog(String errorLog) {
+        this.errorLog = errorLog;
+    }
+
+    public List<RuleApplicationError> getRuleApplicationErrors() {
+        return ruleApplicationErrors;
+    }
+
+    public void setRuleApplicationErrors(List<RuleApplicationError> ruleApplicationErrors) {
+        this.ruleApplicationErrors = ruleApplicationErrors;
+    }
+
+    public boolean isErrorsTruncated() {
+        return errorsTruncated;
+    }
+
+    public void setErrorsTruncated(boolean errorsTruncated) {
+        this.errorsTruncated = errorsTruncated;
     }
 }
 

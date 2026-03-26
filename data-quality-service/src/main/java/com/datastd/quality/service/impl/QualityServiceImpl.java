@@ -15,6 +15,8 @@ import com.datastd.quality.entity.QualityReportEntity;
 import com.datastd.quality.entity.ValidationRule;
 import com.datastd.quality.entity.ValidationRuleSet;
 import com.datastd.quality.entity.ValidationType;
+import com.datastd.quality.exception.DataProcessingException;
+import com.datastd.quality.exception.ResourceNotFoundException;
 import com.datastd.quality.mapper.QualityMapper;
 import com.datastd.quality.repository.QualityAlertConfigRepository;
 import com.datastd.quality.repository.QualityReportRepository;
@@ -118,8 +120,7 @@ public class QualityServiceImpl implements QualityService {
     public ValidationRuleResponse updateRule(UUID id, ValidationRuleRequest request) {
         log.info("Updating validation rule: id={}", id);
         ValidationRule rule = ruleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Validation rule not found: " + id));
-
+                .orElseThrow(() -> new ResourceNotFoundException("Validation rule not found: " + id));
         rule.setName(request.getName());
         rule.setColumnName(request.getColumnName());
         rule.setValidationType(request.getValidationType());
@@ -135,7 +136,7 @@ public class QualityServiceImpl implements QualityService {
     @Override
     public void deleteRule(UUID id) {
         if (!ruleRepository.existsById(id)) {
-            throw new RuntimeException("Validation rule not found: " + id);
+            throw new ResourceNotFoundException("Validation rule not found: " + id);
         }
         ruleRepository.deleteById(id);
         log.info("Validation rule deleted: id={}", id);
@@ -144,7 +145,7 @@ public class QualityServiceImpl implements QualityService {
     @Override
     public ValidationRuleResponse toggleRule(UUID id) {
         ValidationRule rule = ruleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Validation rule not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Validation rule not found: " + id));
         rule.setActive(!rule.isActive());
         ValidationRule saved = ruleRepository.save(rule);
         log.info("Validation rule toggled: id={}, active={}", saved.getId(), saved.isActive());
@@ -179,7 +180,7 @@ public class QualityServiceImpl implements QualityService {
         log.info("Creating validation rule set: name={}, ruleCount={}", request.getName(), request.getRuleIds().size());
         List<ValidationRule> rules = ruleRepository.findByIdIn(request.getRuleIds());
         if (rules.size() != request.getRuleIds().size()) {
-            throw new RuntimeException("Some validation rule IDs are invalid");
+            throw new IllegalArgumentException("Some validation rule IDs are invalid");
         }
 
         ValidationRuleSet ruleSet = new ValidationRuleSet();
@@ -206,7 +207,7 @@ public class QualityServiceImpl implements QualityService {
     public ValidationRuleSetResponse getRuleSetById(UUID id) {
         log.debug("Fetching validation rule set: id={}", id);
         ValidationRuleSet ruleSet = ruleSetRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Validation rule set not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Validation rule set not found: " + id));
 
         List<ValidationRule> rules = ruleRepository.findByIdIn(ruleSet.getRuleIds());
         List<ValidationRuleResponse> ruleResponses = rules.stream()
@@ -236,7 +237,7 @@ public class QualityServiceImpl implements QualityService {
     private List<ValidationRule> resolveRules(ValidateRequest request) {
         if (request.getRuleSetId() != null) {
             ValidationRuleSet ruleSet = ruleSetRepository.findById(request.getRuleSetId())
-                    .orElseThrow(() -> new RuntimeException("Validation rule set not found: " + request.getRuleSetId()));
+                    .orElseThrow(() -> new ResourceNotFoundException("Validation rule set not found: " + request.getRuleSetId()));
             return ruleRepository.findByIdIn(ruleSet.getRuleIds());
         } else if (request.getRuleIds() != null && !request.getRuleIds().isEmpty()) {
             return ruleRepository.findByIdIn(request.getRuleIds());
@@ -253,7 +254,7 @@ public class QualityServiceImpl implements QualityService {
             return objectMapper.readValue(rawData, new TypeReference<>() {});
         } catch (JsonProcessingException e) {
             log.error("Failed to parse rawData as JSON array: {}", e.getMessage());
-            throw new RuntimeException("Failed to parse dataset raw data as JSON array", e);
+            throw new DataProcessingException("Failed to parse dataset raw data as JSON array", e);
         }
     }
 
@@ -274,7 +275,7 @@ public class QualityServiceImpl implements QualityService {
                     report.getDatasetId(), saved.getId(), report.getOverallStatus());
         } catch (JsonProcessingException e) {
             log.error("Failed to serialize QualityReport to JSON: {}", e.getMessage());
-            throw new RuntimeException("Failed to serialize quality report", e);
+            throw new DataProcessingException("Failed to serialize quality report", e);
         }
     }
 
@@ -284,7 +285,7 @@ public class QualityServiceImpl implements QualityService {
     public QualityReport getLatestReport(UUID datasetId) {
         log.debug("Fetching latest report for datasetId={}", datasetId);
         QualityReportEntity entity = reportRepository.findTopByDatasetIdOrderByEvaluatedAtDesc(datasetId)
-                .orElseThrow(() -> new RuntimeException("No quality report found for dataset: " + datasetId));
+                .orElseThrow(() -> new ResourceNotFoundException("No quality report found for dataset: " + datasetId));
         return deserializeReport(entity);
     }
 
@@ -308,7 +309,7 @@ public class QualityServiceImpl implements QualityService {
     public QualityReport getFullReport(UUID reportId) {
         log.debug("Fetching full report: reportId={}", reportId);
         QualityReportEntity entity = reportRepository.findById(reportId)
-                .orElseThrow(() -> new RuntimeException("Quality report not found: " + reportId));
+                .orElseThrow(() -> new ResourceNotFoundException("Quality report not found: " + reportId));
         return deserializeReport(entity);
     }
 
@@ -416,7 +417,7 @@ public class QualityServiceImpl implements QualityService {
     @Override
     public AlertConfigResponse updateAlertConfig(UUID id, AlertConfigRequest request) {
         QualityAlertConfig config = alertConfigRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Alert config not found: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Alert config not found: " + id));
         config.setName(request.getName());
         config.setWebhookUrl(request.getWebhookUrl());
         config.setTriggerOnStatus(request.getTriggerOnStatus() != null
@@ -433,7 +434,7 @@ public class QualityServiceImpl implements QualityService {
     @Override
     public void deleteAlertConfig(UUID id) {
         if (!alertConfigRepository.existsById(id)) {
-            throw new RuntimeException("Alert config not found: " + id);
+            throw new ResourceNotFoundException("Alert config not found: " + id);
         }
         alertConfigRepository.deleteById(id);
         log.info("Alert config deleted: id={}", id);
@@ -448,7 +449,7 @@ public class QualityServiceImpl implements QualityService {
             return report;
         } catch (JsonProcessingException e) {
             log.error("Failed to deserialize report JSON: {}", e.getMessage());
-            throw new RuntimeException("Failed to deserialize quality report", e);
+            throw new DataProcessingException("Failed to deserialize quality report", e);
         }
     }
 

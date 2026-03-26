@@ -1,6 +1,7 @@
 package com.datastd.standardization.service.rules.impl;
 
 import com.datastd.standardization.service.rules.RuleApplier;
+import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
@@ -8,8 +9,15 @@ import java.util.Map;
  * Maps specific values to standardized values.
  * Config: {"mappings": {"M": "Male", "F": "Female", "m": "Male", "f": "Female"}}
  */
+@Component
 @SuppressWarnings("unchecked")
 public class MapValuesApplier implements RuleApplier {
+
+    @Override
+    public String getType() {
+        return "MAP_VALUES";
+    }
+
     @Override
     public String apply(String value, Map<String, Object> config) {
         if (value == null || config == null) return value;

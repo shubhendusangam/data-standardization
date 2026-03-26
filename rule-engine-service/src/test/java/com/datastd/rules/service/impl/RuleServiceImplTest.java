@@ -9,6 +9,7 @@ import com.datastd.rules.entity.StandardizationRule;
 import com.datastd.rules.entity.StandardizationRule.RuleType;
 import com.datastd.rules.repository.RuleSetRepository;
 import com.datastd.rules.repository.StandardizationRuleRepository;
+import com.datastd.rules.validation.RuleConfigValidator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,6 +33,9 @@ class RuleServiceImplTest {
 
     @Mock
     private RuleSetRepository ruleSetRepository;
+
+    @Mock
+    private RuleConfigValidator ruleConfigValidator;
 
     @InjectMocks
     private RuleServiceImpl ruleService;

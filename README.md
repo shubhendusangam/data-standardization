@@ -220,6 +220,18 @@ Every response includes an **`X-Trace-Id`** header for log correlation.
 | `GET`    | `/api/ingestion/datasets/{id}` | Get dataset by ID        |
 | `DELETE` | `/api/ingestion/datasets/{id}` | Delete dataset           |
 
+#### File Upload Limits
+
+| Constraint             | Value  | Notes                                               |
+|------------------------|--------|-----------------------------------------------------|
+| Max file size          | **50 MB** | Configured via `spring.servlet.multipart.max-file-size` |
+| Max request size       | **52 MB** | Allows for multipart overhead                       |
+| Allowed content types  | `text/csv`, `application/vnd.ms-excel`, `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` | CSV, XLS, XLSX |
+
+Oversized files return **HTTP 413** with error code `FILE_TOO_LARGE`.
+Unsupported file types return **HTTP 415** with error code `UNSUPPORTED_FILE_TYPE`.
+Empty files return **HTTP 400**.
+
 ### Rule Engine Service (`/api/rules`)
 
 | Method   | Endpoint                    | Description                                      |
@@ -242,8 +254,35 @@ Every response includes an **`X-Trace-Id`** header for log correlation.
 | `POST` | `/api/standardization/process`             | Submit processing job (returns 202) |
 | `GET`  | `/api/standardization/jobs`                | List jobs (filter: `status`, `datasetId`) |
 | `GET`  | `/api/standardization/jobs/{jobId}`        | Get job status & progress |
-| `GET`  | `/api/standardization/jobs/{jobId}/result` | Get standardized results |
+| `GET`  | `/api/standardization/jobs/{jobId}/result` | Get standardized results (paginated) |
 | `POST` | `/api/standardization/preview`             | Preview standardization (sync) |
+
+#### Pagination — `GET /api/standardization/jobs/{jobId}/result`
+
+| Param  | Default | Constraints       | Description                       |
+|--------|---------|-------------------|-----------------------------------|
+| `page` | `0`     | ≥ 0               | Zero-based page index             |
+| `size` | `100`   | 1 – 1000          | Number of records per page        |
+
+Returns `400 Bad Request` if `size > 1000`, `size < 1`, or `page < 0`.
+
+Response body:
+```json
+{
+  "records": [ ... ],
+  "page": 0,
+  "size": 100,
+  "totalRecords": 4820,
+  "totalPages": 49,
+  "hasNext": true,
+  "hasPrevious": false
+}
+```
+
+Response includes a `Content-Range` header:
+```
+Content-Range: records 0-99/4820
+```
 
 ### Data Quality Service (`/api/quality`)
 
@@ -756,14 +795,18 @@ No authentication is enabled in v1. When needed:
 
 ## Future Enhancements
 
-- **Apache Kafka** — Event-driven async processing (replace `@Async` thread pool)
-- **Elasticsearch / MongoDB** — Persistent storage for datasets and standardized results
-- **Spring Security + JWT** — Authentication & authorization (v2 placeholder ready)
-- **Rate Limiting** — API throttling at the gateway
-- **Zipkin** — Visual trace waterfall diagrams (add `zipkin-reporter-brave` dependency)
-- **Prometheus + Grafana** — Metrics monitoring (Spring Boot Actuator metrics endpoint)
-- **WebSocket live updates** — Push job progress and log entries instead of polling
-- **Dark/light theme toggle** — UI already uses CSS custom properties; add a switcher
-- **Quality gates** — Block standardization jobs when data quality score is below threshold
-- **Scheduled validation** — Cron-based automatic quality checks with alert notifications
-- **Custom SQL validation** — `CUSTOM_SQL` validation type for advanced data checks
+> See [CONTRIBUTING.md](CONTRIBUTING.md#6-future-enhancements--prioritised-roadmap) for the full prioritised roadmap.
+
+| Priority | Enhancement | Status | Notes |
+|----------|-------------|--------|-------|
+| P0 | PostgreSQL persistent storage | Not started | Blocks production use — replaces H2 |
+| P0 | Spring Security + JWT auth | Placeholder ready | See [`SecurityPlaceholder.java`](api-gateway/src/main/java/com/datastd/gateway/config/SecurityPlaceholder.java) |
+| P1 | Apache Kafka job queue | Not started | Replace `@Async` thread pool |
+| P1 | Source connectors (JDBC, REST, S3) | Not started | See issues |
+| P2 | Data quality validation gates | Not started | Block jobs when quality score is below threshold |
+| P2 | Rate limiting at gateway | Not started | Spring Cloud Gateway filter |
+| P2 | WebSocket live updates | Not started | Push job progress instead of polling |
+| P3 | Zipkin trace waterfall | Not started | Add `zipkin-reporter-brave` dependency |
+| P3 | UI dark / light theme toggle | Not started | CSS custom properties already in place |
+| P3 | Scheduled validation | Not started | Cron-based quality checks with alert notifications |
+| P3 | Custom SQL validation | Not started | `CUSTOM_SQL` validation type for advanced checks |

@@ -588,30 +588,70 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
     }
 
     // COMPLETED / FAILED: fetch result
-    if (job.status === 'COMPLETED' || job.status === 'FAILED') {
-      fetch(GW + '/api/standardization/jobs/' + jobId + '/result')
+    if (job.status === 'FAILED') {
+      // Fetch error details from the job status endpoint
+      fetch(GW + '/api/standardization/jobs/' + jobId)
         .then(function (r) { return r.json(); })
-        .then(function (result) {
-          if (job.status === 'FAILED') {
-            var eb = $('#error-box');
-            if (eb) eb.textContent = result.errorLog || 'No error details available.';
-          }
-          if (job.status === 'COMPLETED') {
-            var records = result.standardizedRecords || [];
-            renderResultTable(records);
-            bindExports(records);
-          }
+        .then(function (data) {
+          var eb = $('#error-box');
+          if (eb) eb.textContent = data.errorLog || 'No error details available.';
         })
         .catch(function () {
-          if (job.status === 'FAILED') {
-            var eb2 = $('#error-box');
-            if (eb2) eb2.textContent = 'Could not load error details.';
-          }
+          var eb2 = $('#error-box');
+          if (eb2) eb2.textContent = 'Could not load error details.';
         });
+    }
+    if (job.status === 'COMPLETED') {
+      loadResultPage(jobId, 0, 100);
     }
 
     $('#drawer-overlay').classList.add('open');
     $('#detail-drawer').classList.add('open');
+  }
+
+  var currentResultPage = 0;
+  var currentResultSize = 100;
+  var allExportRecords = null;
+
+  function loadResultPage(jobId, page, size) {
+    fetch(GW + '/api/standardization/jobs/' + jobId + '/result?page=' + page + '&size=' + size)
+      .then(function (r) { return r.json(); })
+      .then(function (result) {
+        var records = result.records || [];
+        renderResultTable(records);
+        allExportRecords = null;
+        bindExports(records, result, jobId);
+        renderPaginationControls(result, jobId);
+      })
+      .catch(function () {
+        var wrap = $('#result-wrap');
+        if (wrap) wrap.innerHTML = '<div class="empty-state">Could not load results.</div>';
+      });
+  }
+
+  function renderPaginationControls(result, jobId) {
+    var wrap = $('#result-wrap');
+    if (!wrap) return;
+    if (result.totalPages == null || result.totalPages <= 1) return;
+    var nav = document.createElement('div');
+    nav.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:10px;padding:8px;font-size:.75rem;';
+    var prevDisabled = !result.hasPrevious ? ' disabled' : '';
+    var nextDisabled = !result.hasNext ? ' disabled' : '';
+    nav.innerHTML =
+      '<button class="btn btn-sm"' + prevDisabled + ' id="pg-prev">\u25C0 Prev</button>' +
+      '<span>Page ' + (result.page + 1) + ' of ' + result.totalPages +
+      ' &middot; ' + result.totalRecords + ' records</span>' +
+      '<button class="btn btn-sm"' + nextDisabled + ' id="pg-next">Next \u25B6</button>';
+    wrap.appendChild(nav);
+
+    var prevBtn = document.getElementById('pg-prev');
+    var nextBtn = document.getElementById('pg-next');
+    if (prevBtn && result.hasPrevious) {
+      prevBtn.addEventListener('click', function () { loadResultPage(jobId, result.page - 1, result.size); });
+    }
+    if (nextBtn && result.hasNext) {
+      nextBtn.addEventListener('click', function () { loadResultPage(jobId, result.page + 1, result.size); });
+    }
   }
 
   /* ── Render quality report section in drawer ────────────────── */
@@ -670,35 +710,62 @@ input:focus,select:focus{outline:none;border-color:var(--color-accent)}
     if (!records.length) { wrap.innerHTML = '<div class="empty-state">No records</div>'; return; }
     var cols = []; var colSet = {};
     records.forEach(function (r) { Object.keys(r).forEach(function (k) { if (!colSet[k]) { colSet[k] = true; cols.push(k); } }); });
-    var maxR = Math.min(records.length, 100);
     var html = '<table class="result-table"><thead><tr>';
     cols.forEach(function (c) { html += '<th>' + escHtml(c) + '</th>'; });
     html += '</tr></thead><tbody>';
-    for (var i = 0; i < maxR; i++) {
+    for (var i = 0; i < records.length; i++) {
       html += '<tr>';
       cols.forEach(function (c) { html += '<td>' + escHtml(records[i][c] == null ? '' : String(records[i][c])) + '</td>'; });
       html += '</tr>';
     }
     html += '</tbody></table>';
-    if (records.length > maxR) html += '<div style="text-align:center;padding:6px;font-size:.7rem;color:var(--color-text-dim)">Showing ' + maxR + ' of ' + records.length + '</div>';
     wrap.innerHTML = html;
   }
 
-  function bindExports(records) {
+  function bindExports(records, resultMeta, jobId) {
     var csvBtn = $('#btn-export-csv');
     var jsonBtn = $('#btn-export-json');
     if (!csvBtn || !jsonBtn || !records.length) return;
-    var cols = Object.keys(records[0]);
-    csvBtn.addEventListener('click', function () {
-      var lines = [cols.map(function (c) { return '"' + c.replace(/"/g, '""') + '"'; }).join(',')];
-      records.forEach(function (r) {
-        lines.push(cols.map(function (c) { var v = r[c] == null ? '' : String(r[c]); return '"' + v.replace(/"/g, '""') + '"'; }).join(','));
+
+    function fetchAllRecords(callback) {
+      if (!resultMeta || !resultMeta.totalPages || resultMeta.totalPages <= 1) {
+        callback(records);
+        return;
+      }
+      var all = [];
+      var fetched = 0;
+      for (var p = 0; p < resultMeta.totalPages; p++) {
+        (function (pg) {
+          fetch(GW + '/api/standardization/jobs/' + jobId + '/result?page=' + pg + '&size=' + resultMeta.size)
+            .then(function (r) { return r.json(); })
+            .then(function (d) {
+              all[pg] = d.records || [];
+              fetched++;
+              if (fetched === resultMeta.totalPages) {
+                var merged = [];
+                for (var i = 0; i < all.length; i++) merged = merged.concat(all[i]);
+                callback(merged);
+              }
+            });
+        })(p);
+      }
+    }
+
+    csvBtn.onclick = function () {
+      fetchAllRecords(function (allRecs) {
+        var cols = Object.keys(allRecs[0]);
+        var lines = [cols.map(function (c) { return '"' + c.replace(/"/g, '""') + '"'; }).join(',')];
+        allRecs.forEach(function (r) {
+          lines.push(cols.map(function (c) { var v = r[c] == null ? '' : String(r[c]); return '"' + v.replace(/"/g, '""') + '"'; }).join(','));
+        });
+        downloadBlob(lines.join('\n'), 'job-result.csv', 'text/csv');
       });
-      downloadBlob(lines.join('\n'), 'job-result.csv', 'text/csv');
-    });
-    jsonBtn.addEventListener('click', function () {
-      downloadBlob(JSON.stringify(records, null, 2), 'job-result.json', 'application/json');
-    });
+    };
+    jsonBtn.onclick = function () {
+      fetchAllRecords(function (allRecs) {
+        downloadBlob(JSON.stringify(allRecs, null, 2), 'job-result.json', 'application/json');
+      });
+    };
   }
 
   function closeDrawer() {

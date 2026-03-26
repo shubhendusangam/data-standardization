@@ -12,8 +12,9 @@ spring:
     show-sql: false
   servlet:
     multipart:
+      enabled: true
       max-file-size: 50MB
-      max-request-size: 50MB
+      max-request-size: 52MB
 
 eureka:
   client:
@@ -29,4 +30,12 @@ logging:
   level:
     root: WARN
     com.datastd: INFO
+
+datastandard:
+  ingestion:
+    max-file-size-bytes: 52428800
+    supported-types:
+      - text/csv
+      - application/vnd.ms-excel
+      - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
 

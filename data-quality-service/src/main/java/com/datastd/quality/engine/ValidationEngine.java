@@ -1,27 +1,28 @@
 package com.datastd.quality.engine;
 
 import com.datastd.common.dto.*;
-import com.datastd.quality.entity.Severity;
+import com.datastd.quality.engine.validation.ValidationStrategy;
+import com.datastd.quality.engine.validation.ValidationStrategyFactory;
 import com.datastd.quality.entity.ValidationRule;
-import com.datastd.quality.entity.ValidationType;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.*;
-import java.util.regex.Pattern;
 
 /**
  * Core validation engine that evaluates a list of records against validation rules
  * and produces a {@link QualityReport}.
+ * <p>
+ * Uses the Strategy pattern: each {@link com.datastd.quality.entity.ValidationType}
+ * is handled by a dedicated {@link ValidationStrategy} implementation,
+ * resolved via {@link ValidationStrategyFactory}.
  */
 @Component
 public class ValidationEngine {
@@ -32,10 +33,13 @@ public class ValidationEngine {
 
     private final ObjectMapper objectMapper;
     private final ColumnProfiler columnProfiler;
+    private final ValidationStrategyFactory validationStrategyFactory;
 
-    public ValidationEngine(ObjectMapper objectMapper, ColumnProfiler columnProfiler) {
+    public ValidationEngine(ObjectMapper objectMapper, ColumnProfiler columnProfiler,
+                            ValidationStrategyFactory validationStrategyFactory) {
         this.objectMapper = objectMapper;
         this.columnProfiler = columnProfiler;
+        this.validationStrategyFactory = validationStrategyFactory;
     }
 
     /**
@@ -120,7 +124,6 @@ public class ValidationEngine {
         return report;
     }
 
-
     // ── Duplicate Detection ─────────────────────────────────────────
 
     private int computeDuplicateCount(List<Map<String, Object>> records) {
@@ -146,7 +149,7 @@ public class ValidationEngine {
             byte[] hash = digest.digest(rowString.getBytes(StandardCharsets.UTF_8));
             return bytesToHex(hash);
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("SHA-256 not available", e);
+            throw new IllegalStateException("SHA-256 not available", e);
         }
     }
 
@@ -158,7 +161,7 @@ public class ValidationEngine {
         return sb.toString();
     }
 
-    // ── Per-Rule Evaluation ─────────────────────────────────────────
+    // ── Per-Rule Evaluation (delegates to Strategy) ─────────────────
 
     private ValidationRuleResult evaluateRule(ValidationRule rule, String columnName, List<Map<String, Object>> records) {
         Map<String, Object> params = parseParams(rule.getParams());
@@ -179,180 +182,10 @@ public class ValidationEngine {
             return result;
         }
 
-        switch (rule.getValidationType()) {
-            case NOT_NULL -> evaluateNotNull(result, columnName, records, params);
-            case NOT_EMPTY -> evaluateNotEmpty(result, columnName, records, params);
-            case REGEX_MATCH -> evaluateRegexMatch(result, columnName, records, params);
-            case ALLOWED_VALUES -> evaluateAllowedValues(result, columnName, records, params);
-            case NUMERIC_RANGE -> evaluateNumericRange(result, columnName, records, params);
-            case MIN_LENGTH -> evaluateMinLength(result, columnName, records, params);
-            case MAX_LENGTH -> evaluateMaxLength(result, columnName, records, params);
-            case UNIQUE -> evaluateUnique(result, columnName, records, params);
-            case CUSTOM_SQL -> {
-                result.setPassed(true);
-                result.setFailRatePct(0);
-                result.setFailCount(0);
-                result.setMessage(columnName + ": CUSTOM_SQL not yet implemented");
-            }
-        }
+        ValidationStrategy strategy = validationStrategyFactory.getStrategy(rule.getValidationType());
+        strategy.evaluate(result, columnName, records, params);
 
         return result;
-    }
-
-    private void evaluateNotNull(ValidationRuleResult result, String column,
-                                  List<Map<String, Object>> records, Map<String, Object> params) {
-        int total = records.size();
-        long nullCount = records.stream().filter(r -> r.get(column) == null).count();
-        double nullRate = round((double) nullCount / total * 100);
-        double maxRate = getDouble(params, "maxNullRatePct", 0.0);
-
-        result.setFailCount((int) nullCount);
-        result.setFailRatePct(nullRate);
-        result.setPassed(nullRate <= maxRate);
-        result.setMessage(String.format("%s: %.1f%% null values (threshold: %.1f%%)", column, nullRate, maxRate));
-    }
-
-    private void evaluateNotEmpty(ValidationRuleResult result, String column,
-                                   List<Map<String, Object>> records, Map<String, Object> params) {
-        int total = records.size();
-        long emptyCount = records.stream().filter(r -> {
-            Object val = r.get(column);
-            return val == null || val.toString().isBlank();
-        }).count();
-        double emptyRate = round((double) emptyCount / total * 100);
-        double maxRate = getDouble(params, "maxNullRatePct", 0.0);
-
-        result.setFailCount((int) emptyCount);
-        result.setFailRatePct(emptyRate);
-        result.setPassed(emptyRate <= maxRate);
-        result.setMessage(String.format("%s: %.1f%% blank/null values (threshold: %.1f%%)", column, emptyRate, maxRate));
-    }
-
-    private void evaluateRegexMatch(ValidationRuleResult result, String column,
-                                     List<Map<String, Object>> records, Map<String, Object> params) {
-        int total = records.size();
-        String patternStr = (String) params.getOrDefault("pattern", ".*");
-        double maxFailRate = getDouble(params, "maxFailRatePct", 0.0);
-        Pattern pattern = Pattern.compile(patternStr);
-
-        long failCount = records.stream().filter(r -> {
-            Object val = r.get(column);
-            if (val == null) return true;
-            return !pattern.matcher(val.toString()).matches();
-        }).count();
-
-        double failRate = round((double) failCount / total * 100);
-        result.setFailCount((int) failCount);
-        result.setFailRatePct(failRate);
-        result.setPassed(failRate <= maxFailRate);
-        result.setMessage(String.format("%s: %.1f%% of values fail regex match (threshold: %.1f%%)", column, failRate, maxFailRate));
-    }
-
-    private void evaluateAllowedValues(ValidationRuleResult result, String column,
-                                        List<Map<String, Object>> records, Map<String, Object> params) {
-        int total = records.size();
-        @SuppressWarnings("unchecked")
-        List<String> allowed = (List<String>) params.getOrDefault("values", List.of());
-        Set<String> allowedSet = new HashSet<>(allowed);
-        double maxFailRate = getDouble(params, "maxFailRatePct", 0.0);
-
-        long failCount = records.stream().filter(r -> {
-            Object val = r.get(column);
-            if (val == null) return true;
-            return !allowedSet.contains(val.toString());
-        }).count();
-
-        double failRate = round((double) failCount / total * 100);
-        result.setFailCount((int) failCount);
-        result.setFailRatePct(failRate);
-        result.setPassed(failRate <= maxFailRate);
-        result.setMessage(String.format("%s: %.1f%% of values not in allowed set (threshold: %.1f%%)", column, failRate, maxFailRate));
-    }
-
-    private void evaluateNumericRange(ValidationRuleResult result, String column,
-                                       List<Map<String, Object>> records, Map<String, Object> params) {
-        int total = records.size();
-        double min = getDouble(params, "min", Double.NEGATIVE_INFINITY);
-        double max = getDouble(params, "max", Double.POSITIVE_INFINITY);
-        double maxFailRate = getDouble(params, "maxFailRatePct", 0.0);
-
-        long failCount = records.stream().filter(r -> {
-            Object val = r.get(column);
-            if (val == null) return true;
-            try {
-                double num = Double.parseDouble(val.toString());
-                return num < min || num > max;
-            } catch (NumberFormatException e) {
-                return true;
-            }
-        }).count();
-
-        double failRate = round((double) failCount / total * 100);
-        result.setFailCount((int) failCount);
-        result.setFailRatePct(failRate);
-        result.setPassed(failRate <= maxFailRate);
-        result.setMessage(String.format("%s: %.1f%% of values outside range [%.1f, %.1f] (threshold: %.1f%%)",
-                column, failRate, min, max, maxFailRate));
-    }
-
-    private void evaluateMinLength(ValidationRuleResult result, String column,
-                                    List<Map<String, Object>> records, Map<String, Object> params) {
-        int total = records.size();
-        int minLen = getInt(params, "length", 0);
-
-        long failCount = records.stream().filter(r -> {
-            Object val = r.get(column);
-            if (val == null) return true;
-            return val.toString().length() < minLen;
-        }).count();
-
-        double failRate = round((double) failCount / total * 100);
-        result.setFailCount((int) failCount);
-        result.setFailRatePct(failRate);
-        result.setPassed(failCount == 0);
-        result.setMessage(String.format("%s: %d values shorter than %d chars", column, failCount, minLen));
-    }
-
-    private void evaluateMaxLength(ValidationRuleResult result, String column,
-                                    List<Map<String, Object>> records, Map<String, Object> params) {
-        int total = records.size();
-        int maxLen = getInt(params, "length", Integer.MAX_VALUE);
-
-        long failCount = records.stream().filter(r -> {
-            Object val = r.get(column);
-            if (val == null) return false;
-            return val.toString().length() > maxLen;
-        }).count();
-
-        double failRate = round((double) failCount / total * 100);
-        result.setFailCount((int) failCount);
-        result.setFailRatePct(failRate);
-        result.setPassed(failCount == 0);
-        result.setMessage(String.format("%s: %d values longer than %d chars", column, failCount, maxLen));
-    }
-
-    private void evaluateUnique(ValidationRuleResult result, String column,
-                                 List<Map<String, Object>> records, Map<String, Object> params) {
-        int total = records.size();
-        double maxDupRate = getDouble(params, "maxDuplicateRatePct", 0.0);
-
-        Map<String, Integer> valueCounts = new HashMap<>();
-        for (Map<String, Object> record : records) {
-            Object val = record.get(column);
-            String key = val == null ? "__NULL__" : val.toString();
-            valueCounts.merge(key, 1, Integer::sum);
-        }
-
-        long duplicateCount = 0;
-        for (int count : valueCounts.values()) {
-            if (count > 1) duplicateCount += (count - 1);
-        }
-
-        double dupRate = total == 0 ? 0 : round((double) duplicateCount / total * 100);
-        result.setFailCount((int) duplicateCount);
-        result.setFailRatePct(dupRate);
-        result.setPassed(dupRate <= maxDupRate);
-        result.setMessage(String.format("%s: %.1f%% duplicate values (threshold: %.1f%%)", column, dupRate, maxDupRate));
     }
 
     // ── Helpers ─────────────────────────────────────────────────────
@@ -367,24 +200,6 @@ public class ValidationEngine {
             log.warn("Failed to parse rule params JSON: {}", e.getMessage());
             return Map.of();
         }
-    }
-
-    private double getDouble(Map<String, Object> params, String key, double defaultValue) {
-        Object val = params.get(key);
-        if (val == null) return defaultValue;
-        if (val instanceof Number) return ((Number) val).doubleValue();
-        try { return Double.parseDouble(val.toString()); } catch (NumberFormatException e) { return defaultValue; }
-    }
-
-    private int getInt(Map<String, Object> params, String key, int defaultValue) {
-        Object val = params.get(key);
-        if (val == null) return defaultValue;
-        if (val instanceof Number) return ((Number) val).intValue();
-        try { return Integer.parseInt(val.toString()); } catch (NumberFormatException e) { return defaultValue; }
-    }
-
-    private double round(double value) {
-        return BigDecimal.valueOf(value).setScale(1, RoundingMode.HALF_UP).doubleValue();
     }
 }
 

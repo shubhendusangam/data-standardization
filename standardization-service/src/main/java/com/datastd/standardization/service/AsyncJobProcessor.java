@@ -3,6 +3,7 @@ package com.datastd.standardization.service;
 import com.datastd.common.dto.IngestedDatasetResponse;
 import com.datastd.common.dto.OverallStatus;
 import com.datastd.common.dto.QualityReport;
+import com.datastd.common.dto.RuleApplicationError;
 import com.datastd.common.dto.RuleResponse;
 import com.datastd.common.dto.ValidationRuleResult;
 import com.datastd.standardization.client.DataQualityClient;
@@ -11,7 +12,9 @@ import com.datastd.standardization.client.RuleEngineClient;
 import com.datastd.standardization.dto.QualityValidateRequest;
 import com.datastd.standardization.entity.ProcessingJob;
 import com.datastd.standardization.entity.ProcessingJob.JobStatus;
+import com.datastd.standardization.exception.ResourceNotFoundException;
 import com.datastd.standardization.repository.ProcessingJobRepository;
+import com.datastd.standardization.service.rules.RuleApplicationResult;
 import com.datastd.standardization.service.rules.RuleExecutionEngine;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -69,7 +72,7 @@ public class AsyncJobProcessor {
         ProcessingJob job = null;
         try {
             job = jobRepository.findById(jobId)
-                    .orElseThrow(() -> new RuntimeException("Job not found: " + jobId));
+                    .orElseThrow(() -> new ResourceNotFoundException("Job not found: " + jobId));
 
             job.setStatus(JobStatus.PROCESSING);
             job.setStartedAt(LocalDateTime.now());
@@ -120,14 +123,26 @@ public class AsyncJobProcessor {
 
             // Apply rules to each record
             List<Map<String, Object>> standardizedRecords = new ArrayList<>();
+            List<RuleApplicationError> allRuleErrors = new ArrayList<>();
             StringBuilder errorLog = new StringBuilder();
             int errorCount = 0;
             int processed = 0;
 
             for (Map<String, Object> record : records) {
                 try {
-                    Map<String, Object> standardized = ruleExecutionEngine.applyRulesToRecord(record, rules);
-                    standardizedRecords.add(standardized);
+                    RuleApplicationResult ruleResult = ruleExecutionEngine.applyRulesToRecord(record, rules);
+                    standardizedRecords.add(ruleResult.getRecord());
+
+                    if (ruleResult.hasErrors()) {
+                        errorCount++;
+                        for (RuleApplicationError err : ruleResult.getErrors()) {
+                            err.setRecordIndex(processed);
+                            allRuleErrors.add(err);
+                        }
+                        errorLog.append("Record ").append(processed + 1)
+                                .append(": ").append(ruleResult.getErrors().size())
+                                .append(" rule error(s)\n");
+                    }
                 } catch (Exception e) {
                     errorCount++;
                     errorLog.append("Record ").append(processed + 1)
@@ -143,11 +158,19 @@ public class AsyncJobProcessor {
                 }
             }
 
+            if (!allRuleErrors.isEmpty()) {
+                log.warn("Job completed with rule errors: jobId={}, totalRecords={}, errorRecords={}",
+                        jobId, processed, errorCount);
+            }
+
             // Save results
             job.setProcessedRecords(processed);
             job.setErrorCount(errorCount);
             job.setResultData(objectMapper.writeValueAsString(standardizedRecords));
             job.setErrorLog(errorLog.toString());
+            if (!allRuleErrors.isEmpty()) {
+                job.setRuleApplicationErrorsJson(objectMapper.writeValueAsString(allRuleErrors));
+            }
             job.setStatus(JobStatus.COMPLETED);
             job.setCompletedAt(LocalDateTime.now());
             jobRepository.save(job);
