@@ -8,6 +8,15 @@ A microservices-based system for processing, standardizing, and validating data 
 ## Data Flow
 ![data_flow](https://github.com/user-attachments/assets/e5e3503c-7aba-479c-8fdd-ae0a063b7fa1)
 
+## Sequence Diagram
+![sequence](https://github.com/user-attachments/assets/4e1fa674-ad4a-4f0c-b375-0b85c345936f)
+
+## ER diagram
+![ER](https://github.com/user-attachments/assets/2d5bfd40-6758-4194-9355-7c686f7bc7ca)
+
+## deployment
+![deployment](https://github.com/user-attachments/assets/46d63c07-f53b-448c-b7c7-b994b9d5d9ce)
+
 ## Technology Stack
 
 | Component              | Technology                          |
