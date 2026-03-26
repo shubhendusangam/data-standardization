@@ -4,42 +4,8 @@ A microservices-based system for processing, standardizing, and validating data 
 
 ## Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                      Browser UI (vanilla HTML/CSS/JS)                       │
-│  dashboard │ ingestion │ rules │ jobs │ data-quality │ logs                  │
-└──────┬────────────┬──────────────┬──────────────┬───────────────────────────┘
-       │ fetch()     │ fetch()       │ fetch()       │ fetch()
-       │ :8080       │ :8080         │ :8080         │ :3100 (Loki)
-┌──────▼────────────▼──────────────▼──────────────▼───┐
-│              API Gateway  :8080                      │
-│              (Spring Cloud Gateway)                  │
-│              X-Trace-Id response header              │
-└──────┬───────────┬───────────┬───────────┬──────────┘
-       │  W3C / B3  │           │           │
-┌──────▼──────────▼───────────▼───────────▼───────────┐
-│              Eureka Service Discovery  :8761         │
-└─────────────────────────────────────────────────────┘
-       │              │              │              │
-┌──────▼──────┐ ┌─────▼──────┐ ┌────▼──────────┐ ┌▼──────────────┐
-│  Ingestion  │ │Rule Engine │ │Standardization│ │ Data Quality  │
-│  Service    │ │  Service   │ │   Service     │ │   Service     │
-│  :8081      │ │  :8082     │ │   :8083       │ │   :8085       │
-│  (H2 DB)   │ │  (H2 DB)   │ │   (H2 DB)    │ │   (H2 DB)     │
-└──────┬──────┘ └─────┬──────┘ └────┬──────────┘ └┬──────────────┘
-       │              │              │              │
-       └──────────────┼──────────────┼──────────────┘
-                      │  Loki4j log shipping
-             ┌────────▼────────┐
-             │  Grafana Loki   │ :3100
-             │  (Log Storage)  │
-             └────────┬────────┘
-                      │
-             ┌────────▼────────┐
-             │    Grafana      │ :3000
-             │  (Dashboards)   │
-             └─────────────────┘
-```
+![arch](https://github.com/user-attachments/assets/fcc2c463-eb9b-4bfe-ba94-8fc1731072a0)
+
 
 ## Technology Stack
 
