@@ -3,9 +3,10 @@
 A microservices-based system for processing, standardizing, and validating data from multiple sources using user-defined JSON rules. Includes a full vanilla HTML/CSS/JS dashboard UI with data quality monitoring, trend analysis, and webhook alerting.
 
 ## Architecture
-
 ![arch](https://github.com/user-attachments/assets/fcc2c463-eb9b-4bfe-ba94-8fc1731072a0)
 
+## Data Flow
+![data_flow](https://github.com/user-attachments/assets/e5e3503c-7aba-479c-8fdd-ae0a063b7fa1)
 
 ## Technology Stack
 
